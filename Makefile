@@ -26,11 +26,11 @@ test-race:
 
 build:
 	@echo "=> Building Go application..."
-	@go build -o ./bin/exec .
+	@go build -o ./bin/kangaroo .
 
 run: build
 	@$(CLEAR_COMMAND)
-	./bin/exec $(ARGS)
+	./bin/kangaroo $(ARGS)
 
 # ==============================================================================
 # Cleanup & Help
@@ -38,7 +38,7 @@ run: build
 
 clean:
 	@echo "=> Cleaning up..."
-	@rm -f ./bin/exec
+	@rm -f ./bin/kangaroo
 
 help:
 	@echo "Available commands:"
