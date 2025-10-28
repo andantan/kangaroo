@@ -1,4 +1,4 @@
-package collections
+package collection
 
 import (
 	"testing"
@@ -30,6 +30,40 @@ func TestSet_Remove(t *testing.T) {
 
 	s.Remove("tiger")
 	assert.Equal(t, 2, s.Len())
+}
+
+func TestSet_RemoveBatch(t *testing.T) {
+	s := NewSet[string]()
+	s.Add("apple")
+	s.Add("banana")
+	s.Add("cherry")
+	s.Add("durian")
+
+	assert.Equal(t, 4, s.Len())
+
+	keysToRemove := []string{"banana", "durian"}
+	s.RemoveBatch(keysToRemove)
+
+	assert.Equal(t, 2, s.Len(), "length should be 2 after removing 2 elements")
+	assert.True(t, s.Contains("apple"))
+	assert.False(t, s.Contains("banana"), "'banana' should have been removed")
+	assert.True(t, s.Contains("cherry"))
+	assert.False(t, s.Contains("durian"), "'durian' should have been removed")
+
+	// Current set: {"apple", "cherry"}
+	mixedKeys := []string{"apple", "fig"}
+	s.RemoveBatch(mixedKeys)
+
+	assert.Equal(t, 1, s.Len(), "only 1 existing element should be removed")
+	assert.False(t, s.Contains("apple"), "'apple' should have been removed")
+	assert.True(t, s.Contains("cherry"), "'cherry' should remain")
+
+	initialLen := s.Len()
+	s.RemoveBatch([]string{})
+	assert.Equal(t, initialLen, s.Len(), "length should not change when removing with an empty slice")
+
+	s.RemoveBatch([]string{"cherry"})
+	assert.Equal(t, 0, s.Len(), "set should be empty after removing all elements")
 }
 
 func TestSet_Clear(t *testing.T) {
