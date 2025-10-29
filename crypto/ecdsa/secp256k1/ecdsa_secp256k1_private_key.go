@@ -14,6 +14,8 @@ type ECDSASecp256k1PrivateKey struct {
 	key *secp256k1.PrivateKey
 }
 
+var _ crypto.PrivateKey = (*ECDSASecp256k1PrivateKey)(nil)
+
 func (k *ECDSASecp256k1PrivateKey) Bytes() []byte {
 	return k.key.Serialize()
 }

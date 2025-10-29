@@ -15,6 +15,8 @@ type ECDSASecp256k1Signature struct {
 	S *secp256k1.ModNScalar
 }
 
+var _ crypto.Signature = (*ECDSASecp256k1Signature)(nil)
+
 func (s *ECDSASecp256k1Signature) Bytes() []byte {
 	rArr := [32]byte{}
 	sArr := [32]byte{}

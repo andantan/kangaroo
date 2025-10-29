@@ -15,6 +15,8 @@ type ECDSASecp256k1PublicKey struct {
 	Key []byte
 }
 
+var _ crypto.PublicKey = (*ECDSASecp256k1PublicKey)(nil)
+
 func (k *ECDSASecp256k1PublicKey) Bytes() []byte {
 	return append([]byte(nil), k.Key...)
 }
@@ -73,7 +75,6 @@ func ECDSASecp256k1PublicKeyFromBytes(b []byte) (crypto.PublicKey, error) {
 
 func ECDSASecp256k1PublicKeyFromString(s string) (crypto.PublicKey, error) {
 	s = strings.TrimPrefix(s, "0x")
-
 	if len(s) != ecdsaformat.ECDSAPublicKeyHexLength {
 		return nil, fmt.Errorf("invalid hex string length for public-key<%s>: expected %d, got %d", ecdsaformat.ECDSASecp256k1Type, ecdsaformat.ECDSAPublicKeyHexLength, len(s))
 	}
