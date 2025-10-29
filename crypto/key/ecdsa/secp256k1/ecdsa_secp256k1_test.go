@@ -1,11 +1,12 @@
 package secp256k1
 
 import (
-	"github.com/andantan/kangaroo/crypto/hash"
-	keccak257 "github.com/andantan/kangaroo/crypto/hash/keccak256"
-	"github.com/andantan/kangaroo/crypto/hash/ripemd160"
-	sha257 "github.com/andantan/kangaroo/crypto/hash/sha256"
-	ecdsaformat "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	"fmt"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	kangarookeccak256 "github.com/andantan/kangaroo/crypto/hash/keccak256"
+	kangarooripemd160 "github.com/andantan/kangaroo/crypto/hash/ripemd160"
+	kangaroosha256 "github.com/andantan/kangaroo/crypto/hash/sha256"
+	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -16,7 +17,7 @@ func Test_ECDSA_Secp256k1_PrivateKey_Lifecycle(t *testing.T) {
 	privKey, err := GenerateECDSASecp256k1PrivateKey()
 	require.NoError(t, err)
 	assert.True(t, privKey.IsValid())
-	assert.Equal(t, ecdsaformat.ECDSASecp256k1Type, privKey.Type())
+	assert.Equal(t, kangarooecdsa.ECDSASecp256k1Type, privKey.Type())
 
 	// 2. Bytes Round Trip
 	privKeyBytes := privKey.Bytes()
@@ -31,206 +32,118 @@ func Test_ECDSA_Secp256k1_PrivateKey_Lifecycle(t *testing.T) {
 	assert.Equal(t, privKey, reloadedPrivKeyFromString)
 }
 
-func Test_ECDSA_Secp256k1_PublicKey_SHA256_Lifecycle(t *testing.T) {
+func Test_ECDSA_Secp256k1_PublicKey_Lifecycle(t *testing.T) {
+	addressDerivers := []struct {
+		name    string
+		deriver kangaroohash.AddressDeriver
+	}{
+		{"SHA256", &kangaroosha256.Sha256AddressDeriver{}},
+		{"KECCAK256", &kangarookeccak256.Keccak256AddressDeriver{}},
+		{"RIPEMD160", &kangarooripemd160.Ripemd160AddressDeriver{}},
+	}
+
 	privKey, err := GenerateECDSASecp256k1PrivateKey()
 	require.NoError(t, err)
 	pubKey := privKey.PublicKey()
 
-	// 1. Validation and Type Check
-	assert.True(t, pubKey.IsValid())
-	assert.Equal(t, ecdsaformat.ECDSASecp256k1Type, pubKey.Type())
+	for _, tc := range addressDerivers {
+		t.Run(fmt.Sprintf("with %s address deriver", tc.name), func(t *testing.T) {
+			assert.True(t, pubKey.IsValid())
+			assert.Equal(t, kangarooecdsa.ECDSASecp256k1Type, pubKey.Type())
 
-	// 2. Bytes Round Trip
-	pubKeyBytes := pubKey.Bytes()
-	reloadedPubKey, err := ECDSASecp256k1PublicKeyFromBytes(pubKeyBytes)
-	require.NoError(t, err)
-	assert.True(t, pubKey.Equal(reloadedPubKey))
+			pubKeyBytes := pubKey.Bytes()
+			reloadedPubKey, err := ECDSASecp256k1PublicKeyFromBytes(pubKeyBytes)
+			require.NoError(t, err)
+			assert.True(t, pubKey.Equal(reloadedPubKey))
 
-	// 3. String Round Trip
-	pubKeyString := pubKey.String()
-	reloadedPubKeyFromString, err := ECDSASecp256k1PublicKeyFromString(pubKeyString)
-	require.NoError(t, err)
-	assert.True(t, pubKey.Equal(reloadedPubKeyFromString))
+			pubKeyString := pubKey.String()
+			reloadedPubKeyFromString, err := ECDSASecp256k1PublicKeyFromString(pubKeyString)
+			require.NoError(t, err)
+			assert.True(t, pubKey.Equal(reloadedPubKeyFromString))
 
-	// 4. Address Derivation using the Derive
-	addressDeriver := sha257.NewSha256AddressDeriver()
-	address := pubKey.Address(addressDeriver)
-	assert.NotNil(t, address)
-	assert.Equal(t, hash.AddressLength, len(address.Bytes()))
+			address := pubKey.Address(tc.deriver)
+			assert.NotNil(t, address)
+			assert.Equal(t, kangaroohash.AddressLength, len(address.Bytes()))
+		})
+	}
 }
 
-func Test_ECDSA_Secp256k1_PublicKey_KECCAK256_Lifecycle(t *testing.T) {
-	privKey, err := GenerateECDSASecp256k1PrivateKey()
-	require.NoError(t, err)
-	pubKey := privKey.PublicKey()
+func Test_ECDSA_Secp256k1_Signature_Lifecycle(t *testing.T) {
+	hashDerivers := []struct {
+		name    string
+		deriver kangaroohash.HashDeriver
+	}{
+		{"SHA256", &kangaroosha256.Sha256HashDeriver{}},
+		{"KECCAK256", &kangarookeccak256.Keccak256HashDeriver{}},
+	}
 
-	// 1. Validation and Type Check
-	assert.True(t, pubKey.IsValid())
-	assert.Equal(t, ecdsaformat.ECDSASecp256k1Type, pubKey.Type())
-
-	// 2. Bytes Round Trip
-	pubKeyBytes := pubKey.Bytes()
-	reloadedPubKey, err := ECDSASecp256k1PublicKeyFromBytes(pubKeyBytes)
-	require.NoError(t, err)
-	assert.True(t, pubKey.Equal(reloadedPubKey))
-
-	// 3. String Round Trip
-	pubKeyString := pubKey.String()
-	reloadedPubKeyFromString, err := ECDSASecp256k1PublicKeyFromString(pubKeyString)
-	require.NoError(t, err)
-	assert.True(t, pubKey.Equal(reloadedPubKeyFromString))
-
-	// 4. Address Derivation using the Derive
-	addressDeriver := keccak257.NewKeccak256AddressDeriver()
-	address := pubKey.Address(addressDeriver)
-	assert.NotNil(t, address)
-	assert.Equal(t, hash.AddressLength, len(address.Bytes()))
-}
-
-func Test_ECDSA_Secp256k1_PublicKey_RIPEMD160_Lifecycle(t *testing.T) {
-	privKey, err := GenerateECDSASecp256k1PrivateKey()
-	require.NoError(t, err)
-	pubKey := privKey.PublicKey()
-
-	// 1. Validation and Type Check
-	assert.True(t, pubKey.IsValid())
-	assert.Equal(t, ecdsaformat.ECDSASecp256k1Type, pubKey.Type())
-
-	// 2. Bytes Round Trip
-	pubKeyBytes := pubKey.Bytes()
-	reloadedPubKey, err := ECDSASecp256k1PublicKeyFromBytes(pubKeyBytes)
-	require.NoError(t, err)
-	assert.True(t, pubKey.Equal(reloadedPubKey))
-
-	// 3. String Round Trip
-	pubKeyString := pubKey.String()
-	reloadedPubKeyFromString, err := ECDSASecp256k1PublicKeyFromString(pubKeyString)
-	require.NoError(t, err)
-	assert.True(t, pubKey.Equal(reloadedPubKeyFromString))
-
-	// 4. Address Derivation using the Derive
-	addressDeriver := ripemd160.NewRipemd160AddressDeriver()
-	address := pubKey.Address(addressDeriver)
-	assert.NotNil(t, address)
-	assert.Equal(t, hash.AddressLength, len(address.Bytes()))
-}
-
-func Test_ECDSA_Secp256k1_Signature_SHA256_Lifecycle(t *testing.T) {
 	privKey, _ := GenerateECDSASecp256k1PrivateKey()
-	hashDeriver := sha257.NewSha256HashDeriver()
-	dataHash := hashDeriver.Derive([]byte("test data"))
 
-	signature, err := privKey.Sign(dataHash.Bytes())
-	require.NoError(t, err)
+	for _, tc := range hashDerivers {
+		t.Run(fmt.Sprintf("with %s hash", tc.name), func(t *testing.T) {
+			dataHash := tc.deriver.Derive([]byte("test data"))
+			signature, err := privKey.Sign(dataHash.Bytes())
+			require.NoError(t, err)
 
-	// 1. Validation (Low-S Rule) and Type Check
-	assert.True(t, signature.IsValid(), "Signature should be valid (pass Low-S check)")
-	assert.Equal(t, ecdsaformat.ECDSASecp256k1Type, signature.Type())
+			assert.True(t, signature.IsValid())
+			assert.Equal(t, kangarooecdsa.ECDSASecp256k1Type, signature.Type())
 
-	// 2. Bytes Round Trip
-	sigBytes := signature.Bytes()
-	reloadedSig, err := ECDSASecp256k1SignatureFromBytes(sigBytes)
-	require.NoError(t, err)
-	assert.True(t, signature.Equal(reloadedSig))
+			sigBytes := signature.Bytes()
+			reloadedSig, err := ECDSASecp256k1SignatureFromBytes(sigBytes)
+			require.NoError(t, err)
+			assert.True(t, signature.Equal(reloadedSig))
 
-	// 3. String Round Trip
-	sigString := signature.String()
-	reloadedSigFromString, err := ECDSASecp256k1SignatureFromString(sigString)
-	require.NoError(t, err)
-	assert.True(t, signature.Equal(reloadedSigFromString))
+			sigString := signature.String()
+			reloadedSigFromString, err := ECDSASecp256k1SignatureFromString(sigString)
+			require.NoError(t, err)
+			assert.True(t, signature.Equal(reloadedSigFromString))
+		})
+	}
 }
 
-func Test_ECDSA_Secp256k1_Signature_KECCAK256_Lifecycle(t *testing.T) {
-	privKey, _ := GenerateECDSASecp256k1PrivateKey()
-	hashDeriver := keccak257.NewKeccak256HashDeriver()
-	dataHash := hashDeriver.Derive([]byte("test data"))
+func Test_ECDSA_Secp256k1_Signature_Verify(t *testing.T) {
+	hashDerivers := []struct {
+		name    string
+		deriver kangaroohash.HashDeriver
+	}{
+		{"SHA256", &kangaroosha256.Sha256HashDeriver{}},
+		{"KECCAK256", &kangarookeccak256.Keccak256HashDeriver{}},
+	}
 
-	signature, err := privKey.Sign(dataHash.Bytes())
-	require.NoError(t, err)
+	for _, tc := range hashDerivers {
+		t.Run(fmt.Sprintf("with %s hash", tc.name), func(t *testing.T) {
+			// --- Setup ---
+			privKey, err := GenerateECDSASecp256k1PrivateKey()
+			require.NoError(t, err)
+			pubKey := privKey.PublicKey()
 
-	// 1. Validation (Low-S Rule) and Type Check
-	assert.True(t, signature.IsValid(), "Signature should be valid (pass Low-S check)")
-	assert.Equal(t, ecdsaformat.ECDSASecp256k1Type, signature.Type())
+			dataHash := tc.deriver.Derive([]byte("correct data"))
+			signature, err := privKey.Sign(dataHash.Bytes())
+			require.NoError(t, err)
 
-	// 2. Bytes Round Trip
-	sigBytes := signature.Bytes()
-	reloadedSig, err := ECDSASecp256k1SignatureFromBytes(sigBytes)
-	require.NoError(t, err)
-	assert.True(t, signature.Equal(reloadedSig))
+			// --- Test Cases ---
+			t.Run("Verification with correct key and data should succeed", func(t *testing.T) {
+				assert.True(t, signature.Verify(pubKey, dataHash.Bytes()))
+			})
 
-	// 3. String Round Trip
-	sigString := signature.String()
-	reloadedSigFromString, err := ECDSASecp256k1SignatureFromString(sigString)
-	require.NoError(t, err)
-	assert.True(t, signature.Equal(reloadedSigFromString))
-}
+			t.Run("Verification with wrong data should fail", func(t *testing.T) {
+				wrongDataHash := tc.deriver.Derive([]byte("wrong data"))
+				assert.False(t, signature.Verify(pubKey, wrongDataHash.Bytes()))
+			})
 
-func Test_ECDSA_Secp256k1_Signature_SHA256_Verify(t *testing.T) {
-	// --- Setup ---
-	privKey, err := GenerateECDSASecp256k1PrivateKey()
-	require.NoError(t, err)
-	pubKey := privKey.PublicKey()
-	hashDeriver := sha257.NewSha256HashDeriver()
-	dataHash := hashDeriver.Derive([]byte("correct data"))
-	signature, err := privKey.Sign(dataHash.Bytes())
-	require.NoError(t, err)
+			t.Run("Verification with wrong key should fail", func(t *testing.T) {
+				otherPrivKey, err := GenerateECDSASecp256k1PrivateKey()
+				assert.NoError(t, err)
+				otherPubKey := otherPrivKey.PublicKey()
+				assert.False(t, signature.Verify(otherPubKey, dataHash.Bytes()))
+			})
 
-	// --- Test Cases ---
-	t.Run("Verification with correct key and data should succeed", func(t *testing.T) {
-		assert.True(t, signature.Verify(pubKey, dataHash.Bytes()))
-	})
-
-	t.Run("Verification with wrong data should fail", func(t *testing.T) {
-		wrongDataHash := hashDeriver.Derive([]byte("wrong data"))
-		assert.False(t, signature.Verify(pubKey, wrongDataHash.Bytes()))
-	})
-
-	t.Run("Verification with wrong key should fail", func(t *testing.T) {
-		otherPrivKey, err := GenerateECDSASecp256k1PrivateKey()
-		assert.NoError(t, err)
-		otherPubKey := otherPrivKey.PublicKey()
-		assert.False(t, signature.Verify(otherPubKey, dataHash.Bytes()))
-	})
-
-	t.Run("Verification with invalid public key should fail", func(t *testing.T) {
-		invalidPubKeyBytes := make([]byte, ecdsaformat.ECDSAPublicKeyBytesLength)
-		invalidPubKey, err := ECDSASecp256k1PublicKeyFromBytes(invalidPubKeyBytes)
-		assert.Error(t, err)
-		assert.False(t, signature.Verify(invalidPubKey, dataHash.Bytes()))
-	})
-}
-
-func Test_ECDSA_Secp256k1_Signature_KECCAK256_Verify(t *testing.T) {
-	// --- Setup ---
-	privKey, err := GenerateECDSASecp256k1PrivateKey()
-	require.NoError(t, err)
-	pubKey := privKey.PublicKey()
-	hashDeriver := keccak257.NewKeccak256HashDeriver()
-	dataHash := hashDeriver.Derive([]byte("correct data"))
-	signature, err := privKey.Sign(dataHash.Bytes())
-	require.NoError(t, err)
-
-	// --- Test Cases ---
-	t.Run("Verification with correct key and data should succeed", func(t *testing.T) {
-		assert.True(t, signature.Verify(pubKey, dataHash.Bytes()))
-	})
-
-	t.Run("Verification with wrong data should fail", func(t *testing.T) {
-		wrongDataHash := hashDeriver.Derive([]byte("wrong data"))
-		assert.False(t, signature.Verify(pubKey, wrongDataHash.Bytes()))
-	})
-
-	t.Run("Verification with wrong key should fail", func(t *testing.T) {
-		otherPrivKey, err := GenerateECDSASecp256k1PrivateKey()
-		assert.NoError(t, err)
-		otherPubKey := otherPrivKey.PublicKey()
-		assert.False(t, signature.Verify(otherPubKey, dataHash.Bytes()))
-	})
-
-	t.Run("Verification with invalid public key should fail", func(t *testing.T) {
-		invalidPubKeyBytes := make([]byte, ecdsaformat.ECDSAPublicKeyBytesLength)
-		invalidPubKey, err := ECDSASecp256k1PublicKeyFromBytes(invalidPubKeyBytes)
-		assert.Error(t, err)
-		assert.False(t, signature.Verify(invalidPubKey, dataHash.Bytes()))
-	})
+			t.Run("Verification with invalid public key should fail", func(t *testing.T) {
+				invalidPubKeyBytes := make([]byte, kangarooecdsa.ECDSAPublicKeyBytesLength)
+				invalidPubKey, err := ECDSASecp256k1PublicKeyFromBytes(invalidPubKeyBytes)
+				assert.Error(t, err)
+				assert.False(t, signature.Verify(invalidPubKey, dataHash.Bytes()))
+			})
+		})
+	}
 }

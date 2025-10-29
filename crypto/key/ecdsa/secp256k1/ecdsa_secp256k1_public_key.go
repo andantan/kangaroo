@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	"github.com/andantan/kangaroo/crypto/hash"
-	"github.com/andantan/kangaroo/crypto/key"
-	ecdsaformat "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	kangarookey "github.com/andantan/kangaroo/crypto/key"
+	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"strings"
 )
@@ -15,7 +15,7 @@ type ECDSASecp256k1PublicKey struct {
 	Key []byte
 }
 
-var _ key.PublicKey = (*ECDSASecp256k1PublicKey)(nil)
+var _ kangarookey.PublicKey = (*ECDSASecp256k1PublicKey)(nil)
 
 func (k *ECDSASecp256k1PublicKey) Bytes() []byte {
 	return append([]byte(nil), k.Key...)
@@ -26,7 +26,7 @@ func (k *ECDSASecp256k1PublicKey) String() string {
 }
 
 func (k *ECDSASecp256k1PublicKey) IsValid() bool {
-	if k.Key == nil || len(k.Key) != ecdsaformat.ECDSAPublicKeyBytesLength {
+	if k.Key == nil || len(k.Key) != kangarooecdsa.ECDSAPublicKeyBytesLength {
 		return false
 	}
 
@@ -36,10 +36,10 @@ func (k *ECDSASecp256k1PublicKey) IsValid() bool {
 }
 
 func (k *ECDSASecp256k1PublicKey) Type() string {
-	return ecdsaformat.ECDSASecp256k1Type
+	return kangarooecdsa.ECDSASecp256k1Type
 }
 
-func (k *ECDSASecp256k1PublicKey) Equal(other key.PublicKey) bool {
+func (k *ECDSASecp256k1PublicKey) Equal(other kangarookey.PublicKey) bool {
 	if k == nil || other == nil {
 		return false
 	}
@@ -52,31 +52,31 @@ func (k *ECDSASecp256k1PublicKey) Equal(other key.PublicKey) bool {
 	return bytes.Equal(k.Bytes(), otherKey.Bytes())
 }
 
-func (k *ECDSASecp256k1PublicKey) Address(deriver hash.AddressDeriver) hash.Addressable {
+func (k *ECDSASecp256k1PublicKey) Address(deriver kangaroohash.AddressDeriver) kangaroohash.Addressable {
 	return deriver.Derive(k.Key)
 }
 
-func ECDSASecp256k1PublicKeyFromBytes(b []byte) (key.PublicKey, error) {
-	if len(b) != ecdsaformat.ECDSAPublicKeyBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for public-key<%s>: expected %d, got %d", ecdsaformat.ECDSASecp256k1Type, ecdsaformat.ECDSAPublicKeyBytesLength, len(b))
+func ECDSASecp256k1PublicKeyFromBytes(b []byte) (kangarookey.PublicKey, error) {
+	if len(b) != kangarooecdsa.ECDSAPublicKeyBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for public-key<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256k1Type, kangarooecdsa.ECDSAPublicKeyBytesLength, len(b))
 	}
 
 	keyBytes := append([]byte(nil), b...)
-	key := &ECDSASecp256k1PublicKey{
+	k := &ECDSASecp256k1PublicKey{
 		Key: keyBytes,
 	}
 
-	if !key.IsValid() {
+	if !k.IsValid() {
 		return nil, fmt.Errorf("public key is not a valid point on ecdsa-secp256k1 curve")
 	}
 
-	return key, nil
+	return k, nil
 }
 
-func ECDSASecp256k1PublicKeyFromString(s string) (key.PublicKey, error) {
+func ECDSASecp256k1PublicKeyFromString(s string) (kangarookey.PublicKey, error) {
 	s = strings.TrimPrefix(s, "0x")
-	if len(s) != ecdsaformat.ECDSAPublicKeyHexLength {
-		return nil, fmt.Errorf("invalid hex string length for public-key<%s>: expected %d, got %d", ecdsaformat.ECDSASecp256k1Type, ecdsaformat.ECDSAPublicKeyHexLength, len(s))
+	if len(s) != kangarooecdsa.ECDSAPublicKeyHexLength {
+		return nil, fmt.Errorf("invalid hex string length for public-key<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256k1Type, kangarooecdsa.ECDSAPublicKeyHexLength, len(s))
 	}
 
 	pubKeyBytes, err := hex.DecodeString(s)

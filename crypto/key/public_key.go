@@ -1,7 +1,7 @@
 package key
 
 import (
-	"github.com/andantan/kangaroo/crypto/hash"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 )
 
 type PublicKey interface {
@@ -11,5 +11,5 @@ type PublicKey interface {
 	Type() string
 
 	Equal(other PublicKey) bool
-	Address(deriver hash.AddressDeriver) hash.Addressable
+	Address(deriver kangaroohash.AddressDeriver) kangaroohash.Addressable
 }

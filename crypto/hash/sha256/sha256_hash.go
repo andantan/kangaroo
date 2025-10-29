@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	"github.com/andantan/kangaroo/crypto/hash"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	"strings"
 )
 
@@ -12,10 +12,9 @@ const (
 	Sha256HashType = "sha256-hash"
 )
 
-type Sha256Hash [hash.HashLength]byte
+type Sha256Hash [kangaroohash.HashLength]byte
 
-var _ hash.Hashable = Sha256Hash{}
-var _ hash.Hashable = (*Sha256Hash)(nil)
+var _ kangaroohash.Hashable = Sha256Hash{}
 
 func (h Sha256Hash) Bytes() []byte {
 	return h[:]
@@ -47,7 +46,7 @@ func (h Sha256Hash) ShortString(l int) string {
 	return "0x" + hs[:l]
 }
 
-func (h Sha256Hash) Equal(other hash.Hashable) bool {
+func (h Sha256Hash) Equal(other kangaroohash.Hashable) bool {
 	if other == nil {
 		return false
 	}
@@ -60,7 +59,7 @@ func (h Sha256Hash) Equal(other hash.Hashable) bool {
 	return h == otherHash
 }
 
-func (h Sha256Hash) Gt(other hash.Hashable) bool {
+func (h Sha256Hash) Gt(other kangaroohash.Hashable) bool {
 	if other == nil {
 		return false
 	}
@@ -73,7 +72,7 @@ func (h Sha256Hash) Gt(other hash.Hashable) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) > 0
 }
 
-func (h Sha256Hash) Gte(other hash.Hashable) bool {
+func (h Sha256Hash) Gte(other kangaroohash.Hashable) bool {
 	if other == nil {
 		return false
 	}
@@ -86,7 +85,7 @@ func (h Sha256Hash) Gte(other hash.Hashable) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) >= 0
 }
 
-func (h Sha256Hash) Lt(other hash.Hashable) bool {
+func (h Sha256Hash) Lt(other kangaroohash.Hashable) bool {
 	if other == nil {
 		return false
 	}
@@ -99,7 +98,7 @@ func (h Sha256Hash) Lt(other hash.Hashable) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) < 0
 }
 
-func (h Sha256Hash) Lte(other hash.Hashable) bool {
+func (h Sha256Hash) Lte(other kangaroohash.Hashable) bool {
 	if other == nil {
 		return false
 	}
@@ -112,8 +111,8 @@ func (h Sha256Hash) Lte(other hash.Hashable) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) <= 0
 }
 
-func Sha256HashFromBytes(b []byte) (hash.Hashable, error) {
-	if len(b) != hash.HashLength {
+func Sha256HashFromBytes(b []byte) (kangaroohash.Hashable, error) {
+	if len(b) != kangaroohash.HashLength {
 		return Sha256Hash{}, fmt.Errorf("given bytes with hash-length %d should be 32 bytes", len(b))
 	}
 
@@ -124,9 +123,9 @@ func Sha256HashFromBytes(b []byte) (hash.Hashable, error) {
 	return h, nil
 }
 
-func Sha256HashFromString(s string) (hash.Hashable, error) {
+func Sha256HashFromString(s string) (kangaroohash.Hashable, error) {
 	s = strings.TrimPrefix(s, "0x")
-	if len(s) != hash.HashHexLength {
+	if len(s) != kangaroohash.HashHexLength {
 		return Sha256Hash{}, fmt.Errorf("invalid hex string length (%d), must be 64", len(s))
 	}
 
@@ -138,9 +137,9 @@ func Sha256HashFromString(s string) (hash.Hashable, error) {
 	return Sha256HashFromBytes(b)
 }
 
-func FilledSha256Hash(b byte) hash.Hashable {
+func FilledSha256Hash(b byte) kangaroohash.Hashable {
 	var h Sha256Hash
-	for i := range hash.HashLength {
+	for i := range kangaroohash.HashLength {
 		h[i] = b
 	}
 

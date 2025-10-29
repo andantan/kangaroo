@@ -1,13 +1,13 @@
 package keccak256
 
 import (
-	"github.com/andantan/kangaroo/crypto/hash"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func Test_KECCAK256_Hash_BytesAndFromBytes(t *testing.T) {
-	originalBytes := make([]byte, hash.HashLength)
+	originalBytes := make([]byte, kangaroohash.HashLength)
 	originalBytes[0] = 0xde
 	originalBytes[1] = 0xad
 	originalBytes[31] = 0xef
@@ -51,7 +51,7 @@ func Test_KECCAK256_Hash_IsZero(t *testing.T) {
 	zeroHash := Keccak256Hash{}
 	assert.True(t, zeroHash.IsZero())
 
-	nonZeroBytes := make([]byte, hash.HashLength)
+	nonZeroBytes := make([]byte, kangaroohash.HashLength)
 	nonZeroBytes[5] = 0xff
 	nonZeroHash, _ := Keccak256HashFromBytes(nonZeroBytes)
 	assert.False(t, nonZeroHash.IsZero())

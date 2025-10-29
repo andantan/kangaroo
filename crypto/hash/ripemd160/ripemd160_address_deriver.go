@@ -2,19 +2,21 @@ package ripemd160
 
 import (
 	"fmt"
-	"github.com/andantan/kangaroo/crypto/hash"
+	kangaroocrypto "github.com/andantan/kangaroo/crypto"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	"golang.org/x/crypto/ripemd160"
 )
 
-type Ripemd160AddressDeriver struct{}
-
-var _ hash.AddressDeriver = (*Ripemd160AddressDeriver)(nil)
-
-func NewRipemd160AddressDeriver() *Ripemd160AddressDeriver {
-	return &Ripemd160AddressDeriver{}
+func init() {
+	kangaroocrypto.RegisterAddressDeriver(Ripemd160AddressType, &Ripemd160AddressDeriver{})
 }
 
-func (d *Ripemd160AddressDeriver) Derive(data []byte) hash.Addressable {
+type Ripemd160AddressDeriver struct{}
+
+var _ kangaroohash.AddressDeriver = (*Ripemd160AddressDeriver)(nil)
+var DefaultRipemd160AddressDeriver = &Ripemd160AddressDeriver{}
+
+func (_ *Ripemd160AddressDeriver) Derive(data []byte) kangaroohash.Addressable {
 	rh := ripemd160.New()
 	rh.Write(data)
 	rhb := rh.Sum(nil)

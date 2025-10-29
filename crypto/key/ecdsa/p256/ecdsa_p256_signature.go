@@ -5,8 +5,8 @@ import (
 	"crypto/elliptic"
 	"encoding/hex"
 	"fmt"
-	"github.com/andantan/kangaroo/crypto/key"
-	ecdsaformat "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	kangarookey "github.com/andantan/kangaroo/crypto/key"
+	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
 	"math/big"
 	"strings"
 )
@@ -16,7 +16,7 @@ type ECDSAP256Signature struct {
 	S *big.Int
 }
 
-var _ key.Signature = (*ECDSAP256Signature)(nil)
+var _ kangarookey.Signature = (*ECDSAP256Signature)(nil)
 
 func (s *ECDSAP256Signature) Bytes() []byte {
 	rBytes := make([]byte, 32)
@@ -41,10 +41,10 @@ func (s *ECDSAP256Signature) IsValid() bool {
 }
 
 func (s *ECDSAP256Signature) Type() string {
-	return ecdsaformat.ECDSAP256Type
+	return kangarooecdsa.ECDSAP256Type
 }
 
-func (s *ECDSAP256Signature) Equal(other key.Signature) bool {
+func (s *ECDSAP256Signature) Equal(other kangarookey.Signature) bool {
 	if s == nil || other == nil {
 		return false
 	}
@@ -57,7 +57,7 @@ func (s *ECDSAP256Signature) Equal(other key.Signature) bool {
 	return s.R.Cmp(otherSig.R) == 0 && s.S.Cmp(otherSig.S) == 0
 }
 
-func (s *ECDSAP256Signature) Verify(pubKey key.PublicKey, data []byte) bool {
+func (s *ECDSAP256Signature) Verify(pubKey kangarookey.PublicKey, data []byte) bool {
 	ecdsaPubKey, ok := pubKey.(*ECDSAP256PublicKey)
 	if !ok {
 		return false
@@ -68,18 +68,18 @@ func (s *ECDSAP256Signature) Verify(pubKey key.PublicKey, data []byte) bool {
 		return false
 	}
 
-	key := &ecdsa.PublicKey{
+	k := &ecdsa.PublicKey{
 		Curve: defaultCurve,
 		X:     x,
 		Y:     y,
 	}
 
-	return ecdsa.Verify(key, data, s.R, s.S)
+	return ecdsa.Verify(k, data, s.R, s.S)
 }
 
-func ECDSAP256SignatureFromBytes(b []byte) (key.Signature, error) {
-	if len(b) != ecdsaformat.ECDSASignatureBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", ecdsaformat.ECDSAP256Type, ecdsaformat.ECDSASignatureBytesLength, len(b))
+func ECDSAP256SignatureFromBytes(b []byte) (kangarookey.Signature, error) {
+	if len(b) != kangarooecdsa.ECDSASignatureBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", kangarooecdsa.ECDSAP256Type, kangarooecdsa.ECDSASignatureBytesLength, len(b))
 	}
 	r := new(big.Int).SetBytes(b[:32])
 	s := new(big.Int).SetBytes(b[32:])
@@ -89,10 +89,10 @@ func ECDSAP256SignatureFromBytes(b []byte) (key.Signature, error) {
 	}, nil
 }
 
-func ECDSAP256SignatureFromString(s string) (key.Signature, error) {
+func ECDSAP256SignatureFromString(s string) (kangarookey.Signature, error) {
 	s = strings.TrimPrefix(s, "0x")
-	if len(s) != ecdsaformat.ECDSASignatureHexLength {
-		return nil, fmt.Errorf("invalid hex string length for signature<%s>: expected %d, got %d", ecdsaformat.ECDSAP256Type, ecdsaformat.ECDSASignatureHexLength, len(s))
+	if len(s) != kangarooecdsa.ECDSASignatureHexLength {
+		return nil, fmt.Errorf("invalid hex string length for signature<%s>: expected %d, got %d", kangarooecdsa.ECDSAP256Type, kangarooecdsa.ECDSASignatureHexLength, len(s))
 	}
 
 	sigBytes, err := hex.DecodeString(s)

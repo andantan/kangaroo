@@ -3,17 +3,17 @@ package atomic
 import (
 	"sync"
 
-	"github.com/andantan/kangaroo/types/collection"
+	kangaroocollection "github.com/andantan/kangaroo/types/collection"
 )
 
 type AtomicList[T comparable] struct {
 	lock sync.RWMutex
-	list *collection.List[T]
+	list *kangaroocollection.List[T]
 }
 
 func NewAtomicList[T comparable]() *AtomicList[T] {
 	return &AtomicList[T]{
-		list: collection.NewList[T](),
+		list: kangaroocollection.NewList[T](),
 	}
 }
 

@@ -1,14 +1,14 @@
 package sha256
 
 import (
-	"github.com/andantan/kangaroo/crypto/hash"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_SHA256_Hash_BytesAndFromBytes(t *testing.T) {
-	originalBytes := make([]byte, hash.HashLength)
+	originalBytes := make([]byte, kangaroohash.HashLength)
 	originalBytes[0] = 0xde
 	originalBytes[1] = 0xad
 	originalBytes[31] = 0xef
@@ -52,7 +52,7 @@ func Test_SHA256_Hash_IsZero(t *testing.T) {
 	zeroHash := Sha256Hash{}
 	assert.True(t, zeroHash.IsZero())
 
-	nonZeroBytes := make([]byte, hash.HashLength)
+	nonZeroBytes := make([]byte, kangaroohash.HashLength)
 	nonZeroBytes[5] = 0xff
 	nonZeroHash, _ := Sha256HashFromBytes(nonZeroBytes)
 	assert.False(t, nonZeroHash.IsZero())

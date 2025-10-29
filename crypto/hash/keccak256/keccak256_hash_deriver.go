@@ -2,19 +2,21 @@ package keccak256
 
 import (
 	"fmt"
-	"github.com/andantan/kangaroo/crypto/hash"
+	kangaroocrypto "github.com/andantan/kangaroo/crypto"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	"golang.org/x/crypto/sha3"
 )
 
-type Keccak256HashDeriver struct{}
-
-var _ hash.HashDeriver = (*Keccak256HashDeriver)(nil)
-
-func NewKeccak256HashDeriver() *Keccak256HashDeriver {
-	return &Keccak256HashDeriver{}
+func init() {
+	kangaroocrypto.RegisterHashDeriver(Keccak256HashType, &Keccak256HashDeriver{})
 }
 
-func (_ *Keccak256HashDeriver) Derive(data []byte) hash.Hashable {
+type Keccak256HashDeriver struct{}
+
+var _ kangaroohash.HashDeriver = (*Keccak256HashDeriver)(nil)
+var DefaultKeccak256HashDeriver = &Keccak256HashDeriver{}
+
+func (_ *Keccak256HashDeriver) Derive(data []byte) kangaroohash.Hashable {
 	kh := sha3.NewLegacyKeccak256()
 	kh.Write(data)
 	khb := kh.Sum(nil)

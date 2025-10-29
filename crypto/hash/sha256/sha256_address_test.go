@@ -1,14 +1,14 @@
 package sha256
 
 import (
-	"github.com/andantan/kangaroo/crypto/hash"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_SHA256_Address_BytesAndFromBytes(t *testing.T) {
-	originalBytes := make([]byte, hash.AddressLength)
+	originalBytes := make([]byte, kangaroohash.AddressLength)
 	originalBytes[0] = 0xaa
 	originalBytes[19] = 0xbb
 
@@ -28,7 +28,7 @@ func Test_SHA256_Address_IsZero(t *testing.T) {
 	zeroAddr := Sha256Address{}
 	assert.True(t, zeroAddr.IsZero())
 
-	nonZeroBytes := make([]byte, hash.AddressLength)
+	nonZeroBytes := make([]byte, kangaroohash.AddressLength)
 	nonZeroBytes[10] = 0x01
 	nonZeroAddr, _ := Sha256AddressFromBytes(nonZeroBytes)
 	assert.False(t, nonZeroAddr.IsZero())

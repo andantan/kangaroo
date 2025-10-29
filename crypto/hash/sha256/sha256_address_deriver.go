@@ -3,20 +3,22 @@ package sha256
 import (
 	"crypto/sha256"
 	"fmt"
-	"github.com/andantan/kangaroo/crypto/hash"
+	kangaroocrypto "github.com/andantan/kangaroo/crypto"
+	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 )
+
+func init() {
+	kangaroocrypto.RegisterAddressDeriver(Sha256AddressType, &Sha256AddressDeriver{})
+}
 
 type Sha256AddressDeriver struct{}
 
-var _ hash.AddressDeriver = (*Sha256AddressDeriver)(nil)
+var _ kangaroohash.AddressDeriver = (*Sha256AddressDeriver)(nil)
+var DefaultSha256AddressDeriver = &Sha256AddressDeriver{}
 
-func NewSha256AddressDeriver() *Sha256AddressDeriver {
-	return &Sha256AddressDeriver{}
-}
-
-func (d *Sha256AddressDeriver) Derive(data []byte) hash.Addressable {
+func (_ *Sha256AddressDeriver) Derive(data []byte) kangaroohash.Addressable {
 	hashBytes := sha256.Sum256(data)
-	start := len(hashBytes) - hash.AddressLength
+	start := len(hashBytes) - kangaroohash.AddressLength
 	addrBytes := hashBytes[start:]
 	address, err := Sha256AddressFromBytes(addrBytes)
 	if err != nil {
