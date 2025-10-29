@@ -1,16 +1,27 @@
 package atomic
 
 import (
-	"github.com/andantan/kangaroo/types"
 	"sync"
 )
 
-type AtomicCounter[N types.Integer] struct {
+type SignedInteger interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64
+}
+
+type UnsignedInteger interface {
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+}
+
+type Integer interface {
+	SignedInteger | UnsignedInteger
+}
+
+type AtomicCounter[N Integer] struct {
 	lock sync.RWMutex
 	n    N
 }
 
-func NewAtomicCounter[N types.Integer](initialValue N) *AtomicCounter[N] {
+func NewAtomicCounter[N Integer](initialValue N) *AtomicCounter[N] {
 	return &AtomicCounter[N]{
 		n: initialValue,
 	}

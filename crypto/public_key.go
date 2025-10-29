@@ -1,6 +1,8 @@
 package crypto
 
-import "github.com/andantan/kangaroo/types"
+import (
+	"github.com/andantan/kangaroo/types/hash"
+)
 
 type PublicKey interface {
 	Bytes() []byte
@@ -9,5 +11,5 @@ type PublicKey interface {
 	Type() string
 
 	Equal(other PublicKey) bool
-	Address(deriver types.AddressDeriver) types.Addressable
+	Address(deriver hash.AddressDeriver) hash.Addressable
 }

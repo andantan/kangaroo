@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/andantan/kangaroo/crypto"
 	ecdsaformat "github.com/andantan/kangaroo/crypto/ecdsa"
-	"github.com/andantan/kangaroo/types"
+	"github.com/andantan/kangaroo/types/hash"
 	"strings"
 )
 
@@ -51,7 +51,7 @@ func (k *ECDSAP256PublicKey) Equal(other crypto.PublicKey) bool {
 	return bytes.Equal(k.Key, otherKey.Key)
 }
 
-func (k *ECDSAP256PublicKey) Address(deriver types.AddressDeriver) types.Addressable {
+func (k *ECDSAP256PublicKey) Address(deriver hash.AddressDeriver) hash.Addressable {
 	return deriver.Derive(k.Key)
 }
 

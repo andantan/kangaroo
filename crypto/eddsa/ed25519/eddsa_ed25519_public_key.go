@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/andantan/kangaroo/crypto"
 	eddsaformat "github.com/andantan/kangaroo/crypto/eddsa"
-	"github.com/andantan/kangaroo/types"
+	"github.com/andantan/kangaroo/types/hash"
 	"strings"
 )
 
@@ -49,7 +49,7 @@ func (k *EdDSAEd25519PublicKey) Equal(other crypto.PublicKey) bool {
 	return bytes.Equal(k.Bytes(), otherKey.Bytes())
 }
 
-func (k *EdDSAEd25519PublicKey) Address(deriver types.AddressDeriver) types.Addressable {
+func (k *EdDSAEd25519PublicKey) Address(deriver hash.AddressDeriver) hash.Addressable {
 	return deriver.Derive(k.Key)
 }
 

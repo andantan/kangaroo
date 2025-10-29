@@ -1,16 +1,19 @@
 package atomic
 
 import (
-	"github.com/andantan/kangaroo/types"
 	"sync"
 )
 
-type AtomicState[S types.State] struct {
+type State interface {
+	~int8 | ~uint8
+}
+
+type AtomicState[S State] struct {
 	lock  sync.RWMutex
 	state S
 }
 
-func NewAtomicState[S types.State](initialState S) *AtomicState[S] {
+func NewAtomicState[S State](initialState S) *AtomicState[S] {
 	return &AtomicState[S]{
 		state: initialState,
 	}
