@@ -17,7 +17,7 @@ KEY_GEN_TARGET := $(BIN_DIR)/kangaroo-key-gen
 CMD_MAIN := .
 
 # Source path for the key generator CLI.
-CMD_KEY_GEN := ./cmd/key_gen/key_gen.go
+CMD_KEY_GEN := ./cmd/key_gen/cli_key_gen.go
 
 # All packages to test.
 TEST_PACKAGES := ./...
