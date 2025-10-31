@@ -8,10 +8,6 @@ import (
 	"strings"
 )
 
-const (
-	Sha256HashType = "sha256-hash"
-)
-
 type Sha256Hash [kangaroohash.HashLength]byte
 
 var _ kangaroohash.Hashable = Sha256Hash{}
@@ -29,7 +25,7 @@ func (h Sha256Hash) IsValid() bool {
 }
 
 func (h Sha256Hash) Type() string {
-	return Sha256HashType
+	return kangaroohash.Sha256Type
 }
 
 func (h Sha256Hash) String() string {

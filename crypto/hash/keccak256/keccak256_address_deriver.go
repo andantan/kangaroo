@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	kangaroocrypto.RegisterAddressDeriver(Keccak256AddressType, &Keccak256AddressDeriver{})
+	kangaroocrypto.RegisterAddressDeriver(kangaroohash.Keccak256Type, &Keccak256AddressDeriver{})
 }
 
 type Keccak256AddressDeriver struct{}

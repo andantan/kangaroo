@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	kangaroocrypto.RegisterHashDeriver(Sha256HashType, &Sha256HashDeriver{})
+	kangaroocrypto.RegisterHashDeriver(kangaroohash.Sha256Type, &Sha256HashDeriver{})
 }
 
 type Sha256HashDeriver struct{}

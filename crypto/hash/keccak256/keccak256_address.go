@@ -8,10 +8,6 @@ import (
 	"strings"
 )
 
-const (
-	Keccak256AddressType = "keccak256-address"
-)
-
 type Keccak256Address [kangaroohash.AddressLength]byte
 
 var _ kangaroohash.Addressable = Keccak256Address{}
@@ -29,7 +25,7 @@ func (a Keccak256Address) IsValid() bool {
 }
 
 func (a Keccak256Address) Type() string {
-	return Keccak256AddressType
+	return kangaroohash.Keccak256Type
 }
 
 func (a Keccak256Address) String() string {

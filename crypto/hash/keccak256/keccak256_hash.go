@@ -8,10 +8,6 @@ import (
 	"strings"
 )
 
-const (
-	Keccak256HashType = "keccak256-hash"
-)
-
 type Keccak256Hash [kangaroohash.HashLength]byte
 
 var _ kangaroohash.Hashable = Keccak256Hash{}
@@ -29,7 +25,7 @@ func (h Keccak256Hash) IsValid() bool {
 }
 
 func (h Keccak256Hash) Type() string {
-	return Keccak256HashType
+	return kangaroohash.Keccak256Type
 }
 
 func (h Keccak256Hash) String() string {

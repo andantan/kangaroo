@@ -5,6 +5,12 @@ const (
 	HashHexLength = HashLength * 2
 )
 
+const (
+	Sha256Type    = "sha256"
+	Keccak256Type = "keccak256"
+	Ripemd160Type = "ripemd160"
+)
+
 type Hashable interface {
 	Bytes() []byte
 	IsZero() bool

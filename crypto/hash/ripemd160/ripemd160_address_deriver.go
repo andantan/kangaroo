@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	kangaroocrypto.RegisterAddressDeriver(Ripemd160AddressType, &Ripemd160AddressDeriver{})
+	kangaroocrypto.RegisterAddressDeriver(kangaroohash.Ripemd160Type, &Ripemd160AddressDeriver{})
 }
 
 type Ripemd160AddressDeriver struct{}

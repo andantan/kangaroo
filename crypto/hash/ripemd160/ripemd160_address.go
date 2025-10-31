@@ -8,10 +8,6 @@ import (
 	"strings"
 )
 
-const (
-	Ripemd160AddressType = "ripemd160-address"
-)
-
 type Ripemd160Address [kangaroohash.AddressLength]byte
 
 var _ kangaroohash.Addressable = Ripemd160Address{}
@@ -29,7 +25,7 @@ func (a Ripemd160Address) IsValid() bool {
 }
 
 func (a Ripemd160Address) Type() string {
-	return Ripemd160AddressType
+	return kangaroohash.Ripemd160Type
 }
 
 func (a Ripemd160Address) String() string {

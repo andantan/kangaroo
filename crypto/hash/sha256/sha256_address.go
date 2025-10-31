@@ -8,10 +8,6 @@ import (
 	"strings"
 )
 
-const (
-	Sha256AddressType = "sha256-address"
-)
-
 type Sha256Address [kangaroohash.AddressLength]byte
 
 var _ kangaroohash.Addressable = Sha256Address{}
@@ -29,7 +25,7 @@ func (a Sha256Address) IsValid() bool {
 }
 
 func (a Sha256Address) Type() string {
-	return Sha256AddressType
+	return kangaroohash.Sha256Type
 }
 
 func (a Sha256Address) String() string {
