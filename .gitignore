@@ -3,6 +3,7 @@
 .vscode
 *.key
 *.hex
+*.json
 
 /bin/
 /*_block/

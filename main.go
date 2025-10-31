@@ -16,6 +16,8 @@ import (
 
 func setupRegistry() {
 	log.Println("--- Initializing Crypto Registry ---")
+
+	// Hash Derivers
 	kangaroocrypto.RegisterHashDeriver(kangaroohash.Sha256Type, &kangaroosha256.Sha256HashDeriver{})
 	kangaroocrypto.RegisterHashDeriver(kangaroohash.Keccak256Type, &kangarookeccak256.Keccak256HashDeriver{})
 

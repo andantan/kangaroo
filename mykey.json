@@ -1,7 +1,0 @@
-{
-  "key_algorithm": "eddsa-ed25519",
-  "private_key": "0xe95d47b1ad230add91239d6c3c8f6106fbd5d476fd14e63986c4e2b9cce73d8377e11fae0ed599e6d215abea5d92e8e5e6a8c4eafbec010d2db820527be9e8cf",
-  "public_key": "0x77e11fae0ed599e6d215abea5d92e8e5e6a8c4eafbec010d2db820527be9e8cf",
-  "addr_Algorithm": "keccak256-address",
-  "address": "0xc514d467926ede1d847cd07fcfdc83f3ddc4fd29"
-}
