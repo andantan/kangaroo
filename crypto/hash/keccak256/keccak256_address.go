@@ -10,7 +10,7 @@ import (
 
 type Keccak256Address [kangaroohash.AddressLength]byte
 
-var _ kangaroohash.Addressable = Keccak256Address{}
+var _ kangaroohash.Address = Keccak256Address{}
 
 func (a Keccak256Address) Bytes() []byte {
 	return a[:]
@@ -42,7 +42,7 @@ func (a Keccak256Address) ShortString(l int) string {
 	return "0x" + as[:l]
 }
 
-func (a Keccak256Address) Equal(other kangaroohash.Addressable) bool {
+func (a Keccak256Address) Equal(other kangaroohash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -55,7 +55,7 @@ func (a Keccak256Address) Equal(other kangaroohash.Addressable) bool {
 	return a == otherAddress
 }
 
-func (a Keccak256Address) Gt(other kangaroohash.Addressable) bool {
+func (a Keccak256Address) Gt(other kangaroohash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -68,7 +68,7 @@ func (a Keccak256Address) Gt(other kangaroohash.Addressable) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) > 0
 }
 
-func (a Keccak256Address) Gte(other kangaroohash.Addressable) bool {
+func (a Keccak256Address) Gte(other kangaroohash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -81,7 +81,7 @@ func (a Keccak256Address) Gte(other kangaroohash.Addressable) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) >= 0
 }
 
-func (a Keccak256Address) Lt(other kangaroohash.Addressable) bool {
+func (a Keccak256Address) Lt(other kangaroohash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -94,7 +94,7 @@ func (a Keccak256Address) Lt(other kangaroohash.Addressable) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) < 0
 }
 
-func (a Keccak256Address) Lte(other kangaroohash.Addressable) bool {
+func (a Keccak256Address) Lte(other kangaroohash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -107,7 +107,7 @@ func (a Keccak256Address) Lte(other kangaroohash.Addressable) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) <= 0
 }
 
-func Keccak256AddressFromBytes(b []byte) (kangaroohash.Addressable, error) {
+func Keccak256AddressFromBytes(b []byte) (kangaroohash.Address, error) {
 	if len(b) != kangaroohash.AddressLength {
 		return Keccak256Address{}, fmt.Errorf("given bytes with address-length %d should be 20 bytes", len(b))
 	}
@@ -119,7 +119,7 @@ func Keccak256AddressFromBytes(b []byte) (kangaroohash.Addressable, error) {
 	return a, nil
 }
 
-func Keccak256AddressFromString(s string) (kangaroohash.Addressable, error) {
+func Keccak256AddressFromString(s string) (kangaroohash.Address, error) {
 	s = strings.TrimPrefix(s, "0x")
 	if len(s) != kangaroohash.AddressHexLength {
 		return Keccak256Address{}, fmt.Errorf("invalid hex string length (%d), must be 40", len(s))
@@ -133,7 +133,7 @@ func Keccak256AddressFromString(s string) (kangaroohash.Addressable, error) {
 	return Keccak256AddressFromBytes(b)
 }
 
-func FilledKeccak256Address(b byte) kangaroohash.Addressable {
+func FilledKeccak256Address(b byte) kangaroohash.Address {
 	var a Keccak256Address
 	for i := range kangaroohash.AddressLength {
 		a[i] = b

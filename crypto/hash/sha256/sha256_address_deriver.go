@@ -16,7 +16,7 @@ type Sha256AddressDeriver struct{}
 var _ kangaroohash.AddressDeriver = (*Sha256AddressDeriver)(nil)
 var DefaultSha256AddressDeriver = &Sha256AddressDeriver{}
 
-func (_ *Sha256AddressDeriver) Derive(data []byte) kangaroohash.Addressable {
+func (_ *Sha256AddressDeriver) Derive(data []byte) kangaroohash.Address {
 	hashBytes := sha256.Sum256(data)
 	start := len(hashBytes) - kangaroohash.AddressLength
 	addrBytes := hashBytes[start:]

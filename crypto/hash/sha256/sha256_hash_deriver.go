@@ -16,7 +16,7 @@ type Sha256HashDeriver struct{}
 var _ kangaroohash.HashDeriver = (*Sha256HashDeriver)(nil)
 var DefaultSha256HashDeriver = &Sha256HashDeriver{}
 
-func (_ *Sha256HashDeriver) Derive(data []byte) kangaroohash.Hashable {
+func (_ *Sha256HashDeriver) Derive(data []byte) kangaroohash.Hash {
 	hashBytes := sha256.Sum256(data)
 	h, err := Sha256HashFromBytes(hashBytes[:])
 	if err != nil {

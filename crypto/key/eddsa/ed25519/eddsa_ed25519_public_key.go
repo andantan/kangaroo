@@ -51,7 +51,7 @@ func (k *EdDSAEd25519PublicKey) Equal(other kangarookey.PublicKey) bool {
 	return bytes.Equal(k.Bytes(), otherKey.Bytes())
 }
 
-func (k *EdDSAEd25519PublicKey) Address(deriver kangaroohash.AddressDeriver) kangaroohash.Addressable {
+func (k *EdDSAEd25519PublicKey) Address(deriver kangaroohash.AddressDeriver) kangaroohash.Address {
 	return deriver.Derive(k.Key)
 }
 

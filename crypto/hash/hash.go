@@ -11,20 +11,20 @@ const (
 	Ripemd160Type = "ripemd160"
 )
 
-type Hashable interface {
+type Hash interface {
 	Bytes() []byte
 	IsZero() bool
 	IsValid() bool
 	Type() string
 	String() string
 	ShortString(length int) string
-	Equal(hash Hashable) bool
-	Gt(hash Hashable) bool
-	Gte(hash Hashable) bool
-	Lt(hash Hashable) bool
-	Lte(hash Hashable) bool
+	Equal(other Hash) bool
+	Gt(other Hash) bool
+	Gte(other Hash) bool
+	Lt(other Hash) bool
+	Lte(other Hash) bool
 }
 
 type HashDeriver interface {
-	Derive(data []byte) Hashable
+	Derive(data []byte) Hash
 }

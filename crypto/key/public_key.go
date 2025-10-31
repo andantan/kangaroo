@@ -11,5 +11,5 @@ type PublicKey interface {
 	Type() string
 
 	Equal(other PublicKey) bool
-	Address(deriver kangaroohash.AddressDeriver) kangaroohash.Addressable
+	Address(deriver kangaroohash.AddressDeriver) kangaroohash.Address
 }

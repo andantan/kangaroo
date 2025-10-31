@@ -16,7 +16,7 @@ type Keccak256HashDeriver struct{}
 var _ kangaroohash.HashDeriver = (*Keccak256HashDeriver)(nil)
 var DefaultKeccak256HashDeriver = &Keccak256HashDeriver{}
 
-func (_ *Keccak256HashDeriver) Derive(data []byte) kangaroohash.Hashable {
+func (_ *Keccak256HashDeriver) Derive(data []byte) kangaroohash.Hash {
 	kh := sha3.NewLegacyKeccak256()
 	kh.Write(data)
 	khb := kh.Sum(nil)

@@ -16,7 +16,7 @@ type Ripemd160AddressDeriver struct{}
 var _ kangaroohash.AddressDeriver = (*Ripemd160AddressDeriver)(nil)
 var DefaultRipemd160AddressDeriver = &Ripemd160AddressDeriver{}
 
-func (_ *Ripemd160AddressDeriver) Derive(data []byte) kangaroohash.Addressable {
+func (_ *Ripemd160AddressDeriver) Derive(data []byte) kangaroohash.Address {
 	rh := ripemd160.New()
 	rh.Write(data)
 	rhb := rh.Sum(nil)

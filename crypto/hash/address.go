@@ -5,20 +5,20 @@ const (
 	AddressHexLength = AddressLength * 2
 )
 
-type Addressable interface {
+type Address interface {
 	Bytes() []byte
 	IsZero() bool
 	IsValid() bool
 	Type() string
 	String() string
 	ShortString(length int) string
-	Equal(hash Addressable) bool
-	Gt(hash Addressable) bool
-	Gte(hash Addressable) bool
-	Lt(hash Addressable) bool
-	Lte(hash Addressable) bool
+	Equal(other Address) bool
+	Gt(other Address) bool
+	Gte(other Address) bool
+	Lt(other Address) bool
+	Lte(other Address) bool
 }
 
 type AddressDeriver interface {
-	Derive(data []byte) Addressable
+	Derive(data []byte) Address
 }

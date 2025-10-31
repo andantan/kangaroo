@@ -14,7 +14,7 @@ type mockHashDeriver struct{}
 
 var _ kangaroohash.HashDeriver = (*mockHashDeriver)(nil)
 
-func (m *mockHashDeriver) Derive(_ []byte) kangaroohash.Hashable { return nil }
+func (m *mockHashDeriver) Derive(_ []byte) kangaroohash.Hash { return nil }
 
 func TestHashDeriverRegistry_RegistrationAndRetrieval(t *testing.T) {
 	hashDeriverRegistry = make(map[string]kangaroohash.HashDeriver)
@@ -70,7 +70,7 @@ type mockAddressDeriver struct{}
 
 var _ kangaroohash.AddressDeriver = (*mockAddressDeriver)(nil)
 
-func (m *mockAddressDeriver) Derive(_ []byte) kangaroohash.Addressable { return nil }
+func (m *mockAddressDeriver) Derive(_ []byte) kangaroohash.Address { return nil }
 
 func TestAddressDeriverRegistry_RegistrationAndRetrieval(t *testing.T) {
 	addressDeriverRegistry = make(map[string]kangaroohash.AddressDeriver)

@@ -10,7 +10,7 @@ import (
 
 type Keccak256Hash [kangaroohash.HashLength]byte
 
-var _ kangaroohash.Hashable = Keccak256Hash{}
+var _ kangaroohash.Hash = Keccak256Hash{}
 
 func (h Keccak256Hash) Bytes() []byte {
 	return h[:]
@@ -42,7 +42,7 @@ func (h Keccak256Hash) ShortString(l int) string {
 	return "0x" + hs[:l]
 }
 
-func (h Keccak256Hash) Equal(other kangaroohash.Hashable) bool {
+func (h Keccak256Hash) Equal(other kangaroohash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -55,7 +55,7 @@ func (h Keccak256Hash) Equal(other kangaroohash.Hashable) bool {
 	return h == otherHash
 }
 
-func (h Keccak256Hash) Gt(other kangaroohash.Hashable) bool {
+func (h Keccak256Hash) Gt(other kangaroohash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -68,7 +68,7 @@ func (h Keccak256Hash) Gt(other kangaroohash.Hashable) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) > 0
 }
 
-func (h Keccak256Hash) Gte(other kangaroohash.Hashable) bool {
+func (h Keccak256Hash) Gte(other kangaroohash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -81,7 +81,7 @@ func (h Keccak256Hash) Gte(other kangaroohash.Hashable) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) >= 0
 }
 
-func (h Keccak256Hash) Lt(other kangaroohash.Hashable) bool {
+func (h Keccak256Hash) Lt(other kangaroohash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -94,7 +94,7 @@ func (h Keccak256Hash) Lt(other kangaroohash.Hashable) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) < 0
 }
 
-func (h Keccak256Hash) Lte(other kangaroohash.Hashable) bool {
+func (h Keccak256Hash) Lte(other kangaroohash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -107,7 +107,7 @@ func (h Keccak256Hash) Lte(other kangaroohash.Hashable) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) <= 0
 }
 
-func Keccak256HashFromBytes(b []byte) (kangaroohash.Hashable, error) {
+func Keccak256HashFromBytes(b []byte) (kangaroohash.Hash, error) {
 	if len(b) != kangaroohash.HashLength {
 		return Keccak256Hash{}, fmt.Errorf("given bytes with hash-length %d should be 32 bytes", len(b))
 	}
@@ -119,7 +119,7 @@ func Keccak256HashFromBytes(b []byte) (kangaroohash.Hashable, error) {
 	return h, nil
 }
 
-func Keccak256HashFromString(s string) (kangaroohash.Hashable, error) {
+func Keccak256HashFromString(s string) (kangaroohash.Hash, error) {
 	s = strings.TrimPrefix(s, "0x")
 	if len(s) != kangaroohash.HashHexLength {
 		return Keccak256Hash{}, fmt.Errorf("invalid hex string length (%d), must be 64", len(s))
@@ -133,7 +133,7 @@ func Keccak256HashFromString(s string) (kangaroohash.Hashable, error) {
 	return Keccak256HashFromBytes(b)
 }
 
-func FilledKeccak256Hash(b byte) kangaroohash.Hashable {
+func FilledKeccak256Hash(b byte) kangaroohash.Hash {
 	var h Keccak256Hash
 	for i := range kangaroohash.HashLength {
 		h[i] = b
