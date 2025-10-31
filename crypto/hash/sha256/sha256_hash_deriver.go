@@ -3,13 +3,8 @@ package sha256
 import (
 	"crypto/sha256"
 	"fmt"
-	kangaroocrypto "github.com/andantan/kangaroo/crypto"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 )
-
-func init() {
-	kangaroocrypto.RegisterHashDeriver(kangaroohash.Sha256Type, &Sha256HashDeriver{})
-}
 
 type Sha256HashDeriver struct{}
 

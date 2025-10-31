@@ -22,3 +22,7 @@ type Address interface {
 type AddressDeriver interface {
 	Derive(data []byte) Address
 }
+
+type Addressable interface {
+	Address(deriver AddressDeriver) (Address, error)
+}

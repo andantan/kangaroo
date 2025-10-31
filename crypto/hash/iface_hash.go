@@ -28,3 +28,7 @@ type Hash interface {
 type HashDeriver interface {
 	Derive(data []byte) Hash
 }
+
+type Hashable interface {
+	Hash(deriver HashDeriver) (Hash, error)
+}

@@ -2,14 +2,9 @@ package ripemd160
 
 import (
 	"fmt"
-	kangaroocrypto "github.com/andantan/kangaroo/crypto"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	"golang.org/x/crypto/ripemd160"
 )
-
-func init() {
-	kangaroocrypto.RegisterAddressDeriver(kangaroohash.Ripemd160Type, &Ripemd160AddressDeriver{})
-}
 
 type Ripemd160AddressDeriver struct{}
 

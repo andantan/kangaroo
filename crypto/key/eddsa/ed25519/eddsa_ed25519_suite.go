@@ -1,14 +1,9 @@
 package ed25519
 
 import (
-	kangaroocrypto "github.com/andantan/kangaroo/crypto"
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
 )
-
-func init() {
-	kangaroocrypto.RegisterKeySuite(&EdDSAEd25519Suite{})
-}
 
 type EdDSAEd25519Suite struct{}
 

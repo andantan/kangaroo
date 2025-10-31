@@ -33,7 +33,6 @@ func Test_EdDSA_Ed25519_PrivateKey_Lifecycle(t *testing.T) {
 }
 
 func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
-	// 1. 테스트할 AddressDeriver들을 테이블로 정의하고 직접 인스턴스화합니다.
 	addressDerivers := []struct {
 		name    string
 		deriver kangaroohash.AddressDeriver
@@ -70,7 +69,6 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 	}
 }
 
-// Signature 생명주기 테스트를 테이블 주도 방식으로 통합합니다.
 func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 	hashDerivers := []struct {
 		name    string
@@ -120,7 +118,6 @@ func Test_EdDSA_Ed25519_Signature_Verify(t *testing.T) {
 			require.NoError(t, err)
 			pubKey := privKey.PublicKey()
 
-			// Ed25519는 해시가 아닌 원본 데이터를 직접 서명하고 검증합니다.
 			correctData := []byte("correct data")
 			wrongData := []byte("wrong data")
 

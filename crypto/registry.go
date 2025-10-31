@@ -65,16 +65,16 @@ func GetAddressDeriver(name string) (kangaroohash.AddressDeriver, error) {
 var keySuiteRegistry = make(map[string]kangarookey.KeySuite)
 var keySuiteLock = &sync.RWMutex{}
 
-func RegisterKeySuite(suite kangarookey.KeySuite) {
+func RegisterKeySuite(s kangarookey.KeySuite) {
 	keySuiteLock.Lock()
 	defer keySuiteLock.Unlock()
 
-	name := suite.Type()
+	name := s.Type()
 	if _, exists := keySuiteRegistry[name]; exists {
 		panic("crypto suite already registered: " + name)
 	}
-	keySuiteRegistry[name] = suite
-	log.Printf("[Registry] Registered Key Suite: name='%s'", name)
+	keySuiteRegistry[name] = s
+	log.Printf("[Registry] Registered Key Suite: name='%s', type=%T", name, s)
 }
 
 func GetKeySuite(name string) (kangarookey.KeySuite, error) {

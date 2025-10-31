@@ -2,14 +2,9 @@ package keccak256
 
 import (
 	"fmt"
-	kangaroocrypto "github.com/andantan/kangaroo/crypto"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	"golang.org/x/crypto/sha3"
 )
-
-func init() {
-	kangaroocrypto.RegisterAddressDeriver(kangaroohash.Keccak256Type, &Keccak256AddressDeriver{})
-}
 
 type Keccak256AddressDeriver struct{}
 
