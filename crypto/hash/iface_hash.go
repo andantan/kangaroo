@@ -26,6 +26,7 @@ type Hash interface {
 }
 
 type HashDeriver interface {
+	Type() string
 	Derive(data []byte) Hash
 }
 

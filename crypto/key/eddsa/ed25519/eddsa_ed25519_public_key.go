@@ -7,7 +7,7 @@ import (
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
-	"strings"
+	"github.com/andantan/kangaroo/crypto/registry"
 )
 
 type EdDSAEd25519PublicKey struct {
@@ -17,7 +17,11 @@ type EdDSAEd25519PublicKey struct {
 var _ kangarookey.PublicKey = (*EdDSAEd25519PublicKey)(nil)
 
 func (k *EdDSAEd25519PublicKey) Bytes() []byte {
-	return append([]byte(nil), k.Key...)
+	prefix, err := registry.GetPrefixFromType(k.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration public-key<%s> panic: %v", k.Type(), err))
+	}
+	return append([]byte{prefix}, k.Key...)
 }
 
 func (k *EdDSAEd25519PublicKey) String() string {
@@ -64,18 +68,4 @@ func EdDSAEd25519PublicKeyFromBytes(b []byte) (kangarookey.PublicKey, error) {
 	return &EdDSAEd25519PublicKey{
 		Key: keyBytes,
 	}, nil
-}
-
-func EdDSAEd25519PublicKeyFromString(s string) (kangarookey.PublicKey, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangarooeddsa.EdDSAPublicKeyHexLength {
-		return nil, fmt.Errorf("invalid bytes length for private-key<%s>: expected %d, got %d", kangarooeddsa.EdDSAEd25519Type, kangarooeddsa.EdDSAPublicKeyHexLength, len(s))
-	}
-
-	pubkeyBytes, err := hex.DecodeString(s)
-	if err != nil {
-		return nil, err
-	}
-
-	return EdDSAEd25519PublicKeyFromBytes(pubkeyBytes)
 }

@@ -1,4 +1,4 @@
-package crypto
+package registry
 
 import (
 	"fmt"
@@ -13,14 +13,14 @@ import (
 var hashDeriverRegistry = make(map[string]kangaroohash.HashDeriver)
 var hashDeriverLock = &sync.RWMutex{}
 
-func RegisterHashDeriver(name string, d kangaroohash.HashDeriver) {
+func RegisterHashDeriver(d kangaroohash.HashDeriver) {
 	hashDeriverLock.Lock()
 	defer hashDeriverLock.Unlock()
-	if _, exists := hashDeriverRegistry[name]; exists {
-		panic("hash deriver already registered: " + name)
+	if _, exists := hashDeriverRegistry[d.Type()]; exists {
+		panic("hash deriver already registered: " + d.Type())
 	}
-	hashDeriverRegistry[name] = d
-	log.Printf("[Registry] Registered Hash Deriver: name='%s', type=%T", name, d)
+	hashDeriverRegistry[d.Type()] = d
+	log.Printf("[Registry] Registered Hash Deriver: name='%s', type=%T", d.Type(), d)
 }
 
 func GetHashDeriver(name string) (kangaroohash.HashDeriver, error) {
@@ -39,14 +39,14 @@ func GetHashDeriver(name string) (kangaroohash.HashDeriver, error) {
 var addressDeriverRegistry = make(map[string]kangaroohash.AddressDeriver)
 var addressDeriverLock = &sync.RWMutex{}
 
-func RegisterAddressDeriver(name string, d kangaroohash.AddressDeriver) {
+func RegisterAddressDeriver(d kangaroohash.AddressDeriver) {
 	addressDeriverLock.Lock()
 	defer addressDeriverLock.Unlock()
-	if _, exists := addressDeriverRegistry[name]; exists {
-		panic("hash deriver already registered: " + name)
+	if _, exists := addressDeriverRegistry[d.Type()]; exists {
+		panic("hash deriver already registered: " + d.Type())
 	}
-	addressDeriverRegistry[name] = d
-	log.Printf("[Registry] Registered Address Deriver: name='%s', type=%T", name, d)
+	addressDeriverRegistry[d.Type()] = d
+	log.Printf("[Registry] Registered Address Deriver: name='%s', type=%T", d.Type(), d)
 }
 
 func GetAddressDeriver(name string) (kangaroohash.AddressDeriver, error) {

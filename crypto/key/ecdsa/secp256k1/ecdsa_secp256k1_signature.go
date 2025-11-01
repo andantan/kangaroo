@@ -5,6 +5,7 @@ import (
 	"fmt"
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 	"strings"
@@ -18,11 +19,17 @@ type ECDSASecp256k1Signature struct {
 var _ kangarookey.Signature = (*ECDSASecp256k1Signature)(nil)
 
 func (s *ECDSASecp256k1Signature) Bytes() []byte {
+	prefix, err := kangarooregistry.GetPrefixFromType(s.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration signature<%s> panic: %v", s.Type(), err))
+	}
 	rArr := [32]byte{}
 	sArr := [32]byte{}
 	s.R.PutBytes(&rArr)
 	s.S.PutBytes(&sArr)
-	return append(rArr[:], sArr[:]...)
+	b := append([]byte{prefix}, rArr[:]...)
+	b = append(b, sArr[:]...)
+	return b
 }
 
 func (s *ECDSASecp256k1Signature) String() string {

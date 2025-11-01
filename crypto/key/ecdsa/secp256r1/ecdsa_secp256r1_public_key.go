@@ -8,7 +8,7 @@ import (
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
-	"strings"
+	"github.com/andantan/kangaroo/crypto/registry"
 )
 
 type ECDSASecp256r1PublicKey struct {
@@ -18,11 +18,16 @@ type ECDSASecp256r1PublicKey struct {
 var _ kangarookey.PublicKey = (*ECDSASecp256r1PublicKey)(nil)
 
 func (k *ECDSASecp256r1PublicKey) Bytes() []byte {
-	return append([]byte(nil), k.Key...)
+	prefix, err := registry.GetPrefixFromType(k.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration public-key<%s> panic: %v", k.Type(), err))
+	}
+
+	return append([]byte{prefix}, k.Key...)
 }
 
 func (k *ECDSASecp256r1PublicKey) String() string {
-	return "0x" + hex.EncodeToString(k.Key)
+	return "0x" + hex.EncodeToString(k.Bytes())
 }
 
 func (k *ECDSASecp256r1PublicKey) IsValid() bool {
@@ -70,19 +75,4 @@ func ECDSASecp256r1PublicKeyFromBytes(b []byte) (kangarookey.PublicKey, error) {
 	}
 
 	return k, nil
-}
-
-func ECDSASecp256r1PublicKeyFromString(s string) (kangarookey.PublicKey, error) {
-	s = strings.TrimPrefix(s, "0x")
-
-	if len(s) != kangarooecdsa.ECDSAPublicKeyHexLength {
-		return nil, fmt.Errorf("invalid hex string length for public-key<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256r1Type, kangarooecdsa.ECDSAPublicKeyHexLength, len(s))
-	}
-
-	pubKeyBytes, err := hex.DecodeString(s)
-	if err != nil {
-		return nil, err
-	}
-
-	return ECDSASecp256r1PublicKeyFromBytes(pubKeyBytes)
 }

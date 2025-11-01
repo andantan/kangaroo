@@ -8,8 +8,8 @@ import (
 	"fmt"
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"math/big"
-	"strings"
 )
 
 var defaultCurve = elliptic.P256()
@@ -21,9 +21,14 @@ type ECDSASecp256r1PrivateKey struct {
 var _ kangarookey.PrivateKey = (*ECDSASecp256r1PrivateKey)(nil)
 
 func (k *ECDSASecp256r1PrivateKey) Bytes() []byte {
+	prefix, err := kangarooregistry.GetPrefixFromType(k.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration private-key<%s> panic: %v", k.Type(), err))
+	}
+
 	b := make([]byte, kangarooecdsa.ECDSAPrivateKeyBytesLength)
 	k.key.D.FillBytes(b)
-	return b
+	return append([]byte{prefix}, b...)
 }
 
 func (k *ECDSASecp256r1PrivateKey) String() string {
@@ -107,18 +112,4 @@ func ECDSASecp256r1PrivateKeyFromBytes(b []byte) (kangarookey.PrivateKey, error)
 	return &ECDSASecp256r1PrivateKey{
 		key: privKey,
 	}, nil
-}
-
-func ECDSASecp256r1PrivateKeyFromString(s string) (kangarookey.PrivateKey, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangarooecdsa.ECDSAPrivateKeyHexLength {
-		return nil, fmt.Errorf("invalid hex string length for private-key<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256r1Type, len(s), kangarooecdsa.ECDSAPrivateKeyHexLength)
-	}
-
-	privKeyBytes, err := hex.DecodeString(s)
-	if err != nil {
-		return nil, err
-	}
-
-	return ECDSASecp256r1PrivateKeyFromBytes(privKeyBytes)
 }

@@ -7,6 +7,7 @@ import (
 	kangarooripemd160 "github.com/andantan/kangaroo/crypto/hash/ripemd160"
 	kangaroosha256 "github.com/andantan/kangaroo/crypto/hash/sha256"
 	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -21,13 +22,14 @@ func Test_ECDSA_Secp256k1_PrivateKey_Lifecycle(t *testing.T) {
 
 	// 2. Bytes Round Trip
 	privKeyBytes := privKey.Bytes()
-	reloadedPrivKey, err := ECDSASecp256k1PrivateKeyFromBytes(privKeyBytes)
+	assert.Equal(t, kangarooregistry.ECDSASecp256k1PrefixByte, privKeyBytes[0])
+	reloadedPrivKey, err := kangarooregistry.ParsePrivateKeyFromBytes(privKeyBytes)
 	require.NoError(t, err)
 	assert.Equal(t, privKey, reloadedPrivKey)
 
 	// 3. String Round Trip
 	privKeyString := privKey.String()
-	reloadedPrivKeyFromString, err := ECDSASecp256k1PrivateKeyFromString(privKeyString)
+	reloadedPrivKeyFromString, err := kangarooregistry.ParsePrivateKeyFromString(privKeyString)
 	require.NoError(t, err)
 	assert.Equal(t, privKey, reloadedPrivKeyFromString)
 }
@@ -52,12 +54,13 @@ func Test_ECDSA_Secp256k1_PublicKey_Lifecycle(t *testing.T) {
 			assert.Equal(t, kangarooecdsa.ECDSASecp256k1Type, pubKey.Type())
 
 			pubKeyBytes := pubKey.Bytes()
-			reloadedPubKey, err := ECDSASecp256k1PublicKeyFromBytes(pubKeyBytes)
+			assert.Equal(t, kangarooregistry.ECDSASecp256k1PrefixByte, pubKeyBytes[0])
+			reloadedPubKey, err := kangarooregistry.ParsePublicKeyFromBytes(pubKeyBytes)
 			require.NoError(t, err)
 			assert.True(t, pubKey.Equal(reloadedPubKey))
 
 			pubKeyString := pubKey.String()
-			reloadedPubKeyFromString, err := ECDSASecp256k1PublicKeyFromString(pubKeyString)
+			reloadedPubKeyFromString, err := kangarooregistry.ParsePublicKeyFromString(pubKeyString)
 			require.NoError(t, err)
 			assert.True(t, pubKey.Equal(reloadedPubKeyFromString))
 
@@ -77,7 +80,8 @@ func Test_ECDSA_Secp256k1_Signature_Lifecycle(t *testing.T) {
 		{"KECCAK256", &kangarookeccak256.Keccak256HashDeriver{}},
 	}
 
-	privKey, _ := GenerateECDSASecp256k1PrivateKey()
+	privKey, err := GenerateECDSASecp256k1PrivateKey()
+	require.NoError(t, err)
 
 	for _, tc := range hashDerivers {
 		t.Run(fmt.Sprintf("with %s hash", tc.name), func(t *testing.T) {
@@ -89,12 +93,13 @@ func Test_ECDSA_Secp256k1_Signature_Lifecycle(t *testing.T) {
 			assert.Equal(t, kangarooecdsa.ECDSASecp256k1Type, signature.Type())
 
 			sigBytes := signature.Bytes()
-			reloadedSig, err := ECDSASecp256k1SignatureFromBytes(sigBytes)
+			assert.Equal(t, kangarooregistry.ECDSASecp256k1PrefixByte, sigBytes[0])
+			reloadedSig, err := kangarooregistry.ParseSignatureFromBytes(sigBytes)
 			require.NoError(t, err)
 			assert.True(t, signature.Equal(reloadedSig))
 
 			sigString := signature.String()
-			reloadedSigFromString, err := ECDSASecp256k1SignatureFromString(sigString)
+			reloadedSigFromString, err := kangarooregistry.ParseSignatureFromString(sigString)
 			require.NoError(t, err)
 			assert.True(t, signature.Equal(reloadedSigFromString))
 		})

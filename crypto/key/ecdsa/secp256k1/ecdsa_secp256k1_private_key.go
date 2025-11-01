@@ -5,9 +5,9 @@ import (
 	"fmt"
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
-	"strings"
 )
 
 type ECDSASecp256k1PrivateKey struct {
@@ -17,7 +17,12 @@ type ECDSASecp256k1PrivateKey struct {
 var _ kangarookey.PrivateKey = (*ECDSASecp256k1PrivateKey)(nil)
 
 func (k *ECDSASecp256k1PrivateKey) Bytes() []byte {
-	return k.key.Serialize()
+	prefix, err := kangarooregistry.GetPrefixFromType(k.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration private-key<%s> panic: %v", k.Type(), err))
+	}
+	kb := k.key.Serialize()
+	return append([]byte{prefix}, kb...)
 }
 
 func (k *ECDSASecp256k1PrivateKey) String() string {
@@ -75,18 +80,4 @@ func ECDSASecp256k1PrivateKeyFromBytes(b []byte) (kangarookey.PrivateKey, error)
 	return &ECDSASecp256k1PrivateKey{
 		key: pk,
 	}, nil
-}
-
-func ECDSASecp256k1PrivateKeyFromString(s string) (kangarookey.PrivateKey, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangarooecdsa.ECDSAPrivateKeyHexLength {
-		return nil, fmt.Errorf("invalid hex string length for private-key<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256k1Type, len(s), kangarooecdsa.ECDSAPrivateKeyHexLength)
-	}
-
-	privKeyBytes, err := hex.DecodeString(s)
-	if err != nil {
-		return nil, err
-	}
-
-	return ECDSASecp256k1PrivateKeyFromBytes(privKeyBytes)
 }

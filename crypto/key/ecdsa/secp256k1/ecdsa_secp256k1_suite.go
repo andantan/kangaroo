@@ -3,7 +3,12 @@ package secp256k1
 import (
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 )
+
+func init() {
+	kangarooregistry.RegisterKeySuite(&ECDSASecp256k1Suite{})
+}
 
 type ECDSASecp256k1Suite struct{}
 

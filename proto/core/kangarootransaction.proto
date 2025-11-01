@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package core;
+
+option go_package = "core/pb;corepb";
+
+message KangarooTransaction {
+  bytes data = 1;
+  uint64 nonce = 2;
+  bytes signature = 3;
+  bytes signer = 4;
+}

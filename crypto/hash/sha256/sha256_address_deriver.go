@@ -4,12 +4,20 @@ import (
 	"crypto/sha256"
 	"fmt"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 )
+
+func init() {
+	kangarooregistry.RegisterAddressDeriver(&Sha256AddressDeriver{})
+}
 
 type Sha256AddressDeriver struct{}
 
 var _ kangaroohash.AddressDeriver = (*Sha256AddressDeriver)(nil)
-var DefaultSha256AddressDeriver = &Sha256AddressDeriver{}
+
+func (_ *Sha256AddressDeriver) Type() string {
+	return kangaroohash.Sha256Type
+}
 
 func (_ *Sha256AddressDeriver) Derive(data []byte) kangaroohash.Address {
 	hashBytes := sha256.Sum256(data)

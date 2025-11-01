@@ -7,8 +7,8 @@ import (
 	"fmt"
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"math/big"
-	"strings"
 )
 
 type ECDSASecp256r1Signature struct {
@@ -19,11 +19,17 @@ type ECDSASecp256r1Signature struct {
 var _ kangarookey.Signature = (*ECDSASecp256r1Signature)(nil)
 
 func (s *ECDSASecp256r1Signature) Bytes() []byte {
+	prefix, err := kangarooregistry.GetPrefixFromType(s.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration signature<%s> panic: %v", s.Type(), err))
+	}
 	rBytes := make([]byte, 32)
 	sBytes := make([]byte, 32)
 	s.R.FillBytes(rBytes)
 	s.S.FillBytes(sBytes)
-	return append(rBytes, sBytes...)
+	b := append([]byte{prefix}, rBytes...)
+	b = append(b, sBytes...)
+	return b
 }
 
 func (s *ECDSASecp256r1Signature) String() string {
@@ -87,18 +93,4 @@ func ECDSASecp256r1SignatureFromBytes(b []byte) (kangarookey.Signature, error) {
 		R: r,
 		S: s,
 	}, nil
-}
-
-func ECDSASecp256r1SignatureFromString(s string) (kangarookey.Signature, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangarooecdsa.ECDSASignatureHexLength {
-		return nil, fmt.Errorf("invalid hex string length for signature<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256r1Type, kangarooecdsa.ECDSASignatureHexLength, len(s))
-	}
-
-	sigBytes, err := hex.DecodeString(s)
-	if err != nil {
-		return nil, err
-	}
-
-	return ECDSASecp256r1SignatureFromBytes(sigBytes)
 }

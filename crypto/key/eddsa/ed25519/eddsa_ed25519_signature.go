@@ -6,7 +6,7 @@ import (
 	"fmt"
 	kangarookey "github.com/andantan/kangaroo/crypto/key"
 	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
-	"strings"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 )
 
 type EdDSAEd25519Signature struct {
@@ -17,7 +17,13 @@ type EdDSAEd25519Signature struct {
 var _ kangarookey.Signature = (*EdDSAEd25519Signature)(nil)
 
 func (s *EdDSAEd25519Signature) Bytes() []byte {
-	return append(s.Point[:], s.Scalar[:]...)
+	prefix, err := kangarooregistry.GetPrefixFromType(s.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration signature<%s> panic: %v", s.Type(), err))
+	}
+	b := append([]byte{prefix}, s.Point[:]...)
+	b = append(b, s.Scalar[:]...)
+	return b
 }
 
 func (s *EdDSAEd25519Signature) String() string {
@@ -25,7 +31,7 @@ func (s *EdDSAEd25519Signature) String() string {
 }
 
 func (s *EdDSAEd25519Signature) IsValid() bool {
-	return len(s.Bytes()) == kangarooeddsa.EdDSASignatureBytesLength
+	return s.Point != [32]byte{} && s.Scalar != [32]byte{}
 }
 
 func (s *EdDSAEd25519Signature) Type() string {
@@ -69,18 +75,4 @@ func EdDSAEd25519SignatureFromBytes(b []byte) (kangarookey.Signature, error) {
 		Point:  pointArr,
 		Scalar: scalarArr,
 	}, nil
-}
-
-func EdDSAEd25519SignatureFromString(s string) (kangarookey.Signature, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangarooeddsa.EdDSASignatureHexLength {
-		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", kangarooeddsa.EdDSAEd25519Type, kangarooeddsa.EdDSASignatureHexLength, len(s))
-	}
-
-	sigBytes, err := hex.DecodeString(s)
-	if err != nil {
-		return nil, err
-	}
-
-	return EdDSAEd25519SignatureFromBytes(sigBytes)
 }

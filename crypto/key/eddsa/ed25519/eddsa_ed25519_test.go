@@ -7,6 +7,7 @@ import (
 	kangarooripemd160 "github.com/andantan/kangaroo/crypto/hash/ripemd160"
 	kangaroosha256 "github.com/andantan/kangaroo/crypto/hash/sha256"
 	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -21,13 +22,14 @@ func Test_EdDSA_Ed25519_PrivateKey_Lifecycle(t *testing.T) {
 
 	// 2. Bytes Round Trip
 	privKeyBytes := privKey.Bytes()
-	reloadedPrivKey, err := EdDSAEd25519PrivateKeyFromBytes(privKeyBytes)
+	assert.Equal(t, kangarooregistry.EdDSAEd25519PrefixByte, privKeyBytes[0])
+	reloadedPrivKey, err := kangarooregistry.ParsePrivateKeyFromBytes(privKeyBytes)
 	require.NoError(t, err)
 	assert.Equal(t, privKey, reloadedPrivKey)
 
 	// 3. String Round Trip
 	privKeyString := privKey.String()
-	reloadedPrivKeyFromString, err := EdDSAEd25519PrivateKeyFromString(privKeyString)
+	reloadedPrivKeyFromString, err := kangarooregistry.ParsePrivateKeyFromString(privKeyString)
 	require.NoError(t, err)
 	assert.Equal(t, privKey, reloadedPrivKeyFromString)
 }
@@ -46,19 +48,19 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 	require.NoError(t, err)
 	pubKey := privKey.PublicKey()
 
-	// 2. 루프를 돌며 각 Deriver에 대해 하위 테스트(subtest)를 실행합니다.
 	for _, tc := range addressDerivers {
 		t.Run(fmt.Sprintf("with %s address deriver", tc.name), func(t *testing.T) {
 			assert.True(t, pubKey.IsValid())
 			assert.Equal(t, kangarooeddsa.EdDSAEd25519Type, pubKey.Type())
 
 			pubKeyBytes := pubKey.Bytes()
-			reloadedPubKey, err := EdDSAEd25519PublicKeyFromBytes(pubKeyBytes)
+			assert.Equal(t, kangarooregistry.EdDSAEd25519PrefixByte, pubKeyBytes[0])
+			reloadedPubKey, err := kangarooregistry.ParsePublicKeyFromBytes(pubKeyBytes)
 			require.NoError(t, err)
 			assert.True(t, pubKey.Equal(reloadedPubKey))
 
 			pubKeyString := pubKey.String()
-			reloadedPubKeyFromString, err := EdDSAEd25519PublicKeyFromString(pubKeyString)
+			reloadedPubKeyFromString, err := kangarooregistry.ParsePublicKeyFromString(pubKeyString)
 			require.NoError(t, err)
 			assert.True(t, pubKey.Equal(reloadedPubKeyFromString))
 
@@ -78,7 +80,8 @@ func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 		{"KECCAK256", &kangarookeccak256.Keccak256HashDeriver{}},
 	}
 
-	privKey, _ := GenerateEdDSAEd25519PrivateKey()
+	privKey, err := GenerateEdDSAEd25519PrivateKey()
+	require.NoError(t, err)
 
 	for _, tc := range hashDerivers {
 		t.Run(fmt.Sprintf("with %s hash", tc.name), func(t *testing.T) {
@@ -90,12 +93,13 @@ func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 			assert.Equal(t, kangarooeddsa.EdDSAEd25519Type, signature.Type())
 
 			sigBytes := signature.Bytes()
-			reloadedSig, err := EdDSAEd25519SignatureFromBytes(sigBytes)
+			assert.Equal(t, kangarooregistry.EdDSAEd25519PrefixByte, sigBytes[0])
+			reloadedSig, err := kangarooregistry.ParseSignatureFromBytes(sigBytes)
 			require.NoError(t, err)
 			assert.True(t, signature.Equal(reloadedSig))
 
 			sigString := signature.String()
-			reloadedSigFromString, err := EdDSAEd25519SignatureFromString(sigString)
+			reloadedSigFromString, err := kangarooregistry.ParseSignatureFromString(sigString)
 			require.NoError(t, err)
 			assert.True(t, signature.Equal(reloadedSigFromString))
 		})

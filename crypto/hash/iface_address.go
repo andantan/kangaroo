@@ -20,6 +20,7 @@ type Address interface {
 }
 
 type AddressDeriver interface {
+	Type() string
 	Derive(data []byte) Address
 }
 
