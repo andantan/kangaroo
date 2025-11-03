@@ -17,7 +17,7 @@ type EdDSAEd25519PublicKey struct {
 var _ kangarookey.PublicKey = (*EdDSAEd25519PublicKey)(nil)
 
 func (k *EdDSAEd25519PublicKey) Bytes() []byte {
-	prefix, err := registry.GetPrefixFromType(k.Type())
+	prefix, err := registry.GetKeyPrefixFromType(k.Type())
 	if err != nil {
 		panic(fmt.Sprintf("configuration public-key<%s> panic: %v", k.Type(), err))
 	}

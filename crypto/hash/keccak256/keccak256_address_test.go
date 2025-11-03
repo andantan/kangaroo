@@ -2,24 +2,41 @@ package keccak256
 
 import (
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func Test_KECCAK256_Address_BytesAndFromBytes(t *testing.T) {
-	originalBytes := make([]byte, kangaroohash.AddressLength)
-	originalBytes[0] = 0xaa
-	originalBytes[19] = 0xbb
+	keccakDeriver := &Keccak256AddressDeriver{}
+	testString := "keccak256_address"
+	originalAddress := keccakDeriver.Derive([]byte(testString))
+	originalBytes := originalAddress.Bytes()
+	assert.Equal(t, kangarooregistry.KECCAK256AddressByte, originalBytes[0])
+	assert.Equal(t, kangaroohash.AddressLength+1, len(originalBytes))
 
 	// FromBytes
-	addr, err := Keccak256AddressFromBytes(originalBytes)
-	assert.NoError(t, err)
+	fromAddressBytes, err := kangarooregistry.ParseAddressFromBytes(originalBytes)
+	require.NoError(t, err)
+	assert.True(t, originalAddress.Equal(fromAddressBytes))
 
-	// Bytes
-	resultBytes := addr.Bytes()
-	assert.Equal(t, originalBytes, resultBytes)
+	_, err = kangarooregistry.ParseAddressFromBytes([]byte{1, 2, 3})
+	assert.Error(t, err)
+}
 
-	_, err = Keccak256AddressFromBytes([]byte{1, 2, 3})
+func Test_KECCAK256_Address_StringAndFromString(t *testing.T) {
+	keccakDeriver := &Keccak256AddressDeriver{}
+	testString := "keccak256_address"
+	originalAddress := keccakDeriver.Derive([]byte(testString))
+	originalString := originalAddress.String()
+
+	// FromString
+	fromAddressString, err := kangarooregistry.ParseAddressFromString(originalString)
+	require.NoError(t, err)
+	assert.True(t, originalAddress.Equal(fromAddressString))
+
+	_, err = kangarooregistry.ParseAddressFromString("0x15eaab4")
 	assert.Error(t, err)
 }
 

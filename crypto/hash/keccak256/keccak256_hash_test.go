@@ -2,48 +2,41 @@ package keccak256
 
 import (
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func Test_KECCAK256_Hash_BytesAndFromBytes(t *testing.T) {
-	originalBytes := make([]byte, kangaroohash.HashLength)
-	originalBytes[0] = 0xde
-	originalBytes[1] = 0xad
-	originalBytes[31] = 0xef
+	keccakDeriver := &Keccak256HashDeriver{}
+	testString := "keccak256_hash"
+	originalHash := keccakDeriver.Derive([]byte(testString))
+	originalBytes := originalHash.Bytes()
+	assert.Equal(t, kangarooregistry.KECCAK256HashByte, originalBytes[0])
+	assert.Equal(t, kangaroohash.HashLength+1, len(originalBytes))
 
 	// FromBytes
-	h, err := Keccak256HashFromBytes(originalBytes)
-	assert.NoError(t, err)
+	fromHashBytes, err := kangarooregistry.ParseHashFromBytes(originalBytes)
+	require.NoError(t, err)
+	assert.True(t, originalHash.Equal(fromHashBytes))
 
-	// Bytes
-	resultBytes := h.Bytes()
-	assert.Equal(t, originalBytes, resultBytes)
-
-	_, err = Keccak256HashFromBytes([]byte{1, 2, 3})
+	_, err = kangarooregistry.ParseHashFromBytes([]byte{1, 2, 3})
 	assert.Error(t, err)
 }
 
 func Test_KECCAK256_Hash_StringAndFromString(t *testing.T) {
-	originalStr := "deadbeef000000000000000000000000000000000000000000000000beefdead"
+	keccakDeriver := &Keccak256HashDeriver{}
+	testString := "keccak256_hash"
+	originalHash := keccakDeriver.Derive([]byte(testString))
+	originString := originalHash.String()
 
-	// FromHexString
-	h, err := Keccak256HashFromString(originalStr)
-	assert.NoError(t, err)
+	// FromString
+	fromHashString, err := kangarooregistry.ParseHashFromString(originString)
+	require.NoError(t, err)
+	assert.True(t, originalHash.Equal(fromHashString))
 
-	// String
-	resultStr := h.String()
-	assert.Equal(t, "0x"+originalStr, resultStr)
-
-	// FromHexString
-	hashWithPrefix, err := Keccak256HashFromString("0x" + originalStr)
-	assert.NoError(t, err)
-	assert.Equal(t, h, hashWithPrefix)
-
-	_, err = Keccak256HashFromString("123456")
-	assert.Error(t, err)
-
-	_, err = Keccak256HashFromString("gg")
+	_, err = kangarooregistry.ParseHashFromString("0x15eaab4")
 	assert.Error(t, err)
 }
 

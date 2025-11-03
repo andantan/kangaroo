@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	"strings"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 )
 
 type Ripemd160Address [kangaroohash.AddressLength]byte
@@ -13,7 +13,11 @@ type Ripemd160Address [kangaroohash.AddressLength]byte
 var _ kangaroohash.Address = Ripemd160Address{}
 
 func (a Ripemd160Address) Bytes() []byte {
-	return a[:]
+	prefix, err := kangarooregistry.GetAddressPrefixFromType(a.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration address<%s> panic: %v", a.Type(), err))
+	}
+	return append([]byte{prefix}, a[:]...)
 }
 
 func (a Ripemd160Address) IsZero() bool {
@@ -29,11 +33,11 @@ func (a Ripemd160Address) Type() string {
 }
 
 func (a Ripemd160Address) String() string {
-	return "0x" + hex.EncodeToString(a[:])
+	return "0x" + hex.EncodeToString(a.Bytes())
 }
 
 func (a Ripemd160Address) ShortString(l int) string {
-	as := hex.EncodeToString(a[:])
+	as := hex.EncodeToString(a.Bytes())
 
 	if l > len(as) {
 		l = len(as)
@@ -117,27 +121,4 @@ func Ripemd160AddressFromBytes(b []byte) (kangaroohash.Address, error) {
 	copy(a[:], b)
 
 	return a, nil
-}
-
-func Ripemd160AddressFromString(s string) (kangaroohash.Address, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangaroohash.AddressHexLength {
-		return Ripemd160Address{}, fmt.Errorf("invalid hex string length (%d), must be 40", len(s))
-	}
-
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		return Ripemd160Address{}, err
-	}
-
-	return Ripemd160AddressFromBytes(b)
-}
-
-func FilledRipemd160Address(b byte) kangaroohash.Address {
-	var a Ripemd160Address
-	for i := range kangaroohash.AddressLength {
-		a[i] = b
-	}
-
-	return a
 }

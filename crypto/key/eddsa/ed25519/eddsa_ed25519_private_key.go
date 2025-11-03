@@ -16,7 +16,7 @@ type EdDSAEd25519PrivateKey struct {
 var _ kangarookey.PrivateKey = (*EdDSAEd25519PrivateKey)(nil)
 
 func (k *EdDSAEd25519PrivateKey) Bytes() []byte {
-	prefix, err := kangarooregistry.GetPrefixFromType(k.Type())
+	prefix, err := kangarooregistry.GetKeyPrefixFromType(k.Type())
 	if err != nil {
 		panic(fmt.Sprintf("configuration private-key<%s> panic: %v", k.Type(), err))
 	}

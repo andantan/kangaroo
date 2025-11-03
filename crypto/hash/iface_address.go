@@ -27,3 +27,9 @@ type AddressDeriver interface {
 type Addressable interface {
 	Address(deriver AddressDeriver) (Address, error)
 }
+
+type AddressSuite interface {
+	Type() string
+	Deriver() AddressDeriver
+	AddressFromBytes(data []byte) (Address, error)
+}

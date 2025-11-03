@@ -32,10 +32,10 @@ func TestSignAndVerify_Integration(t *testing.T) {
 	}{
 		{"ecdsa-secp256r1 with sha256", &kangaroosecp256r1.ECDSASecp256r1Suite{}, &kangaroosha256.Sha256HashDeriver{}},
 		{"ecdsa-secp256k1 with sha256", &kangaroosecp256k1.ECDSASecp256k1Suite{}, &kangaroosha256.Sha256HashDeriver{}},
-		{"eddsa-ed25519 with2 sha256", &kangarooed25519.EdDSAEd25519Suite{}, &kangaroosha256.Sha256HashDeriver{}},
+		{"eddsa-ed25519 with sha256", &kangarooed25519.EdDSAEd25519Suite{}, &kangaroosha256.Sha256HashDeriver{}},
 		{"ecdsa-secp256r1 with keccak256", &kangaroosecp256r1.ECDSASecp256r1Suite{}, &kangarookeccak256.Keccak256HashDeriver{}},
 		{"ecdsa-secp256k1 with keccak256", &kangaroosecp256k1.ECDSASecp256k1Suite{}, &kangarookeccak256.Keccak256HashDeriver{}},
-		{"eddsa-ed25519 with2 keccak256", &kangarooed25519.EdDSAEd25519Suite{}, &kangarookeccak256.Keccak256HashDeriver{}},
+		{"eddsa-ed25519 with keccak256", &kangarooed25519.EdDSAEd25519Suite{}, &kangarookeccak256.Keccak256HashDeriver{}},
 	}
 
 	for _, tc := range testCases {

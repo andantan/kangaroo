@@ -14,33 +14,33 @@ const (
 )
 
 // mapping algorithm type name to 1 byte prefix
-var typeToPrefix = map[string]byte{
+var typeToKeyPrefix = map[string]byte{
 	kangarooecdsa.ECDSASecp256r1Type: ECDSASecp256r1PrefixByte,
 	kangarooecdsa.ECDSASecp256k1Type: ECDSASecp256k1PrefixByte,
 	kangarooeddsa.EdDSAEd25519Type:   EdDSAEd25519PrefixByte,
 }
 
-var prefixToType = make(map[byte]string)
+var keyPrefixToType = make(map[byte]string)
 
 func init() {
-	for name, prefix := range typeToPrefix {
-		if _, exists := prefixToType[prefix]; exists {
-			panic(fmt.Sprintf("duplicate crypto type prefix defined: 0x%x", prefix))
+	for name, prefix := range typeToKeyPrefix {
+		if _, exists := keyPrefixToType[prefix]; exists {
+			panic(fmt.Sprintf("duplicate key type prefix defined: 0x%x", prefix))
 		}
-		prefixToType[prefix] = name
+		keyPrefixToType[prefix] = name
 	}
 }
 
-func GetPrefixFromType(name string) (byte, error) {
-	prefix, ok := typeToPrefix[name]
+func GetKeyPrefixFromType(name string) (byte, error) {
+	prefix, ok := typeToKeyPrefix[name]
 	if !ok {
 		return 0, fmt.Errorf("no prefix defined for key type: %s", name)
 	}
 	return prefix, nil
 }
 
-func GetTypeFromPrefix(prefix byte) (string, error) {
-	name, ok := prefixToType[prefix]
+func GetTypeFromKeyPrefix(prefix byte) (string, error) {
+	name, ok := keyPrefixToType[prefix]
 	if !ok {
 		return "", fmt.Errorf("unknown key type prefix: 0x%x", prefix)
 	}

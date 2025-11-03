@@ -15,7 +15,7 @@ func ParsePrivateKeyFromBytes(data []byte) (kangarookey.PrivateKey, error) {
 	typePrefix := data[0]
 	keyData := data[1:]
 
-	typeName, err := GetTypeFromPrefix(typePrefix)
+	typeName, err := GetTypeFromKeyPrefix(typePrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func ParsePublicKeyFromBytes(data []byte) (kangarookey.PublicKey, error) {
 	typePrefix := data[0]
 	keyData := data[1:]
 
-	typeName, err := GetTypeFromPrefix(typePrefix)
+	typeName, err := GetTypeFromKeyPrefix(typePrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func ParseSignatureFromBytes(data []byte) (kangarookey.Signature, error) {
 	typePrefix := data[0]
 	sigData := data[1:]
 
-	typeName, err := GetTypeFromPrefix(typePrefix)
+	typeName, err := GetTypeFromKeyPrefix(typePrefix)
 	if err != nil {
 		return nil, err
 	}

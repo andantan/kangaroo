@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"strings"
 )
 
@@ -13,7 +14,11 @@ type Sha256Address [kangaroohash.AddressLength]byte
 var _ kangaroohash.Address = Sha256Address{}
 
 func (a Sha256Address) Bytes() []byte {
-	return a[:]
+	prefix, err := kangarooregistry.GetAddressPrefixFromType(a.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration address<%s> panic: %v", a.Type(), err))
+	}
+	return append([]byte{prefix}, a[:]...)
 }
 
 func (a Sha256Address) IsZero() bool {
@@ -29,11 +34,11 @@ func (a Sha256Address) Type() string {
 }
 
 func (a Sha256Address) String() string {
-	return "0x" + hex.EncodeToString(a[:])
+	return "0x" + hex.EncodeToString(a.Bytes())
 }
 
 func (a Sha256Address) ShortString(l int) string {
-	as := hex.EncodeToString(a[:])
+	as := hex.EncodeToString(a.Bytes())
 
 	if l > len(as) {
 		l = len(as)

@@ -2,24 +2,41 @@ package ripemd160
 
 import (
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func Test_RIPEMD160_Address_BytesAndFromBytes(t *testing.T) {
-	originalBytes := make([]byte, kangaroohash.AddressLength)
-	originalBytes[0] = 0xaa
-	originalBytes[19] = 0xbb
+	ripemdDeriver := &Ripemd160AddressDeriver{}
+	testString := "ripemd160_address"
+	originalAddress := ripemdDeriver.Derive([]byte(testString))
+	originalBytes := originalAddress.Bytes()
+	assert.Equal(t, kangarooregistry.RIPEMD160AddressByte, originalBytes[0])
+	assert.Equal(t, kangaroohash.AddressLength+1, len(originalBytes))
 
 	// FromBytes
-	addr, err := Ripemd160AddressFromBytes(originalBytes)
-	assert.NoError(t, err)
+	fromAddressBytes, err := kangarooregistry.ParseAddressFromBytes(originalBytes)
+	require.NoError(t, err)
+	assert.True(t, originalAddress.Equal(fromAddressBytes))
 
-	// Bytes
-	resultBytes := addr.Bytes()
-	assert.Equal(t, originalBytes, resultBytes)
+	_, err = kangarooregistry.ParseAddressFromBytes([]byte{1, 2, 3})
+	assert.Error(t, err)
+}
 
-	_, err = Ripemd160AddressFromBytes([]byte{1, 2, 3})
+func Test_RIPEMD160_Address_StringAndFromString(t *testing.T) {
+	ripemdDeriver := &Ripemd160AddressDeriver{}
+	testString := "ripemd160_address"
+	originalAddress := ripemdDeriver.Derive([]byte(testString))
+	originalString := originalAddress.String()
+
+	// FromString
+	fromAddressString, err := kangarooregistry.ParseAddressFromString(originalString)
+	require.NoError(t, err)
+	assert.True(t, originalAddress.Equal(fromAddressString))
+
+	_, err = kangarooregistry.ParseAddressFromString("0x15eaab4")
 	assert.Error(t, err)
 }
 

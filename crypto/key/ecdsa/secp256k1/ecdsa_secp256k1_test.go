@@ -66,7 +66,7 @@ func Test_ECDSA_Secp256k1_PublicKey_Lifecycle(t *testing.T) {
 
 			address := pubKey.Address(tc.deriver)
 			assert.NotNil(t, address)
-			assert.Equal(t, kangaroohash.AddressLength, len(address.Bytes()))
+			assert.Equal(t, kangaroohash.AddressLength+1, len(address.Bytes()))
 		})
 	}
 }

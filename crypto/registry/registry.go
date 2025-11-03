@@ -10,53 +10,55 @@ import (
 
 // ============================================================================================================
 
-var hashDeriverRegistry = make(map[string]kangaroohash.HashDeriver)
-var hashDeriverLock = &sync.RWMutex{}
+var hashSuiteRegistry = make(map[string]kangaroohash.HashSuite)
+var hashSuiteLock = &sync.RWMutex{}
 
-func RegisterHashDeriver(d kangaroohash.HashDeriver) {
-	hashDeriverLock.Lock()
-	defer hashDeriverLock.Unlock()
-	if _, exists := hashDeriverRegistry[d.Type()]; exists {
-		panic("hash deriver already registered: " + d.Type())
+func RegisterHashSuite(s kangaroohash.HashSuite) {
+	hashSuiteLock.Lock()
+	defer hashSuiteLock.Unlock()
+	name := s.Type()
+	if _, exists := hashSuiteRegistry[name]; exists {
+		panic("hash suite already registered: " + name)
 	}
-	hashDeriverRegistry[d.Type()] = d
-	log.Printf("[Registry] Registered Hash Deriver: name='%s', type=%T", d.Type(), d)
+	hashSuiteRegistry[name] = s
+	log.Printf("[Registry] Registered Hash Suite: name='%s', type=%T", name, s)
 }
 
-func GetHashDeriver(name string) (kangaroohash.HashDeriver, error) {
-	hashDeriverLock.RLock()
-	defer hashDeriverLock.RUnlock()
-	d, ok := hashDeriverRegistry[name]
+func GetHashSuite(name string) (kangaroohash.HashSuite, error) {
+	hashSuiteLock.RLock()
+	defer hashSuiteLock.RUnlock()
+	suite, ok := hashSuiteRegistry[name]
 	if !ok {
-		return nil, fmt.Errorf("hash deriver not found: %s", name)
+		return nil, fmt.Errorf("hash suite not found: %s", name)
 	}
-	return d, nil
+	return suite, nil
 }
 
 // ============================================================================================================
 // ============================================================================================================
 
-var addressDeriverRegistry = make(map[string]kangaroohash.AddressDeriver)
-var addressDeriverLock = &sync.RWMutex{}
+var addressSuiteRegistry = make(map[string]kangaroohash.AddressSuite)
+var addressSuiteLock = &sync.RWMutex{}
 
-func RegisterAddressDeriver(d kangaroohash.AddressDeriver) {
-	addressDeriverLock.Lock()
-	defer addressDeriverLock.Unlock()
-	if _, exists := addressDeriverRegistry[d.Type()]; exists {
-		panic("hash deriver already registered: " + d.Type())
+func RegisterAddressSuite(s kangaroohash.AddressSuite) {
+	addressSuiteLock.Lock()
+	defer addressSuiteLock.Unlock()
+	name := s.Type()
+	if _, exists := addressSuiteRegistry[name]; exists {
+		panic("hash suite already registered: " + name)
 	}
-	addressDeriverRegistry[d.Type()] = d
-	log.Printf("[Registry] Registered Address Deriver: name='%s', type=%T", d.Type(), d)
+	addressSuiteRegistry[name] = s
+	log.Printf("[Registry] Registered Address Suite: name='%s', type=%T", name, s)
 }
 
-func GetAddressDeriver(name string) (kangaroohash.AddressDeriver, error) {
-	addressDeriverLock.RLock()
-	defer addressDeriverLock.RUnlock()
-	d, ok := addressDeriverRegistry[name]
+func GetAddressSuite(name string) (kangaroohash.AddressSuite, error) {
+	addressSuiteLock.RLock()
+	defer addressSuiteLock.RUnlock()
+	suite, ok := addressSuiteRegistry[name]
 	if !ok {
-		return nil, fmt.Errorf("hash deriver not found: %s", name)
+		return nil, fmt.Errorf("hash suite not found: %s", name)
 	}
-	return d, nil
+	return suite, nil
 }
 
 // ============================================================================================================

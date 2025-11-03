@@ -19,7 +19,7 @@ type ECDSASecp256k1Signature struct {
 var _ kangarookey.Signature = (*ECDSASecp256k1Signature)(nil)
 
 func (s *ECDSASecp256k1Signature) Bytes() []byte {
-	prefix, err := kangarooregistry.GetPrefixFromType(s.Type())
+	prefix, err := kangarooregistry.GetKeyPrefixFromType(s.Type())
 	if err != nil {
 		panic(fmt.Sprintf("configuration signature<%s> panic: %v", s.Type(), err))
 	}

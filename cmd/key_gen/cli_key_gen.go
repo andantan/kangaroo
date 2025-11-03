@@ -33,7 +33,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("FATAL: Unsupported key algorithm: %v", err)
 	}
-	addressDeriver, err := kangaroocrypto.GetAddressDeriver(*addrAlgo)
+	addressSuite, err := kangaroocrypto.GetAddressSuite(*addrAlgo)
 	if err != nil {
 		log.Fatalf("FATAL: Unsupported address algorithm: %v", err)
 	}
@@ -45,7 +45,7 @@ func main() {
 		log.Fatalf("FATAL: Failed to generate private key: %v", err)
 	}
 	publicKey := privateKey.PublicKey()
-	address := publicKey.Address(addressDeriver)
+	address := publicKey.Address(addressSuite.Deriver())
 
 	keyFile := KeyFile{
 		KeyAlgorithm:  privateKey.Type(),

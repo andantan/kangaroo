@@ -4,12 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 )
-
-func init() {
-	kangarooregistry.RegisterHashDeriver(&Sha256HashDeriver{})
-}
 
 type Sha256HashDeriver struct{}
 

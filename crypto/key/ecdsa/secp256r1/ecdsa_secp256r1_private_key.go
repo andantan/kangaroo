@@ -21,7 +21,7 @@ type ECDSASecp256r1PrivateKey struct {
 var _ kangarookey.PrivateKey = (*ECDSASecp256r1PrivateKey)(nil)
 
 func (k *ECDSASecp256r1PrivateKey) Bytes() []byte {
-	prefix, err := kangarooregistry.GetPrefixFromType(k.Type())
+	prefix, err := kangarooregistry.GetKeyPrefixFromType(k.Type())
 	if err != nil {
 		panic(fmt.Sprintf("configuration private-key<%s> panic: %v", k.Type(), err))
 	}

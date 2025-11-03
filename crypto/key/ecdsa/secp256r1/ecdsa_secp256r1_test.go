@@ -70,7 +70,7 @@ func Test_ECDSA_Secp256r1_PublicKey_Lifecycle(t *testing.T) {
 			// 4. Address Derivation using the current Deriver from the table
 			address := pubKey.Address(tc.deriver)
 			assert.NotNil(t, address)
-			assert.Equal(t, kangaroohash.AddressLength, len(address.Bytes()))
+			assert.Equal(t, kangaroohash.AddressLength+1, len(address.Bytes()))
 		})
 	}
 }

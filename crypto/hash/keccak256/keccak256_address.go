@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	"strings"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 )
 
 type Keccak256Address [kangaroohash.AddressLength]byte
@@ -13,7 +13,11 @@ type Keccak256Address [kangaroohash.AddressLength]byte
 var _ kangaroohash.Address = Keccak256Address{}
 
 func (a Keccak256Address) Bytes() []byte {
-	return a[:]
+	prefix, err := kangarooregistry.GetAddressPrefixFromType(a.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration address<%s> panic: %v", a.Type(), err))
+	}
+	return append([]byte{prefix}, a[:]...)
 }
 
 func (a Keccak256Address) IsZero() bool {
@@ -29,11 +33,11 @@ func (a Keccak256Address) Type() string {
 }
 
 func (a Keccak256Address) String() string {
-	return "0x" + hex.EncodeToString(a[:])
+	return "0x" + hex.EncodeToString(a.Bytes())
 }
 
 func (a Keccak256Address) ShortString(l int) string {
-	as := hex.EncodeToString(a[:])
+	as := hex.EncodeToString(a.Bytes())
 
 	if l > len(as) {
 		l = len(as)
@@ -117,27 +121,4 @@ func Keccak256AddressFromBytes(b []byte) (kangaroohash.Address, error) {
 	copy(a[:], b)
 
 	return a, nil
-}
-
-func Keccak256AddressFromString(s string) (kangaroohash.Address, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangaroohash.AddressHexLength {
-		return Keccak256Address{}, fmt.Errorf("invalid hex string length (%d), must be 40", len(s))
-	}
-
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		return Keccak256Address{}, err
-	}
-
-	return Keccak256AddressFromBytes(b)
-}
-
-func FilledKeccak256Address(b byte) kangaroohash.Address {
-	var a Keccak256Address
-	for i := range kangaroohash.AddressLength {
-		a[i] = b
-	}
-
-	return a
 }

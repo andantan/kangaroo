@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	"strings"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 )
 
 type Keccak256Hash [kangaroohash.HashLength]byte
@@ -13,7 +13,11 @@ type Keccak256Hash [kangaroohash.HashLength]byte
 var _ kangaroohash.Hash = Keccak256Hash{}
 
 func (h Keccak256Hash) Bytes() []byte {
-	return h[:]
+	prefix, err := kangarooregistry.GetHashPrefixFromType(h.Type())
+	if err != nil {
+		panic(fmt.Sprintf("configuration hash<%s> panic: %v", h.Type(), err))
+	}
+	return append([]byte{prefix}, h[:]...)
 }
 
 func (h Keccak256Hash) IsZero() bool {
@@ -29,11 +33,11 @@ func (h Keccak256Hash) Type() string {
 }
 
 func (h Keccak256Hash) String() string {
-	return "0x" + hex.EncodeToString(h[:])
+	return "0x" + hex.EncodeToString(h.Bytes())
 }
 
 func (h Keccak256Hash) ShortString(l int) string {
-	hs := hex.EncodeToString(h[:])
+	hs := hex.EncodeToString(h.Bytes())
 
 	if l > len(hs) {
 		l = len(hs)
@@ -117,27 +121,4 @@ func Keccak256HashFromBytes(b []byte) (kangaroohash.Hash, error) {
 	copy(h[:], b)
 
 	return h, nil
-}
-
-func Keccak256HashFromString(s string) (kangaroohash.Hash, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangaroohash.HashHexLength {
-		return Keccak256Hash{}, fmt.Errorf("invalid hex string length (%d), must be 64", len(s))
-	}
-
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		return Keccak256Hash{}, err
-	}
-
-	return Keccak256HashFromBytes(b)
-}
-
-func FilledKeccak256Hash(b byte) kangaroohash.Hash {
-	var h Keccak256Hash
-	for i := range kangaroohash.HashLength {
-		h[i] = b
-	}
-
-	return h
 }

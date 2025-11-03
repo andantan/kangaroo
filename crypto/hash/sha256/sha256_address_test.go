@@ -2,25 +2,42 @@ package sha256
 
 import (
 	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_SHA256_Address_BytesAndFromBytes(t *testing.T) {
-	originalBytes := make([]byte, kangaroohash.AddressLength)
-	originalBytes[0] = 0xaa
-	originalBytes[19] = 0xbb
+	shaDeriver := &Sha256AddressDeriver{}
+	testString := "sha256_address"
+	originalAddress := shaDeriver.Derive([]byte(testString))
+	originalBytes := originalAddress.Bytes()
+	assert.Equal(t, kangarooregistry.SHA256AddressPrefixByte, originalBytes[0])
+	assert.Equal(t, kangaroohash.AddressLength+1, len(originalBytes))
 
 	// FromBytes
-	addr, err := Sha256AddressFromBytes(originalBytes)
-	assert.NoError(t, err)
+	fromAddressBytes, err := kangarooregistry.ParseAddressFromBytes(originalBytes)
+	require.NoError(t, err)
+	assert.True(t, originalAddress.Equal(fromAddressBytes))
 
-	// Bytes
-	resultBytes := addr.Bytes()
-	assert.Equal(t, originalBytes, resultBytes)
+	_, err = kangarooregistry.ParseAddressFromBytes([]byte{1, 2, 3})
+	assert.Error(t, err)
+}
 
-	_, err = Sha256AddressFromBytes([]byte{1, 2, 3})
+func Test_SHA256_Address_StringAndFromString(t *testing.T) {
+	shaDeriver := &Sha256AddressDeriver{}
+	testString := "sha256_address"
+	originalAddress := shaDeriver.Derive([]byte(testString))
+	originalString := originalAddress.String()
+
+	// FromString
+	fromAddressString, err := kangarooregistry.ParseAddressFromString(originalString)
+	require.NoError(t, err)
+	assert.True(t, originalAddress.Equal(fromAddressString))
+
+	_, err = kangarooregistry.ParseAddressFromString("0x15eaab4")
 	assert.Error(t, err)
 }
 

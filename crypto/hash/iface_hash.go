@@ -33,3 +33,9 @@ type HashDeriver interface {
 type Hashable interface {
 	Hash(deriver HashDeriver) (Hash, error)
 }
+
+type HashSuite interface {
+	Type() string
+	Deriver() HashDeriver
+	HashFromBytes(data []byte) (Hash, error)
+}

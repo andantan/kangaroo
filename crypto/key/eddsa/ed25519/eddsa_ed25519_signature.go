@@ -17,7 +17,7 @@ type EdDSAEd25519Signature struct {
 var _ kangarookey.Signature = (*EdDSAEd25519Signature)(nil)
 
 func (s *EdDSAEd25519Signature) Bytes() []byte {
-	prefix, err := kangarooregistry.GetPrefixFromType(s.Type())
+	prefix, err := kangarooregistry.GetKeyPrefixFromType(s.Type())
 	if err != nil {
 		panic(fmt.Sprintf("configuration signature<%s> panic: %v", s.Type(), err))
 	}
