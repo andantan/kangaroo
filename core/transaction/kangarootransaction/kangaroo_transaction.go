@@ -7,7 +7,7 @@ import (
 	"github.com/andantan/kangaroo/crypto"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/andantan/kangaroo/crypto/key"
-	corepb "github.com/andantan/kangaroo/proto/core/pb"
+	kangarootxpb "github.com/andantan/kangaroo/proto/core/transaction/pb"
 	"google.golang.org/protobuf/proto"
 	"math/big"
 )
@@ -74,7 +74,7 @@ func (tx *KangarooTransaction) HashForSigning(deriver hash.HashDeriver) (hash.Ha
 		valBytes = tx.Value.Bytes()
 	}
 
-	dataProto := &corepb.KangarooTransactionData{
+	dataProto := &kangarootxpb.KangarooTransactionData{
 		ToAddress: toBytes,
 		Value:     valBytes,
 		Data:      tx.Data,
@@ -120,7 +120,7 @@ func (tx *KangarooTransaction) ToProto() (proto.Message, error) {
 		}
 	}
 
-	return &corepb.KangarooTransaction{
+	return &kangarootxpb.KangarooTransaction{
 		ToAddress: toBytes,
 		Value:     valBytes,
 		Data:      tx.Data,
@@ -131,7 +131,7 @@ func (tx *KangarooTransaction) ToProto() (proto.Message, error) {
 }
 
 func (tx *KangarooTransaction) FromProto(message proto.Message) error {
-	pb, ok := message.(*corepb.KangarooTransaction)
+	pb, ok := message.(*kangarootxpb.KangarooTransaction)
 	if !ok {
 		return fmt.Errorf("cannot deserialize protobuf KangarooTransaction")
 	}
@@ -173,7 +173,7 @@ func (tx *KangarooTransaction) FromProto(message proto.Message) error {
 }
 
 func (tx *KangarooTransaction) NewProto() proto.Message {
-	return &corepb.KangarooTransaction{}
+	return &kangarootxpb.KangarooTransaction{}
 }
 
 func (tx *KangarooTransaction) Sign(privKey key.PrivateKey, deriver hash.HashDeriver) error {
@@ -211,6 +211,20 @@ func (tx *KangarooTransaction) Verify(deriver hash.HashDeriver) error {
 	}
 
 	return nil
+}
+
+func (tx *KangarooTransaction) String() string {
+	signerAddr := "<nil>"
+	if tx.Signer != nil {
+		signerAddr = tx.Signer.String()[:10] + "..."
+	}
+
+	return fmt.Sprintf("Transaction<%s>{Nonce: %d, DataSize: %d, Signer: %s}",
+		tx.Type(),
+		tx.Nonce,
+		len(tx.Data),
+		signerAddr,
+	)
 }
 
 func (tx *KangarooTransaction) Type() string {

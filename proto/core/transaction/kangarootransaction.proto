@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package core;
+package transaction;
 
-option go_package = "core/pb;corepb";
+option go_package = "core/transaction/pb;kangarootxpb";
 
 message KangarooTransaction {
   bytes to_address = 1;

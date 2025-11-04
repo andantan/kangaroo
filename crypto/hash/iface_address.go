@@ -1,16 +1,19 @@
 package hash
 
+import "github.com/andantan/kangaroo/types/format"
+
 const (
 	AddressLength    = 20
 	AddressHexLength = AddressLength * 2
 )
 
 type Address interface {
-	Bytes() []byte
+	format.Byteable
+	format.Stringable
+	format.StringTypable
+	format.Validatable
+
 	IsZero() bool
-	IsValid() bool
-	Type() string
-	String() string
 	ShortString(length int) string
 	Equal(other Address) bool
 	Gt(other Address) bool
@@ -20,7 +23,8 @@ type Address interface {
 }
 
 type AddressDeriver interface {
-	Type() string
+	format.StringTypable
+
 	Derive(data []byte) Address
 }
 
@@ -29,7 +33,8 @@ type Addressable interface {
 }
 
 type AddressSuite interface {
-	Type() string
+	format.StringTypable
+
 	Deriver() AddressDeriver
 	AddressFromBytes(data []byte) (Address, error)
 }

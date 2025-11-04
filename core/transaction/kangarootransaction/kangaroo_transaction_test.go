@@ -6,7 +6,7 @@ import (
 	_ "github.com/andantan/kangaroo/crypto/all"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/andantan/kangaroo/crypto/key"
-	corepb "github.com/andantan/kangaroo/proto/core/pb"
+	kangarootxpb "github.com/andantan/kangaroo/proto/core/transaction/pb"
 	"github.com/andantan/kangaroo/registry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -255,7 +255,7 @@ func TestKangarooTransaction_FromProto_Failures(t *testing.T) {
 	invalidAddressBytes := []byte{0xBB, 0x01, 0x02, 0x03}
 
 	t.Run("should fail with invalid signer bytes", func(t *testing.T) {
-		pbTx := &corepb.KangarooTransaction{
+		pbTx := &kangarootxpb.KangarooTransaction{
 			Signer: invalidPublicKeyBytes, // tampering public key
 		}
 		tx := new(KangarooTransaction)
@@ -264,7 +264,7 @@ func TestKangarooTransaction_FromProto_Failures(t *testing.T) {
 	})
 
 	t.Run("should fail with invalid signature bytes", func(t *testing.T) {
-		pbTx := &corepb.KangarooTransaction{
+		pbTx := &kangarootxpb.KangarooTransaction{
 			Signature: invalidSignatureBytes, // tampering signature
 		}
 		tx := new(KangarooTransaction)
@@ -273,7 +273,7 @@ func TestKangarooTransaction_FromProto_Failures(t *testing.T) {
 	})
 
 	t.Run("should fail with invalid address bytes", func(t *testing.T) {
-		pbTx := &corepb.KangarooTransaction{
+		pbTx := &kangarootxpb.KangarooTransaction{
 			ToAddress: invalidAddressBytes, // tampering address
 		}
 		tx := new(KangarooTransaction)

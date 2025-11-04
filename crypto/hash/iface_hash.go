@@ -1,5 +1,7 @@
 package hash
 
+import "github.com/andantan/kangaroo/types/format"
+
 const (
 	HashLength    = 32
 	HashHexLength = HashLength * 2
@@ -12,11 +14,12 @@ const (
 )
 
 type Hash interface {
-	Bytes() []byte
+	format.Byteable
+	format.Stringable
+	format.StringTypable
+	format.Validatable
+
 	IsZero() bool
-	IsValid() bool
-	Type() string
-	String() string
 	ShortString(length int) string
 	Equal(other Hash) bool
 	Gt(other Hash) bool
@@ -26,7 +29,8 @@ type Hash interface {
 }
 
 type HashDeriver interface {
-	Type() string
+	format.StringTypable
+
 	Derive(data []byte) Hash
 }
 
@@ -35,7 +39,8 @@ type Hashable interface {
 }
 
 type HashSuite interface {
-	Type() string
+	format.StringTypable
+
 	Deriver() HashDeriver
 	HashFromBytes(data []byte) (Hash, error)
 }

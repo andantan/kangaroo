@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.30.2
-// source: core/kangarootransaction.proto
+// source: core/transaction/kangarootransaction.proto
 
-package corepb
+package kangarootxpb
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -35,7 +35,7 @@ type KangarooTransaction struct {
 
 func (x *KangarooTransaction) Reset() {
 	*x = KangarooTransaction{}
-	mi := &file_core_kangarootransaction_proto_msgTypes[0]
+	mi := &file_core_transaction_kangarootransaction_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -47,7 +47,7 @@ func (x *KangarooTransaction) String() string {
 func (*KangarooTransaction) ProtoMessage() {}
 
 func (x *KangarooTransaction) ProtoReflect() protoreflect.Message {
-	mi := &file_core_kangarootransaction_proto_msgTypes[0]
+	mi := &file_core_transaction_kangarootransaction_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -60,7 +60,7 @@ func (x *KangarooTransaction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KangarooTransaction.ProtoReflect.Descriptor instead.
 func (*KangarooTransaction) Descriptor() ([]byte, []int) {
-	return file_core_kangarootransaction_proto_rawDescGZIP(), []int{0}
+	return file_core_transaction_kangarootransaction_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *KangarooTransaction) GetToAddress() []byte {
@@ -117,7 +117,7 @@ type KangarooTransactionData struct {
 
 func (x *KangarooTransactionData) Reset() {
 	*x = KangarooTransactionData{}
-	mi := &file_core_kangarootransaction_proto_msgTypes[1]
+	mi := &file_core_transaction_kangarootransaction_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -129,7 +129,7 @@ func (x *KangarooTransactionData) String() string {
 func (*KangarooTransactionData) ProtoMessage() {}
 
 func (x *KangarooTransactionData) ProtoReflect() protoreflect.Message {
-	mi := &file_core_kangarootransaction_proto_msgTypes[1]
+	mi := &file_core_transaction_kangarootransaction_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -142,7 +142,7 @@ func (x *KangarooTransactionData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KangarooTransactionData.ProtoReflect.Descriptor instead.
 func (*KangarooTransactionData) Descriptor() ([]byte, []int) {
-	return file_core_kangarootransaction_proto_rawDescGZIP(), []int{1}
+	return file_core_transaction_kangarootransaction_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *KangarooTransactionData) GetToAddress() []byte {
@@ -173,11 +173,11 @@ func (x *KangarooTransactionData) GetNonce() uint64 {
 	return 0
 }
 
-var File_core_kangarootransaction_proto protoreflect.FileDescriptor
+var File_core_transaction_kangarootransaction_proto protoreflect.FileDescriptor
 
-const file_core_kangarootransaction_proto_rawDesc = "" +
+const file_core_transaction_kangarootransaction_proto_rawDesc = "" +
 	"\n" +
-	"\x1ecore/kangarootransaction.proto\x12\x04core\"\xaa\x01\n" +
+	"*core/transaction/kangarootransaction.proto\x12\vtransaction\"\xaa\x01\n" +
 	"\x13KangarooTransaction\x12\x1d\n" +
 	"\n" +
 	"to_address\x18\x01 \x01(\fR\ttoAddress\x12\x14\n" +
@@ -191,26 +191,26 @@ const file_core_kangarootransaction_proto_rawDesc = "" +
 	"to_address\x18\x01 \x01(\fR\ttoAddress\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\fR\x05value\x12\x12\n" +
 	"\x04data\x18\x03 \x01(\fR\x04data\x12\x14\n" +
-	"\x05nonce\x18\x04 \x01(\x04R\x05nonceB\x10Z\x0ecore/pb;corepbb\x06proto3"
+	"\x05nonce\x18\x04 \x01(\x04R\x05nonceB\"Z core/transaction/pb;kangarootxpbb\x06proto3"
 
 var (
-	file_core_kangarootransaction_proto_rawDescOnce sync.Once
-	file_core_kangarootransaction_proto_rawDescData []byte
+	file_core_transaction_kangarootransaction_proto_rawDescOnce sync.Once
+	file_core_transaction_kangarootransaction_proto_rawDescData []byte
 )
 
-func file_core_kangarootransaction_proto_rawDescGZIP() []byte {
-	file_core_kangarootransaction_proto_rawDescOnce.Do(func() {
-		file_core_kangarootransaction_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_core_kangarootransaction_proto_rawDesc), len(file_core_kangarootransaction_proto_rawDesc)))
+func file_core_transaction_kangarootransaction_proto_rawDescGZIP() []byte {
+	file_core_transaction_kangarootransaction_proto_rawDescOnce.Do(func() {
+		file_core_transaction_kangarootransaction_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_core_transaction_kangarootransaction_proto_rawDesc), len(file_core_transaction_kangarootransaction_proto_rawDesc)))
 	})
-	return file_core_kangarootransaction_proto_rawDescData
+	return file_core_transaction_kangarootransaction_proto_rawDescData
 }
 
-var file_core_kangarootransaction_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_core_kangarootransaction_proto_goTypes = []any{
-	(*KangarooTransaction)(nil),     // 0: core.KangarooTransaction
-	(*KangarooTransactionData)(nil), // 1: core.KangarooTransactionData
+var file_core_transaction_kangarootransaction_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_core_transaction_kangarootransaction_proto_goTypes = []any{
+	(*KangarooTransaction)(nil),     // 0: transaction.KangarooTransaction
+	(*KangarooTransactionData)(nil), // 1: transaction.KangarooTransactionData
 }
-var file_core_kangarootransaction_proto_depIdxs = []int32{
+var file_core_transaction_kangarootransaction_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -218,26 +218,26 @@ var file_core_kangarootransaction_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_core_kangarootransaction_proto_init() }
-func file_core_kangarootransaction_proto_init() {
-	if File_core_kangarootransaction_proto != nil {
+func init() { file_core_transaction_kangarootransaction_proto_init() }
+func file_core_transaction_kangarootransaction_proto_init() {
+	if File_core_transaction_kangarootransaction_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_kangarootransaction_proto_rawDesc), len(file_core_kangarootransaction_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_transaction_kangarootransaction_proto_rawDesc), len(file_core_transaction_kangarootransaction_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_core_kangarootransaction_proto_goTypes,
-		DependencyIndexes: file_core_kangarootransaction_proto_depIdxs,
-		MessageInfos:      file_core_kangarootransaction_proto_msgTypes,
+		GoTypes:           file_core_transaction_kangarootransaction_proto_goTypes,
+		DependencyIndexes: file_core_transaction_kangarootransaction_proto_depIdxs,
+		MessageInfos:      file_core_transaction_kangarootransaction_proto_msgTypes,
 	}.Build()
-	File_core_kangarootransaction_proto = out.File
-	file_core_kangarootransaction_proto_goTypes = nil
-	file_core_kangarootransaction_proto_depIdxs = nil
+	File_core_transaction_kangarootransaction_proto = out.File
+	file_core_transaction_kangarootransaction_proto_goTypes = nil
+	file_core_transaction_kangarootransaction_proto_depIdxs = nil
 }

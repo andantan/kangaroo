@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package block;
+
+option go_package = "core/block/pb;kangaroobodypb";
+
+message KangarooBody {
+  repeated bytes transactions = 1;
+}

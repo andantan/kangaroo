@@ -4,6 +4,7 @@ import (
 	"github.com/andantan/kangaroo/codec"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/types/format"
 	"math/big"
 )
 
@@ -12,13 +13,12 @@ const (
 )
 
 type Transaction interface {
-	hash.Hashable
-	key.Signable
-	codec.ProtoCodec
-
-	Sign(privKey key.PrivateKey, deriver hash.HashDeriver) error
-	Verify(deriver hash.HashDeriver) error
-	Type() string
+	hash.Hashable        // txid
+	key.Signable         // digest
+	key.EmbeddedSigner   // sign, verify
+	codec.ProtoCodec     // protobuf
+	format.Stringable    // string format
+	format.StringTypable // string type
 
 	GetValue() *big.Int
 	GetData() []byte
@@ -27,6 +27,7 @@ type Transaction interface {
 }
 
 type TransactionSuite interface {
-	Type() string
+	format.StringTypable
+
 	TransactionFromBytes(data []byte) (Transaction, error)
 }
