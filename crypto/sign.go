@@ -2,16 +2,16 @@ package crypto
 
 import (
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	kangarookey "github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/crypto/hash"
+	"github.com/andantan/kangaroo/crypto/key"
 )
 
 func Sign(
-	signer kangarookey.PrivateKey,
-	item kangaroohash.Hashable,
-	hasher kangaroohash.HashDeriver,
-) (kangarookey.Signature, error) {
-	h, err := item.Hash(hasher)
+	signer key.PrivateKey,
+	item key.Signable,
+	hasher hash.HashDeriver,
+) (key.Signature, error) {
+	h, err := item.HashForSigning(hasher)
 	if err != nil {
 		return nil, fmt.Errorf("failed to hash: %w", err)
 	}
@@ -25,9 +25,9 @@ func Sign(
 }
 
 func VerifySignature(
-	pubKey kangarookey.PublicKey,
-	sig kangarookey.Signature,
-	hash kangaroohash.Hash,
+	pubKey key.PublicKey,
+	sig key.Signature,
+	hash hash.Hash,
 ) error {
 	if pubKey == nil {
 		return fmt.Errorf("public key cannot be nil")

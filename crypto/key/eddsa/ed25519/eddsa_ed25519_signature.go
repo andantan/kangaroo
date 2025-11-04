@@ -4,9 +4,8 @@ import (
 	"crypto/ed25519"
 	"encoding/hex"
 	"fmt"
-	kangarookey "github.com/andantan/kangaroo/crypto/key"
-	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
+	"github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/crypto/key/eddsa"
 )
 
 type EdDSAEd25519Signature struct {
@@ -14,14 +13,10 @@ type EdDSAEd25519Signature struct {
 	Scalar [32]byte // S
 }
 
-var _ kangarookey.Signature = (*EdDSAEd25519Signature)(nil)
+var _ key.Signature = (*EdDSAEd25519Signature)(nil)
 
 func (s *EdDSAEd25519Signature) Bytes() []byte {
-	prefix, err := kangarooregistry.GetKeyPrefixFromType(s.Type())
-	if err != nil {
-		panic(fmt.Sprintf("configuration signature<%s> panic: %v", s.Type(), err))
-	}
-	b := append([]byte{prefix}, s.Point[:]...)
+	b := append([]byte(nil), s.Point[:]...)
 	b = append(b, s.Scalar[:]...)
 	return b
 }
@@ -35,10 +30,10 @@ func (s *EdDSAEd25519Signature) IsValid() bool {
 }
 
 func (s *EdDSAEd25519Signature) Type() string {
-	return kangarooeddsa.EdDSAEd25519Type
+	return eddsa.EdDSAEd25519Type
 }
 
-func (s *EdDSAEd25519Signature) Equal(other kangarookey.Signature) bool {
+func (s *EdDSAEd25519Signature) Equal(other key.Signature) bool {
 	if s == nil || other == nil {
 		return false
 	}
@@ -51,7 +46,7 @@ func (s *EdDSAEd25519Signature) Equal(other kangarookey.Signature) bool {
 	return s.Point == otherSig.Point && s.Scalar == otherSig.Scalar
 }
 
-func (s *EdDSAEd25519Signature) Verify(pubkey kangarookey.PublicKey, data []byte) bool {
+func (s *EdDSAEd25519Signature) Verify(pubkey key.PublicKey, data []byte) bool {
 	eddsaPubKey, ok := pubkey.(*EdDSAEd25519PublicKey)
 	if !ok {
 		return false
@@ -61,9 +56,9 @@ func (s *EdDSAEd25519Signature) Verify(pubkey kangarookey.PublicKey, data []byte
 	return ed25519.Verify(eddsaPubKey.Key, data, sig)
 }
 
-func EdDSAEd25519SignatureFromBytes(b []byte) (kangarookey.Signature, error) {
-	if len(b) != kangarooeddsa.EdDSASignatureBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", kangarooeddsa.EdDSAEd25519Type, kangarooeddsa.EdDSASignatureBytesLength, len(b))
+func EdDSAEd25519SignatureFromBytes(b []byte) (key.Signature, error) {
+	if len(b) != eddsa.EdDSASignatureBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSASignatureBytesLength, len(b))
 	}
 
 	pointArr := [32]byte{}

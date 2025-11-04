@@ -5,8 +5,17 @@ package core;
 option go_package = "core/pb;corepb";
 
 message KangarooTransaction {
-  bytes data = 1;
-  uint64 nonce = 2;
-  bytes signature = 3;
-  bytes signer = 4;
+  bytes to_address = 1;
+  bytes value = 2;
+  bytes data = 3;
+  uint64 nonce = 4;
+  bytes signature = 5;
+  bytes signer = 6;
+}
+
+message KangarooTransactionData {
+  bytes to_address = 1;
+  bytes value = 2;
+  bytes data = 3;
+  uint64 nonce = 4;
 }

@@ -4,23 +4,39 @@ import (
 	"crypto/ed25519"
 	"encoding/hex"
 	"fmt"
-	kangarookey "github.com/andantan/kangaroo/crypto/key"
-	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
+	"github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/crypto/key/eddsa"
 )
 
 type EdDSAEd25519PrivateKey struct {
 	key ed25519.PrivateKey
 }
 
-var _ kangarookey.PrivateKey = (*EdDSAEd25519PrivateKey)(nil)
+var _ key.PrivateKey = (*EdDSAEd25519PrivateKey)(nil)
+
+func GenerateEdDSAEd25519PrivateKey() (key.PrivateKey, error) {
+	_, k, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &EdDSAEd25519PrivateKey{
+		key: k,
+	}, nil
+}
+
+func EdDSAEd25519PrivateKeyFromBytes(b []byte) (key.PrivateKey, error) {
+	if len(b) != eddsa.EdDSAPrivateKeyBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for private-key<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSAPrivateKeyBytesLength, len(b))
+	}
+
+	return &EdDSAEd25519PrivateKey{
+		key: b,
+	}, nil
+}
 
 func (k *EdDSAEd25519PrivateKey) Bytes() []byte {
-	prefix, err := kangarooregistry.GetKeyPrefixFromType(k.Type())
-	if err != nil {
-		panic(fmt.Sprintf("configuration private-key<%s> panic: %v", k.Type(), err))
-	}
-	return append([]byte{prefix}, k.key...)
+	return k.key[:]
 }
 
 func (k *EdDSAEd25519PrivateKey) String() string {
@@ -32,17 +48,17 @@ func (k *EdDSAEd25519PrivateKey) IsValid() bool {
 }
 
 func (k *EdDSAEd25519PrivateKey) Type() string {
-	return kangarooeddsa.EdDSAEd25519Type
+	return eddsa.EdDSAEd25519Type
 }
 
-func (k *EdDSAEd25519PrivateKey) PublicKey() kangarookey.PublicKey {
+func (k *EdDSAEd25519PrivateKey) PublicKey() key.PublicKey {
 	pk := k.key.Public().(ed25519.PublicKey)
 	return &EdDSAEd25519PublicKey{
 		Key: pk,
 	}
 }
 
-func (k *EdDSAEd25519PrivateKey) Sign(data []byte) (kangarookey.Signature, error) {
+func (k *EdDSAEd25519PrivateKey) Sign(data []byte) (key.Signature, error) {
 	sig := ed25519.Sign(k.key, data)
 	point := [32]byte{}
 	scalar := [32]byte{}
@@ -53,26 +69,5 @@ func (k *EdDSAEd25519PrivateKey) Sign(data []byte) (kangarookey.Signature, error
 	return &EdDSAEd25519Signature{
 		Point:  point,
 		Scalar: scalar,
-	}, nil
-}
-
-func GenerateEdDSAEd25519PrivateKey() (kangarookey.PrivateKey, error) {
-	_, k, err := ed25519.GenerateKey(nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return &EdDSAEd25519PrivateKey{
-		key: k,
-	}, nil
-}
-
-func EdDSAEd25519PrivateKeyFromBytes(b []byte) (kangarookey.PrivateKey, error) {
-	if len(b) != kangarooeddsa.EdDSAPrivateKeyBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for private-key<%s>: expected %d, got %d", kangarooeddsa.EdDSAEd25519Type, kangarooeddsa.EdDSAPrivateKeyBytesLength, len(b))
-	}
-
-	return &EdDSAEd25519PrivateKey{
-		key: b,
 	}, nil
 }

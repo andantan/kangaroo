@@ -1,8 +1,7 @@
-package registry
+package hash
 
 import (
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
 )
 
 const (
@@ -12,8 +11,8 @@ const (
 )
 
 var typeToHashPrefix = map[string]byte{
-	kangaroohash.Sha256Type:    SHA256HashPrefixByte,
-	kangaroohash.Keccak256Type: KECCAK256HashByte,
+	Sha256Type:    SHA256HashPrefixByte,
+	Keccak256Type: KECCAK256HashByte,
 }
 
 var hashPrefixToType = make(map[byte]string)

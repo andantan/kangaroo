@@ -3,18 +3,18 @@ package sha256
 import (
 	"crypto/sha256"
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	"github.com/andantan/kangaroo/crypto/hash"
 )
 
 type Sha256HashDeriver struct{}
 
-var _ kangaroohash.HashDeriver = (*Sha256HashDeriver)(nil)
+var _ hash.HashDeriver = (*Sha256HashDeriver)(nil)
 
 func (_ *Sha256HashDeriver) Type() string {
-	return kangaroohash.Sha256Type
+	return hash.Sha256Type
 }
 
-func (_ *Sha256HashDeriver) Derive(data []byte) kangaroohash.Hash {
+func (_ *Sha256HashDeriver) Derive(data []byte) hash.Hash {
 	hashBytes := sha256.Sum256(data)
 	h, err := Sha256HashFromBytes(hashBytes[:])
 	if err != nil {

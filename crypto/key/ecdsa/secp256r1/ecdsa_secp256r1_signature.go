@@ -5,9 +5,8 @@ import (
 	"crypto/elliptic"
 	"encoding/hex"
 	"fmt"
-	kangarookey "github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/crypto/key"
 	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
 	"math/big"
 )
 
@@ -16,18 +15,14 @@ type ECDSASecp256r1Signature struct {
 	S *big.Int
 }
 
-var _ kangarookey.Signature = (*ECDSASecp256r1Signature)(nil)
+var _ key.Signature = (*ECDSASecp256r1Signature)(nil)
 
 func (s *ECDSASecp256r1Signature) Bytes() []byte {
-	prefix, err := kangarooregistry.GetKeyPrefixFromType(s.Type())
-	if err != nil {
-		panic(fmt.Sprintf("configuration signature<%s> panic: %v", s.Type(), err))
-	}
 	rBytes := make([]byte, 32)
 	sBytes := make([]byte, 32)
 	s.R.FillBytes(rBytes)
 	s.S.FillBytes(sBytes)
-	b := append([]byte{prefix}, rBytes...)
+	b := append([]byte(nil), rBytes...)
 	b = append(b, sBytes...)
 	return b
 }
@@ -50,7 +45,7 @@ func (s *ECDSASecp256r1Signature) Type() string {
 	return kangarooecdsa.ECDSASecp256r1Type
 }
 
-func (s *ECDSASecp256r1Signature) Equal(other kangarookey.Signature) bool {
+func (s *ECDSASecp256r1Signature) Equal(other key.Signature) bool {
 	if s == nil || other == nil {
 		return false
 	}
@@ -63,7 +58,7 @@ func (s *ECDSASecp256r1Signature) Equal(other kangarookey.Signature) bool {
 	return s.R.Cmp(otherSig.R) == 0 && s.S.Cmp(otherSig.S) == 0
 }
 
-func (s *ECDSASecp256r1Signature) Verify(pubKey kangarookey.PublicKey, data []byte) bool {
+func (s *ECDSASecp256r1Signature) Verify(pubKey key.PublicKey, data []byte) bool {
 	ecdsaPubKey, ok := pubKey.(*ECDSASecp256r1PublicKey)
 	if !ok {
 		return false
@@ -83,7 +78,7 @@ func (s *ECDSASecp256r1Signature) Verify(pubKey kangarookey.PublicKey, data []by
 	return ecdsa.Verify(k, data, s.R, s.S)
 }
 
-func ECDSASecp256r1SignatureFromBytes(b []byte) (kangarookey.Signature, error) {
+func ECDSASecp256r1SignatureFromBytes(b []byte) (key.Signature, error) {
 	if len(b) != kangarooecdsa.ECDSASignatureBytesLength {
 		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256r1Type, kangarooecdsa.ECDSASignatureBytesLength, len(b))
 	}

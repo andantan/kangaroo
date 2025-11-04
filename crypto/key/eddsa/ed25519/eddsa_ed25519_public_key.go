@@ -4,24 +4,19 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	kangarookey "github.com/andantan/kangaroo/crypto/key"
-	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
-	"github.com/andantan/kangaroo/crypto/registry"
+	"github.com/andantan/kangaroo/crypto/hash"
+	"github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/crypto/key/eddsa"
 )
 
 type EdDSAEd25519PublicKey struct {
 	Key []byte
 }
 
-var _ kangarookey.PublicKey = (*EdDSAEd25519PublicKey)(nil)
+var _ key.PublicKey = (*EdDSAEd25519PublicKey)(nil)
 
 func (k *EdDSAEd25519PublicKey) Bytes() []byte {
-	prefix, err := registry.GetKeyPrefixFromType(k.Type())
-	if err != nil {
-		panic(fmt.Sprintf("configuration public-key<%s> panic: %v", k.Type(), err))
-	}
-	return append([]byte{prefix}, k.Key...)
+	return k.Key[:]
 }
 
 func (k *EdDSAEd25519PublicKey) String() string {
@@ -31,7 +26,7 @@ func (k *EdDSAEd25519PublicKey) String() string {
 func (k *EdDSAEd25519PublicKey) IsValid() bool {
 	// This performs a length check. Full cryptographic validation of the point
 	// is implicitly handled by the ed25519.Verify function.
-	if k.Key == nil || len(k.Key) != kangarooeddsa.EdDSAPublicKeyBytesLength {
+	if k.Key == nil || len(k.Key) != eddsa.EdDSAPublicKeyBytesLength {
 		return false
 	}
 
@@ -39,10 +34,10 @@ func (k *EdDSAEd25519PublicKey) IsValid() bool {
 }
 
 func (k *EdDSAEd25519PublicKey) Type() string {
-	return kangarooeddsa.EdDSAEd25519Type
+	return eddsa.EdDSAEd25519Type
 }
 
-func (k *EdDSAEd25519PublicKey) Equal(other kangarookey.PublicKey) bool {
+func (k *EdDSAEd25519PublicKey) Equal(other key.PublicKey) bool {
 	if k == nil || other == nil {
 		return false
 	}
@@ -55,13 +50,13 @@ func (k *EdDSAEd25519PublicKey) Equal(other kangarookey.PublicKey) bool {
 	return bytes.Equal(k.Bytes(), otherKey.Bytes())
 }
 
-func (k *EdDSAEd25519PublicKey) Address(deriver kangaroohash.AddressDeriver) kangaroohash.Address {
+func (k *EdDSAEd25519PublicKey) Address(deriver hash.AddressDeriver) hash.Address {
 	return deriver.Derive(k.Key)
 }
 
-func EdDSAEd25519PublicKeyFromBytes(b []byte) (kangarookey.PublicKey, error) {
-	if len(b) != kangarooeddsa.EdDSAPublicKeyBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for public-key<%s>: expected %d, got %d", kangarooeddsa.EdDSAEd25519Type, kangarooeddsa.EdDSAPublicKeyBytesLength, len(b))
+func EdDSAEd25519PublicKeyFromBytes(b []byte) (key.PublicKey, error) {
+	if len(b) != eddsa.EdDSAPublicKeyBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for public-key<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSAPublicKeyBytesLength, len(b))
 	}
 
 	keyBytes := append([]byte(nil), b...)

@@ -4,20 +4,15 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
+	"github.com/andantan/kangaroo/crypto/hash"
 )
 
-type Keccak256Hash [kangaroohash.HashLength]byte
+type Keccak256Hash [hash.HashLength]byte
 
-var _ kangaroohash.Hash = Keccak256Hash{}
+var _ hash.Hash = Keccak256Hash{}
 
 func (h Keccak256Hash) Bytes() []byte {
-	prefix, err := kangarooregistry.GetHashPrefixFromType(h.Type())
-	if err != nil {
-		panic(fmt.Sprintf("configuration hash<%s> panic: %v", h.Type(), err))
-	}
-	return append([]byte{prefix}, h[:]...)
+	return h[:]
 }
 
 func (h Keccak256Hash) IsZero() bool {
@@ -29,7 +24,7 @@ func (h Keccak256Hash) IsValid() bool {
 }
 
 func (h Keccak256Hash) Type() string {
-	return kangaroohash.Keccak256Type
+	return hash.Keccak256Type
 }
 
 func (h Keccak256Hash) String() string {
@@ -46,7 +41,7 @@ func (h Keccak256Hash) ShortString(l int) string {
 	return "0x" + hs[:l]
 }
 
-func (h Keccak256Hash) Equal(other kangaroohash.Hash) bool {
+func (h Keccak256Hash) Equal(other hash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -59,7 +54,7 @@ func (h Keccak256Hash) Equal(other kangaroohash.Hash) bool {
 	return h == otherHash
 }
 
-func (h Keccak256Hash) Gt(other kangaroohash.Hash) bool {
+func (h Keccak256Hash) Gt(other hash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -72,7 +67,7 @@ func (h Keccak256Hash) Gt(other kangaroohash.Hash) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) > 0
 }
 
-func (h Keccak256Hash) Gte(other kangaroohash.Hash) bool {
+func (h Keccak256Hash) Gte(other hash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -85,7 +80,7 @@ func (h Keccak256Hash) Gte(other kangaroohash.Hash) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) >= 0
 }
 
-func (h Keccak256Hash) Lt(other kangaroohash.Hash) bool {
+func (h Keccak256Hash) Lt(other hash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -98,7 +93,7 @@ func (h Keccak256Hash) Lt(other kangaroohash.Hash) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) < 0
 }
 
-func (h Keccak256Hash) Lte(other kangaroohash.Hash) bool {
+func (h Keccak256Hash) Lte(other hash.Hash) bool {
 	if other == nil {
 		return false
 	}
@@ -111,8 +106,8 @@ func (h Keccak256Hash) Lte(other kangaroohash.Hash) bool {
 	return bytes.Compare(h.Bytes(), otherHash.Bytes()) <= 0
 }
 
-func Keccak256HashFromBytes(b []byte) (kangaroohash.Hash, error) {
-	if len(b) != kangaroohash.HashLength {
+func Keccak256HashFromBytes(b []byte) (hash.Hash, error) {
+	if len(b) != hash.HashLength {
 		return Keccak256Hash{}, fmt.Errorf("given bytes with hash-length %d should be 32 bytes", len(b))
 	}
 

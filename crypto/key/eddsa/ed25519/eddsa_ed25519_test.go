@@ -2,12 +2,11 @@ package ed25519
 
 import (
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	kangarookeccak256 "github.com/andantan/kangaroo/crypto/hash/keccak256"
-	kangarooripemd160 "github.com/andantan/kangaroo/crypto/hash/ripemd160"
-	kangaroosha256 "github.com/andantan/kangaroo/crypto/hash/sha256"
-	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
+	"github.com/andantan/kangaroo/crypto/hash"
+	"github.com/andantan/kangaroo/crypto/hash/keccak256"
+	"github.com/andantan/kangaroo/crypto/hash/ripemd160"
+	"github.com/andantan/kangaroo/crypto/hash/sha256"
+	"github.com/andantan/kangaroo/crypto/key/eddsa"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -18,30 +17,24 @@ func Test_EdDSA_Ed25519_PrivateKey_Lifecycle(t *testing.T) {
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
 	require.NoError(t, err)
 	assert.True(t, privKey.IsValid())
-	assert.Equal(t, kangarooeddsa.EdDSAEd25519Type, privKey.Type())
+	assert.Equal(t, eddsa.EdDSAEd25519Type, privKey.Type())
 
 	// 2. Bytes Round Trip
 	privKeyBytes := privKey.Bytes()
-	assert.Equal(t, kangarooregistry.EdDSAEd25519PrefixByte, privKeyBytes[0])
-	reloadedPrivKey, err := kangarooregistry.ParsePrivateKeyFromBytes(privKeyBytes)
+	assert.Equal(t, eddsa.EdDSAPrivateKeyBytesLength, len(privKeyBytes))
+	reloadedPrivKey, err := EdDSAEd25519PrivateKeyFromBytes(privKeyBytes)
 	require.NoError(t, err)
 	assert.Equal(t, privKey, reloadedPrivKey)
-
-	// 3. String Round Trip
-	privKeyString := privKey.String()
-	reloadedPrivKeyFromString, err := kangarooregistry.ParsePrivateKeyFromString(privKeyString)
-	require.NoError(t, err)
-	assert.Equal(t, privKey, reloadedPrivKeyFromString)
 }
 
 func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 	addressDerivers := []struct {
 		name    string
-		deriver kangaroohash.AddressDeriver
+		deriver hash.AddressDeriver
 	}{
-		{"SHA256", &kangaroosha256.Sha256AddressDeriver{}},
-		{"KECCAK256", &kangarookeccak256.Keccak256AddressDeriver{}},
-		{"RIPEMD160", &kangarooripemd160.Ripemd160AddressDeriver{}},
+		{"SHA256", &sha256.Sha256AddressDeriver{}},
+		{"KECCAK256", &keccak256.Keccak256AddressDeriver{}},
+		{"RIPEMD160", &ripemd160.Ripemd160AddressDeriver{}},
 	}
 
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
@@ -50,23 +43,21 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 
 	for _, tc := range addressDerivers {
 		t.Run(fmt.Sprintf("with %s address deriver", tc.name), func(t *testing.T) {
+			// 1. Validation and Type Check
 			assert.True(t, pubKey.IsValid())
-			assert.Equal(t, kangarooeddsa.EdDSAEd25519Type, pubKey.Type())
+			assert.Equal(t, eddsa.EdDSAEd25519Type, pubKey.Type())
 
+			// 2. Bytes Round Trip
 			pubKeyBytes := pubKey.Bytes()
-			assert.Equal(t, kangarooregistry.EdDSAEd25519PrefixByte, pubKeyBytes[0])
-			reloadedPubKey, err := kangarooregistry.ParsePublicKeyFromBytes(pubKeyBytes)
+			assert.Equal(t, eddsa.EdDSAPublicKeyBytesLength, len(pubKeyBytes))
+			reloadedPubKey, err := EdDSAEd25519PublicKeyFromBytes(pubKeyBytes)
 			require.NoError(t, err)
 			assert.True(t, pubKey.Equal(reloadedPubKey))
 
-			pubKeyString := pubKey.String()
-			reloadedPubKeyFromString, err := kangarooregistry.ParsePublicKeyFromString(pubKeyString)
-			require.NoError(t, err)
-			assert.True(t, pubKey.Equal(reloadedPubKeyFromString))
-
+			// 3. Address Derivation using the current Deriver from the table
 			address := pubKey.Address(tc.deriver)
 			assert.NotNil(t, address)
-			assert.Equal(t, kangaroohash.AddressLength+1, len(address.Bytes()))
+			assert.Equal(t, hash.AddressLength, len(address.Bytes()))
 		})
 	}
 }
@@ -74,10 +65,10 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 	hashDerivers := []struct {
 		name    string
-		deriver kangaroohash.HashDeriver
+		deriver hash.HashDeriver
 	}{
-		{"SHA256", &kangaroosha256.Sha256HashDeriver{}},
-		{"KECCAK256", &kangarookeccak256.Keccak256HashDeriver{}},
+		{"SHA256", &sha256.Sha256HashDeriver{}},
+		{"KECCAK256", &keccak256.Keccak256HashDeriver{}},
 	}
 
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
@@ -90,18 +81,13 @@ func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 			require.NoError(t, err)
 
 			assert.True(t, signature.IsValid())
-			assert.Equal(t, kangarooeddsa.EdDSAEd25519Type, signature.Type())
+			assert.Equal(t, eddsa.EdDSAEd25519Type, signature.Type())
 
 			sigBytes := signature.Bytes()
-			assert.Equal(t, kangarooregistry.EdDSAEd25519PrefixByte, sigBytes[0])
-			reloadedSig, err := kangarooregistry.ParseSignatureFromBytes(sigBytes)
+			assert.Equal(t, eddsa.EdDSASignatureBytesLength, len(sigBytes))
+			reloadedSig, err := EdDSAEd25519SignatureFromBytes(sigBytes)
 			require.NoError(t, err)
 			assert.True(t, signature.Equal(reloadedSig))
-
-			sigString := signature.String()
-			reloadedSigFromString, err := kangarooregistry.ParseSignatureFromString(sigString)
-			require.NoError(t, err)
-			assert.True(t, signature.Equal(reloadedSigFromString))
 		})
 	}
 }
@@ -109,10 +95,10 @@ func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 func Test_EdDSA_Ed25519_Signature_Verify(t *testing.T) {
 	hashDerivers := []struct {
 		name    string
-		deriver kangaroohash.HashDeriver
+		deriver hash.HashDeriver
 	}{
-		{"SHA256", &kangaroosha256.Sha256HashDeriver{}},
-		{"KECCAK256", &kangarookeccak256.Keccak256HashDeriver{}},
+		{"SHA256", &sha256.Sha256HashDeriver{}},
+		{"KECCAK256", &keccak256.Keccak256HashDeriver{}},
 	}
 
 	for _, tc := range hashDerivers {
@@ -145,9 +131,9 @@ func Test_EdDSA_Ed25519_Signature_Verify(t *testing.T) {
 			})
 
 			t.Run("Verification with invalid public key should fail", func(t *testing.T) {
-				invalidPubKeyBytes := make([]byte, kangarooeddsa.EdDSAPublicKeyBytesLength)
+				invalidPubKeyBytes := make([]byte, eddsa.EdDSAPublicKeyBytesLength)
 				invalidPubKey, err := EdDSAEd25519PublicKeyFromBytes(invalidPubKeyBytes)
-				assert.NoError(t, err) // 길이만 맞으면 생성은 성공
+				assert.NoError(t, err)
 				assert.False(t, signature.Verify(invalidPubKey, correctData))
 			})
 		})

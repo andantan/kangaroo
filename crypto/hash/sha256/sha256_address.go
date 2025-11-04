@@ -4,21 +4,16 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
+	"github.com/andantan/kangaroo/crypto/hash"
 	"strings"
 )
 
-type Sha256Address [kangaroohash.AddressLength]byte
+type Sha256Address [hash.AddressLength]byte
 
-var _ kangaroohash.Address = Sha256Address{}
+var _ hash.Address = Sha256Address{}
 
 func (a Sha256Address) Bytes() []byte {
-	prefix, err := kangarooregistry.GetAddressPrefixFromType(a.Type())
-	if err != nil {
-		panic(fmt.Sprintf("configuration address<%s> panic: %v", a.Type(), err))
-	}
-	return append([]byte{prefix}, a[:]...)
+	return a[:]
 }
 
 func (a Sha256Address) IsZero() bool {
@@ -30,7 +25,7 @@ func (a Sha256Address) IsValid() bool {
 }
 
 func (a Sha256Address) Type() string {
-	return kangaroohash.Sha256Type
+	return hash.Sha256Type
 }
 
 func (a Sha256Address) String() string {
@@ -47,7 +42,7 @@ func (a Sha256Address) ShortString(l int) string {
 	return "0x" + as[:l]
 }
 
-func (a Sha256Address) Equal(other kangaroohash.Address) bool {
+func (a Sha256Address) Equal(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -60,7 +55,7 @@ func (a Sha256Address) Equal(other kangaroohash.Address) bool {
 	return a == otherAddress
 }
 
-func (a Sha256Address) Gt(other kangaroohash.Address) bool {
+func (a Sha256Address) Gt(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -73,7 +68,7 @@ func (a Sha256Address) Gt(other kangaroohash.Address) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) > 0
 }
 
-func (a Sha256Address) Gte(other kangaroohash.Address) bool {
+func (a Sha256Address) Gte(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -86,7 +81,7 @@ func (a Sha256Address) Gte(other kangaroohash.Address) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) >= 0
 }
 
-func (a Sha256Address) Lt(other kangaroohash.Address) bool {
+func (a Sha256Address) Lt(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -99,7 +94,7 @@ func (a Sha256Address) Lt(other kangaroohash.Address) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) < 0
 }
 
-func (a Sha256Address) Lte(other kangaroohash.Address) bool {
+func (a Sha256Address) Lte(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -112,8 +107,8 @@ func (a Sha256Address) Lte(other kangaroohash.Address) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) <= 0
 }
 
-func Sha256AddressFromBytes(b []byte) (kangaroohash.Address, error) {
-	if len(b) != kangaroohash.AddressLength {
+func Sha256AddressFromBytes(b []byte) (hash.Address, error) {
+	if len(b) != hash.AddressLength {
 		return Sha256Address{}, fmt.Errorf("given bytes with address-length %d should be 20 bytes", len(b))
 	}
 
@@ -124,9 +119,9 @@ func Sha256AddressFromBytes(b []byte) (kangaroohash.Address, error) {
 	return a, nil
 }
 
-func Sha256AddressFromString(s string) (kangaroohash.Address, error) {
+func Sha256AddressFromString(s string) (hash.Address, error) {
 	s = strings.TrimPrefix(s, "0x")
-	if len(s) != kangaroohash.AddressHexLength {
+	if len(s) != hash.AddressHexLength {
 		return Sha256Address{}, fmt.Errorf("invalid hex string length (%d), must be 40", len(s))
 	}
 
@@ -138,9 +133,9 @@ func Sha256AddressFromString(s string) (kangaroohash.Address, error) {
 	return Sha256AddressFromBytes(b)
 }
 
-func FilledSha256Address(b byte) kangaroohash.Address {
+func FilledSha256Address(b byte) hash.Address {
 	var a Sha256Address
-	for i := range kangaroohash.AddressLength {
+	for i := range hash.AddressLength {
 		a[i] = b
 	}
 

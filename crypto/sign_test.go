@@ -3,39 +3,39 @@ package crypto
 import (
 	"testing"
 
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	kangarookeccak256 "github.com/andantan/kangaroo/crypto/hash/keccak256"
-	kangaroosha256 "github.com/andantan/kangaroo/crypto/hash/sha256"
-	kangarookey "github.com/andantan/kangaroo/crypto/key"
-	kangaroosecp256k1 "github.com/andantan/kangaroo/crypto/key/ecdsa/secp256k1"
-	kangaroosecp256r1 "github.com/andantan/kangaroo/crypto/key/ecdsa/secp256r1"
-	kangarooed25519 "github.com/andantan/kangaroo/crypto/key/eddsa/ed25519"
+	"github.com/andantan/kangaroo/crypto/hash"
+	"github.com/andantan/kangaroo/crypto/hash/keccak256"
+	"github.com/andantan/kangaroo/crypto/hash/sha256"
+	"github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/crypto/key/ecdsa/secp256k1"
+	"github.com/andantan/kangaroo/crypto/key/ecdsa/secp256r1"
+	"github.com/andantan/kangaroo/crypto/key/eddsa/ed25519"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-type mockHashable struct {
+type mockSignable struct {
 	data []byte
 }
 
-func (m *mockHashable) Hash(deriver kangaroohash.HashDeriver) (kangaroohash.Hash, error) {
+func (m *mockSignable) HashForSigning(deriver hash.HashDeriver) (hash.Hash, error) {
 	return deriver.Derive(m.data), nil
 }
 
-var _ kangaroohash.Hashable = (*mockHashable)(nil)
+var _ key.Signable = (*mockSignable)(nil)
 
 func TestSignAndVerify_Integration(t *testing.T) {
 	testCases := []struct {
 		name        string
-		keySuite    kangarookey.KeySuite
-		hashDeriver kangaroohash.HashDeriver
+		keySuite    key.KeySuite
+		hashDeriver hash.HashDeriver
 	}{
-		{"ecdsa-secp256r1 with sha256", &kangaroosecp256r1.ECDSASecp256r1Suite{}, &kangaroosha256.Sha256HashDeriver{}},
-		{"ecdsa-secp256k1 with sha256", &kangaroosecp256k1.ECDSASecp256k1Suite{}, &kangaroosha256.Sha256HashDeriver{}},
-		{"eddsa-ed25519 with sha256", &kangarooed25519.EdDSAEd25519Suite{}, &kangaroosha256.Sha256HashDeriver{}},
-		{"ecdsa-secp256r1 with keccak256", &kangaroosecp256r1.ECDSASecp256r1Suite{}, &kangarookeccak256.Keccak256HashDeriver{}},
-		{"ecdsa-secp256k1 with keccak256", &kangaroosecp256k1.ECDSASecp256k1Suite{}, &kangarookeccak256.Keccak256HashDeriver{}},
-		{"eddsa-ed25519 with keccak256", &kangarooed25519.EdDSAEd25519Suite{}, &kangarookeccak256.Keccak256HashDeriver{}},
+		{"ecdsa-secp256r1 with sha256", &secp256r1.ECDSASecp256r1Suite{}, &sha256.Sha256HashDeriver{}},
+		{"ecdsa-secp256k1 with sha256", &secp256k1.ECDSASecp256k1Suite{}, &sha256.Sha256HashDeriver{}},
+		{"eddsa-ed25519 with sha256", &ed25519.EdDSAEd25519Suite{}, &sha256.Sha256HashDeriver{}},
+		{"ecdsa-secp256r1 with keccak256", &secp256r1.ECDSASecp256r1Suite{}, &keccak256.Keccak256HashDeriver{}},
+		{"ecdsa-secp256k1 with keccak256", &secp256k1.ECDSASecp256k1Suite{}, &keccak256.Keccak256HashDeriver{}},
+		{"eddsa-ed25519 with keccak256", &ed25519.EdDSAEd25519Suite{}, &keccak256.Keccak256HashDeriver{}},
 	}
 
 	for _, tc := range testCases {
@@ -45,8 +45,8 @@ func TestSignAndVerify_Integration(t *testing.T) {
 			require.NoError(t, err, "key generation should succeed")
 			pubKey := signer.PublicKey()
 
-			itemToSign := &mockHashable{data: []byte("this is the data to be signed")}
-			dataHash, err := itemToSign.Hash(tc.hashDeriver)
+			itemToSign := &mockSignable{data: []byte("this is the data to be signed")}
+			dataHash, err := itemToSign.HashForSigning(tc.hashDeriver)
 			require.NoError(t, err)
 
 			// --- Action: Sign ---
@@ -60,8 +60,8 @@ func TestSignAndVerify_Integration(t *testing.T) {
 			})
 
 			t.Run("should fail with wrong data", func(t *testing.T) {
-				wrongItem := &mockHashable{data: []byte("this is wrong data")}
-				wrongDataHash, _ := wrongItem.Hash(tc.hashDeriver)
+				wrongItem := &mockSignable{data: []byte("this is wrong data")}
+				wrongDataHash, _ := wrongItem.HashForSigning(tc.hashDeriver)
 
 				err := VerifySignature(pubKey, signature, wrongDataHash)
 				assert.Error(t, err, "verification with wrong data should fail")
@@ -79,17 +79,17 @@ func TestSignAndVerify_Integration(t *testing.T) {
 }
 
 func TestVerifySignature_MismatchedTypes(t *testing.T) {
-	secp256r1Suite := &kangaroosecp256r1.ECDSASecp256r1Suite{}
+	secp256r1Suite := &secp256r1.ECDSASecp256r1Suite{}
 	secp256r1Signer, _ := secp256r1Suite.GeneratePrivateKey()
 	secp256r1Sig, _ := secp256r1Signer.Sign([]byte("data"))
 
-	ed25519Suite := &kangarooed25519.EdDSAEd25519Suite{}
+	ed25519Suite := &ed25519.EdDSAEd25519Suite{}
 	ed25519Signer, _ := ed25519Suite.GeneratePrivateKey()
 	ed25519PubKey := ed25519Signer.PublicKey()
 
-	mockHash := &mockHashable{data: []byte("data")}
-	sha256Deriver := &kangaroosha256.Sha256HashDeriver{}
-	dataHash, _ := mockHash.Hash(sha256Deriver)
+	mockHash := &mockSignable{data: []byte("data")}
+	sha256Deriver := &sha256.Sha256HashDeriver{}
+	dataHash, _ := mockHash.HashForSigning(sha256Deriver)
 
 	err := VerifySignature(ed25519PubKey, secp256r1Sig, dataHash)
 	assert.Error(t, err, "verification should fail with mismatched key and signature types")

@@ -23,10 +23,12 @@ const (
 
 type KangarooTransaction struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	Nonce         uint64                 `protobuf:"varint,2,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	Signature     []byte                 `protobuf:"bytes,3,opt,name=signature,proto3" json:"signature,omitempty"`
-	Signer        []byte                 `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty"`
+	ToAddress     []byte                 `protobuf:"bytes,1,opt,name=to_address,json=toAddress,proto3" json:"to_address,omitempty"`
+	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	Nonce         uint64                 `protobuf:"varint,4,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	Signature     []byte                 `protobuf:"bytes,5,opt,name=signature,proto3" json:"signature,omitempty"`
+	Signer        []byte                 `protobuf:"bytes,6,opt,name=signer,proto3" json:"signer,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -61,6 +63,20 @@ func (*KangarooTransaction) Descriptor() ([]byte, []int) {
 	return file_core_kangarootransaction_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *KangarooTransaction) GetToAddress() []byte {
+	if x != nil {
+		return x.ToAddress
+	}
+	return nil
+}
+
+func (x *KangarooTransaction) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
 func (x *KangarooTransaction) GetData() []byte {
 	if x != nil {
 		return x.Data
@@ -89,16 +105,93 @@ func (x *KangarooTransaction) GetSigner() []byte {
 	return nil
 }
 
+type KangarooTransactionData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ToAddress     []byte                 `protobuf:"bytes,1,opt,name=to_address,json=toAddress,proto3" json:"to_address,omitempty"`
+	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	Nonce         uint64                 `protobuf:"varint,4,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *KangarooTransactionData) Reset() {
+	*x = KangarooTransactionData{}
+	mi := &file_core_kangarootransaction_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *KangarooTransactionData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*KangarooTransactionData) ProtoMessage() {}
+
+func (x *KangarooTransactionData) ProtoReflect() protoreflect.Message {
+	mi := &file_core_kangarootransaction_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use KangarooTransactionData.ProtoReflect.Descriptor instead.
+func (*KangarooTransactionData) Descriptor() ([]byte, []int) {
+	return file_core_kangarootransaction_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *KangarooTransactionData) GetToAddress() []byte {
+	if x != nil {
+		return x.ToAddress
+	}
+	return nil
+}
+
+func (x *KangarooTransactionData) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+func (x *KangarooTransactionData) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *KangarooTransactionData) GetNonce() uint64 {
+	if x != nil {
+		return x.Nonce
+	}
+	return 0
+}
+
 var File_core_kangarootransaction_proto protoreflect.FileDescriptor
 
 const file_core_kangarootransaction_proto_rawDesc = "" +
 	"\n" +
-	"\x1ecore/kangarootransaction.proto\x12\x04core\"u\n" +
-	"\x13KangarooTransaction\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\x12\x14\n" +
-	"\x05nonce\x18\x02 \x01(\x04R\x05nonce\x12\x1c\n" +
-	"\tsignature\x18\x03 \x01(\fR\tsignature\x12\x16\n" +
-	"\x06signer\x18\x04 \x01(\fR\x06signerB\x10Z\x0ecore/pb;corepbb\x06proto3"
+	"\x1ecore/kangarootransaction.proto\x12\x04core\"\xaa\x01\n" +
+	"\x13KangarooTransaction\x12\x1d\n" +
+	"\n" +
+	"to_address\x18\x01 \x01(\fR\ttoAddress\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\fR\x05value\x12\x12\n" +
+	"\x04data\x18\x03 \x01(\fR\x04data\x12\x14\n" +
+	"\x05nonce\x18\x04 \x01(\x04R\x05nonce\x12\x1c\n" +
+	"\tsignature\x18\x05 \x01(\fR\tsignature\x12\x16\n" +
+	"\x06signer\x18\x06 \x01(\fR\x06signer\"x\n" +
+	"\x17KangarooTransactionData\x12\x1d\n" +
+	"\n" +
+	"to_address\x18\x01 \x01(\fR\ttoAddress\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\fR\x05value\x12\x12\n" +
+	"\x04data\x18\x03 \x01(\fR\x04data\x12\x14\n" +
+	"\x05nonce\x18\x04 \x01(\x04R\x05nonceB\x10Z\x0ecore/pb;corepbb\x06proto3"
 
 var (
 	file_core_kangarootransaction_proto_rawDescOnce sync.Once
@@ -112,9 +205,10 @@ func file_core_kangarootransaction_proto_rawDescGZIP() []byte {
 	return file_core_kangarootransaction_proto_rawDescData
 }
 
-var file_core_kangarootransaction_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_core_kangarootransaction_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_core_kangarootransaction_proto_goTypes = []any{
-	(*KangarooTransaction)(nil), // 0: core.KangarooTransaction
+	(*KangarooTransaction)(nil),     // 0: core.KangarooTransaction
+	(*KangarooTransactionData)(nil), // 1: core.KangarooTransactionData
 }
 var file_core_kangarootransaction_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -135,7 +229,7 @@ func file_core_kangarootransaction_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_kangarootransaction_proto_rawDesc), len(file_core_kangarootransaction_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

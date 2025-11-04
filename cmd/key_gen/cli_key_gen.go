@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	kangaroocrypto "github.com/andantan/kangaroo/crypto/registry"
+	_ "github.com/andantan/kangaroo/crypto/all"
+	"github.com/andantan/kangaroo/registry"
 	"log"
 	"os"
-
-	_ "github.com/andantan/kangaroo/crypto/all"
 )
 
 type KeyFile struct {
@@ -29,11 +28,11 @@ func main() {
 	outputFile := flag.String("o", "wallet.json", "Output file name for the generated key pair")
 	flag.Parse()
 
-	keySuite, err := kangaroocrypto.GetKeySuite(*keyAlgo)
+	keySuite, err := registry.GetKeySuite(*keyAlgo)
 	if err != nil {
 		log.Fatalf("FATAL: Unsupported key algorithm: %v", err)
 	}
-	addressSuite, err := kangaroocrypto.GetAddressSuite(*addrAlgo)
+	addressSuite, err := registry.GetAddressSuite(*addrAlgo)
 	if err != nil {
 		log.Fatalf("FATAL: Unsupported address algorithm: %v", err)
 	}

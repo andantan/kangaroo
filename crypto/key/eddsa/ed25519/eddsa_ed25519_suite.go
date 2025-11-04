@@ -1,35 +1,35 @@
 package ed25519
 
 import (
-	kangarookey "github.com/andantan/kangaroo/crypto/key"
-	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
+	"github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/crypto/key/eddsa"
+	"github.com/andantan/kangaroo/registry"
 )
 
 func init() {
-	kangarooregistry.RegisterKeySuite(&EdDSAEd25519Suite{})
+	registry.RegisterKeySuite(&EdDSAEd25519Suite{})
 }
 
 type EdDSAEd25519Suite struct{}
 
-var _ kangarookey.KeySuite = (*EdDSAEd25519Suite)(nil)
+var _ key.KeySuite = (*EdDSAEd25519Suite)(nil)
 
 func (s *EdDSAEd25519Suite) Type() string {
-	return kangarooeddsa.EdDSAEd25519Type
+	return eddsa.EdDSAEd25519Type
 }
 
-func (s *EdDSAEd25519Suite) GeneratePrivateKey() (kangarookey.PrivateKey, error) {
+func (s *EdDSAEd25519Suite) GeneratePrivateKey() (key.PrivateKey, error) {
 	return GenerateEdDSAEd25519PrivateKey()
 }
 
-func (s *EdDSAEd25519Suite) PrivateKeyFromBytes(data []byte) (kangarookey.PrivateKey, error) {
+func (s *EdDSAEd25519Suite) PrivateKeyFromBytes(data []byte) (key.PrivateKey, error) {
 	return EdDSAEd25519PrivateKeyFromBytes(data)
 }
 
-func (s *EdDSAEd25519Suite) PublicKeyFromBytes(data []byte) (kangarookey.PublicKey, error) {
+func (s *EdDSAEd25519Suite) PublicKeyFromBytes(data []byte) (key.PublicKey, error) {
 	return EdDSAEd25519PublicKeyFromBytes(data)
 }
 
-func (s *EdDSAEd25519Suite) SignatureFromBytes(data []byte) (kangarookey.Signature, error) {
+func (s *EdDSAEd25519Suite) SignatureFromBytes(data []byte) (key.Signature, error) {
 	return EdDSAEd25519SignatureFromBytes(data)
 }

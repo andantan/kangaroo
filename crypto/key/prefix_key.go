@@ -1,9 +1,9 @@
-package registry
+package key
 
 import (
 	"fmt"
-	kangarooecdsa "github.com/andantan/kangaroo/crypto/key/ecdsa"
-	kangarooeddsa "github.com/andantan/kangaroo/crypto/key/eddsa"
+	"github.com/andantan/kangaroo/crypto/key/ecdsa"
+	"github.com/andantan/kangaroo/crypto/key/eddsa"
 )
 
 const (
@@ -15,9 +15,9 @@ const (
 
 // mapping algorithm type name to 1 byte prefix
 var typeToKeyPrefix = map[string]byte{
-	kangarooecdsa.ECDSASecp256r1Type: ECDSASecp256r1PrefixByte,
-	kangarooecdsa.ECDSASecp256k1Type: ECDSASecp256k1PrefixByte,
-	kangarooeddsa.EdDSAEd25519Type:   EdDSAEd25519PrefixByte,
+	ecdsa.ECDSASecp256r1Type: ECDSASecp256r1PrefixByte,
+	ecdsa.ECDSASecp256k1Type: ECDSASecp256k1PrefixByte,
+	eddsa.EdDSAEd25519Type:   EdDSAEd25519PrefixByte,
 }
 
 var keyPrefixToType = make(map[byte]string)

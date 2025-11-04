@@ -4,20 +4,15 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
-	kangarooregistry "github.com/andantan/kangaroo/crypto/registry"
+	"github.com/andantan/kangaroo/crypto/hash"
 )
 
-type Ripemd160Address [kangaroohash.AddressLength]byte
+type Ripemd160Address [hash.AddressLength]byte
 
-var _ kangaroohash.Address = Ripemd160Address{}
+var _ hash.Address = Ripemd160Address{}
 
 func (a Ripemd160Address) Bytes() []byte {
-	prefix, err := kangarooregistry.GetAddressPrefixFromType(a.Type())
-	if err != nil {
-		panic(fmt.Sprintf("configuration address<%s> panic: %v", a.Type(), err))
-	}
-	return append([]byte{prefix}, a[:]...)
+	return a[:]
 }
 
 func (a Ripemd160Address) IsZero() bool {
@@ -29,7 +24,7 @@ func (a Ripemd160Address) IsValid() bool {
 }
 
 func (a Ripemd160Address) Type() string {
-	return kangaroohash.Ripemd160Type
+	return hash.Ripemd160Type
 }
 
 func (a Ripemd160Address) String() string {
@@ -46,7 +41,7 @@ func (a Ripemd160Address) ShortString(l int) string {
 	return "0x" + as[:l]
 }
 
-func (a Ripemd160Address) Equal(other kangaroohash.Address) bool {
+func (a Ripemd160Address) Equal(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -59,7 +54,7 @@ func (a Ripemd160Address) Equal(other kangaroohash.Address) bool {
 	return a == otherAddress
 }
 
-func (a Ripemd160Address) Gt(other kangaroohash.Address) bool {
+func (a Ripemd160Address) Gt(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -72,7 +67,7 @@ func (a Ripemd160Address) Gt(other kangaroohash.Address) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) > 0
 }
 
-func (a Ripemd160Address) Gte(other kangaroohash.Address) bool {
+func (a Ripemd160Address) Gte(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -85,7 +80,7 @@ func (a Ripemd160Address) Gte(other kangaroohash.Address) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) >= 0
 }
 
-func (a Ripemd160Address) Lt(other kangaroohash.Address) bool {
+func (a Ripemd160Address) Lt(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -98,7 +93,7 @@ func (a Ripemd160Address) Lt(other kangaroohash.Address) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) < 0
 }
 
-func (a Ripemd160Address) Lte(other kangaroohash.Address) bool {
+func (a Ripemd160Address) Lte(other hash.Address) bool {
 	if other == nil {
 		return false
 	}
@@ -111,8 +106,8 @@ func (a Ripemd160Address) Lte(other kangaroohash.Address) bool {
 	return bytes.Compare(a.Bytes(), otherAddress.Bytes()) <= 0
 }
 
-func Ripemd160AddressFromBytes(b []byte) (kangaroohash.Address, error) {
-	if len(b) != kangaroohash.AddressLength {
+func Ripemd160AddressFromBytes(b []byte) (hash.Address, error) {
+	if len(b) != hash.AddressLength {
 		return Ripemd160Address{}, fmt.Errorf("given bytes with address-length %d should be 20 bytes", len(b))
 	}
 

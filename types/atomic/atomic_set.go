@@ -1,18 +1,18 @@
 package atomic
 
 import (
-	kangaroocollection "github.com/andantan/kangaroo/types/collection"
+	"github.com/andantan/kangaroo/types/collection"
 	"sync"
 )
 
 type AtomicSet[K comparable] struct {
 	lock sync.RWMutex
-	s    *kangaroocollection.Set[K]
+	s    *collection.Set[K]
 }
 
 func NewAtomicSet[K comparable]() *AtomicSet[K] {
 	return &AtomicSet[K]{
-		s: kangaroocollection.NewSet[K](),
+		s: collection.NewSet[K](),
 	}
 }
 
