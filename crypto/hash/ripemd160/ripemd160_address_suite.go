@@ -13,14 +13,14 @@ type Ripemd160AddressSuite struct{}
 
 var _ hash.AddressSuite = (*Ripemd160AddressSuite)(nil)
 
-func (s *Ripemd160AddressSuite) Type() string {
+func (_ *Ripemd160AddressSuite) Type() string {
 	return hash.Ripemd160Type
 }
 
-func (s *Ripemd160AddressSuite) Deriver() hash.AddressDeriver {
+func (_ *Ripemd160AddressSuite) Deriver() hash.AddressDeriver {
 	return &Ripemd160AddressDeriver{}
 }
 
-func (s *Ripemd160AddressSuite) AddressFromBytes(data []byte) (hash.Address, error) {
+func (_ *Ripemd160AddressSuite) AddressFromBytes(data []byte) (hash.Address, error) {
 	return Ripemd160AddressFromBytes(data)
 }

@@ -1,6 +1,7 @@
 package crypto
 
 import (
+	"github.com/andantan/kangaroo/crypto/hash/blake2b256"
 	"testing"
 
 	"github.com/andantan/kangaroo/crypto/hash"
@@ -36,6 +37,9 @@ func TestSignAndVerify_Integration(t *testing.T) {
 		{"ecdsa-secp256r1 with keccak256", &secp256r1.ECDSASecp256r1Suite{}, &keccak256.Keccak256HashDeriver{}},
 		{"ecdsa-secp256k1 with keccak256", &secp256k1.ECDSASecp256k1Suite{}, &keccak256.Keccak256HashDeriver{}},
 		{"eddsa-ed25519 with keccak256", &ed25519.EdDSAEd25519Suite{}, &keccak256.Keccak256HashDeriver{}},
+		{"ecdsa-secp256r1 with blake2b256", &secp256r1.ECDSASecp256r1Suite{}, &blake2b256.Blake2b256HashDeriver{}},
+		{"ecdsa-secp256k1 with blake2b256", &secp256k1.ECDSASecp256k1Suite{}, &blake2b256.Blake2b256HashDeriver{}},
+		{"eddsa-ed25519 with blake2b256", &ed25519.EdDSAEd25519Suite{}, &blake2b256.Blake2b256HashDeriver{}},
 	}
 
 	for _, tc := range testCases {

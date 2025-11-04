@@ -110,10 +110,7 @@ func Ripemd160AddressFromBytes(b []byte) (hash.Address, error) {
 	if len(b) != hash.AddressLength {
 		return Ripemd160Address{}, fmt.Errorf("given bytes with address-length %d should be 20 bytes", len(b))
 	}
-
 	var a Ripemd160Address
-
 	copy(a[:], b)
-
 	return a, nil
 }

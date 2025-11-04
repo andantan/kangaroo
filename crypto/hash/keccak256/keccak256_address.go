@@ -110,10 +110,7 @@ func Keccak256AddressFromBytes(b []byte) (hash.Address, error) {
 	if len(b) != hash.AddressLength {
 		return Keccak256Address{}, fmt.Errorf("given bytes with address-length %d should be 20 bytes", len(b))
 	}
-
 	var a Keccak256Address
-
 	copy(a[:], b)
-
 	return a, nil
 }

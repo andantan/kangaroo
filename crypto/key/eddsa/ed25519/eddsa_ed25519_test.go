@@ -3,6 +3,7 @@ package ed25519
 import (
 	"fmt"
 	"github.com/andantan/kangaroo/crypto/hash"
+	"github.com/andantan/kangaroo/crypto/hash/blake2b256"
 	"github.com/andantan/kangaroo/crypto/hash/keccak256"
 	"github.com/andantan/kangaroo/crypto/hash/ripemd160"
 	"github.com/andantan/kangaroo/crypto/hash/sha256"
@@ -35,6 +36,7 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 		{"SHA256", &sha256.Sha256AddressDeriver{}},
 		{"KECCAK256", &keccak256.Keccak256AddressDeriver{}},
 		{"RIPEMD160", &ripemd160.Ripemd160AddressDeriver{}},
+		{"BLAKE2B256", &blake2b256.Blake2b256AddressDeriver{}},
 	}
 
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
@@ -69,6 +71,7 @@ func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 	}{
 		{"SHA256", &sha256.Sha256HashDeriver{}},
 		{"KECCAK256", &keccak256.Keccak256HashDeriver{}},
+		{"BLAKE2B256", &blake2b256.Blake2b256HashDeriver{}},
 	}
 
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
@@ -99,6 +102,7 @@ func Test_EdDSA_Ed25519_Signature_Verify(t *testing.T) {
 	}{
 		{"SHA256", &sha256.Sha256HashDeriver{}},
 		{"KECCAK256", &keccak256.Keccak256HashDeriver{}},
+		{"BLAKE2B256", &blake2b256.Blake2b256HashDeriver{}},
 	}
 
 	for _, tc := range hashDerivers {

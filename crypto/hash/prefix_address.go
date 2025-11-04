@@ -6,15 +6,17 @@ import (
 
 const (
 	_ byte = iota
-	SHA256AddressPrefixByte
-	KECCAK256AddressByte
-	RIPEMD160AddressByte
+	Sha256AddressPrefixByte
+	Keccak256AddressByte
+	Ripemd160AddressByte
+	Blake2b256AddressByte
 )
 
 var typeToAddressPrefix = map[string]byte{
-	Sha256Type:    SHA256AddressPrefixByte,
-	Keccak256Type: KECCAK256AddressByte,
-	Ripemd160Type: RIPEMD160AddressByte,
+	Sha256Type:     Sha256AddressPrefixByte,
+	Keccak256Type:  Keccak256AddressByte,
+	Ripemd160Type:  Ripemd160AddressByte,
+	Blake2b256Type: Blake2b256AddressByte,
 }
 
 var addressPrefixToType = make(map[byte]string)

@@ -3,14 +3,14 @@ package hash
 import "github.com/andantan/kangaroo/types/format"
 
 const (
-	HashLength    = 32
-	HashHexLength = HashLength * 2
+	HashLength = 32
 )
 
 const (
-	Sha256Type    = "sha256"
-	Keccak256Type = "keccak256"
-	Ripemd160Type = "ripemd160"
+	Sha256Type     = "sha256"
+	Keccak256Type  = "keccak256"
+	Ripemd160Type  = "ripemd160"
+	Blake2b256Type = "blake2b256"
 )
 
 type Hash interface {

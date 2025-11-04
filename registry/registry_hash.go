@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"log"
+	"sort"
 	"sync"
 )
 
@@ -14,6 +15,19 @@ import (
 // ============================================================================================================
 var hashSuiteRegistry = make(map[string]hash.HashSuite)
 var hashSuiteLock = &sync.RWMutex{}
+
+func ListHashSuiteTypes() []string {
+	hashSuiteLock.RLock()
+	defer hashSuiteLock.RUnlock()
+
+	types := make([]string, 0, len(hashSuiteRegistry))
+	for t := range hashSuiteRegistry {
+		types = append(types, t)
+	}
+
+	sort.Strings(types)
+	return types
+}
 
 func RegisterHashSuite(s hash.HashSuite) {
 	hashSuiteLock.Lock()

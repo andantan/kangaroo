@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/andantan/kangaroo/crypto/hash"
-	"strings"
 )
 
 type Sha256Hash [hash.HashLength]byte
@@ -111,33 +110,7 @@ func Sha256HashFromBytes(b []byte) (hash.Hash, error) {
 	if len(b) != hash.HashLength {
 		return Sha256Hash{}, fmt.Errorf("given bytes with hash-length %d should be 32 bytes", len(b))
 	}
-
 	var h Sha256Hash
-
 	copy(h[:], b)
-
 	return h, nil
-}
-
-func Sha256HashFromString(s string) (hash.Hash, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != hash.HashHexLength {
-		return Sha256Hash{}, fmt.Errorf("invalid hex string length (%d), must be 64", len(s))
-	}
-
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		return Sha256Hash{}, err
-	}
-
-	return Sha256HashFromBytes(b)
-}
-
-func FilledSha256Hash(b byte) hash.Hash {
-	var h Sha256Hash
-	for i := range hash.HashLength {
-		h[i] = b
-	}
-
-	return h
 }

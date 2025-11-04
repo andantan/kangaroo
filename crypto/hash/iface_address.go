@@ -3,8 +3,7 @@ package hash
 import "github.com/andantan/kangaroo/types/format"
 
 const (
-	AddressLength    = 20
-	AddressHexLength = AddressLength * 2
+	AddressLength = 20
 )
 
 type Address interface {

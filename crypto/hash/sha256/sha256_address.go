@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/andantan/kangaroo/crypto/hash"
-	"strings"
 )
 
 type Sha256Address [hash.AddressLength]byte
@@ -111,33 +110,7 @@ func Sha256AddressFromBytes(b []byte) (hash.Address, error) {
 	if len(b) != hash.AddressLength {
 		return Sha256Address{}, fmt.Errorf("given bytes with address-length %d should be 20 bytes", len(b))
 	}
-
 	var a Sha256Address
-
 	copy(a[:], b)
-
 	return a, nil
-}
-
-func Sha256AddressFromString(s string) (hash.Address, error) {
-	s = strings.TrimPrefix(s, "0x")
-	if len(s) != hash.AddressHexLength {
-		return Sha256Address{}, fmt.Errorf("invalid hex string length (%d), must be 40", len(s))
-	}
-
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		return Sha256Address{}, err
-	}
-
-	return Sha256AddressFromBytes(b)
-}
-
-func FilledSha256Address(b byte) hash.Address {
-	var a Sha256Address
-	for i := range hash.AddressLength {
-		a[i] = b
-	}
-
-	return a
 }

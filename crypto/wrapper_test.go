@@ -79,8 +79,8 @@ func TestKeyWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
 
 func TestHashWrapper_AddressWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
 	// --- 1. setup ---
-	hashSuiteNames := []string{"sha256", "keccak256"}
-	addrSuiteNames := []string{"sha256", "keccak256", "ripemd160"}
+	hashSuiteNames := []string{"sha256", "keccak256", "blake2b256"}
+	addrSuiteNames := []string{"sha256", "keccak256", "ripemd160", "blake2b256"}
 	testData := []byte("test data for hashing")
 
 	// --- 2. Hash round trip test ---

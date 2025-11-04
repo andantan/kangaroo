@@ -13,14 +13,14 @@ type Sha256HashSuite struct{}
 
 var _ hash.HashSuite = (*Sha256HashSuite)(nil)
 
-func (s *Sha256HashSuite) Type() string {
+func (_ *Sha256HashSuite) Type() string {
 	return hash.Sha256Type
 }
 
-func (s *Sha256HashSuite) Deriver() hash.HashDeriver {
+func (_ *Sha256HashSuite) Deriver() hash.HashDeriver {
 	return &Sha256HashDeriver{}
 }
 
-func (s *Sha256HashSuite) HashFromBytes(data []byte) (hash.Hash, error) {
+func (_ *Sha256HashSuite) HashFromBytes(data []byte) (hash.Hash, error) {
 	return Sha256HashFromBytes(data)
 }

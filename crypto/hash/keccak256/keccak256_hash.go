@@ -110,10 +110,7 @@ func Keccak256HashFromBytes(b []byte) (hash.Hash, error) {
 	if len(b) != hash.HashLength {
 		return Keccak256Hash{}, fmt.Errorf("given bytes with hash-length %d should be 32 bytes", len(b))
 	}
-
 	var h Keccak256Hash
-
 	copy(h[:], b)
-
 	return h, nil
 }

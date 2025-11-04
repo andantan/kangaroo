@@ -13,14 +13,14 @@ type Sha256AddressSuite struct{}
 
 var _ hash.AddressSuite = (*Sha256AddressSuite)(nil)
 
-func (s *Sha256AddressSuite) Type() string {
+func (_ *Sha256AddressSuite) Type() string {
 	return hash.Sha256Type
 }
 
-func (s *Sha256AddressSuite) Deriver() hash.AddressDeriver {
+func (_ *Sha256AddressSuite) Deriver() hash.AddressDeriver {
 	return &Sha256AddressDeriver{}
 }
 
-func (s *Sha256AddressSuite) AddressFromBytes(data []byte) (hash.Address, error) {
+func (_ *Sha256AddressSuite) AddressFromBytes(data []byte) (hash.Address, error) {
 	return Sha256AddressFromBytes(data)
 }

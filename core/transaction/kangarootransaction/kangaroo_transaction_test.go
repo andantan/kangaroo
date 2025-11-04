@@ -30,6 +30,8 @@ func setupTestMatrix(t *testing.T) []struct {
 	require.NoError(t, err)
 	keccak256Suite, err := registry.GetHashSuite("keccak256")
 	require.NoError(t, err)
+	blake2b256Suite, err := registry.GetHashSuite("blake2b256")
+	require.NoError(t, err)
 
 	return []struct {
 		name        string
@@ -38,10 +40,13 @@ func setupTestMatrix(t *testing.T) []struct {
 	}{
 		{"SECP256R1_with_SHA256", secp256r1Suite, sha256Suite},
 		{"SECP256R1_with_KECCAK256", secp256r1Suite, keccak256Suite},
+		{"SECP256R1_with_BLAKE2B256", secp256r1Suite, blake2b256Suite},
 		{"SECP256K1_with_SHA256", secp256k1Suite, sha256Suite},
 		{"SECP256K1_with_KECCAK256", secp256k1Suite, keccak256Suite},
+		{"SECP256K1_with_BLAKE2B256", secp256k1Suite, blake2b256Suite},
 		{"ED25519_with_SHA256", ed25519Suite, sha256Suite},
 		{"ED25519_with_KECCAK256", ed25519Suite, keccak256Suite},
+		{"ED25519_with_BLAKE2B256", ed25519Suite, blake2b256Suite},
 	}
 }
 
@@ -118,9 +123,9 @@ func TestKangarooTransaction_FullLifecycle(t *testing.T) {
 }
 
 func TestKangarooTransaction_Verify_Failures(t *testing.T) {
-	// secp256k1 + keccak256
+	// secp256k1 + blake2b256
 	keySuite, _ := registry.GetKeySuite("ecdsa-secp256k1")
-	hashSuite, _ := registry.GetHashSuite("keccak256")
+	hashSuite, _ := registry.GetHashSuite("blake2b256")
 	signer, _ := keySuite.GeneratePrivateKey()
 
 	// original transaction
@@ -202,10 +207,10 @@ func TestKangarooTransaction_Hash_Failures(t *testing.T) {
 }
 
 func TestKangarooTransaction_With_ToAddress_And_Value(t *testing.T) {
-	// secp256k1 + keccak256
-	keySuite, _ := registry.GetKeySuite("ecdsa-secp256k1")
+	// ed25519 + keccak256
+	keySuite, _ := registry.GetKeySuite("eddsa-ed25519")
 	hashSuite, _ := registry.GetHashSuite("keccak256")
-	addressSuite, _ := registry.GetAddressSuite("keccak256")
+	addressSuite, _ := registry.GetAddressSuite("blake2b256")
 	hasher := hashSuite.Deriver()
 
 	signer, err := keySuite.GeneratePrivateKey()

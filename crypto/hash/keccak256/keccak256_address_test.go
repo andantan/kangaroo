@@ -26,6 +26,7 @@ func Test_KECCAK256_Address_IsZero(t *testing.T) {
 
 	nonZeroBytes := make([]byte, hash.AddressLength)
 	nonZeroBytes[10] = 0x01
-	nonZeroAddr, _ := Keccak256AddressFromBytes(nonZeroBytes)
+	nonZeroAddr, err := Keccak256AddressFromBytes(nonZeroBytes)
+	require.NoError(t, err)
 	assert.False(t, nonZeroAddr.IsZero())
 }

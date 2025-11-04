@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"log"
+	"sort"
 	"sync"
 )
 
@@ -14,6 +15,19 @@ import (
 // ============================================================================================================
 var addressSuiteRegistry = make(map[string]hash.AddressSuite)
 var addressSuiteLock = &sync.RWMutex{}
+
+func ListAddressSuiteTypes() []string {
+	addressSuiteLock.RLock()
+	defer addressSuiteLock.RUnlock()
+
+	types := make([]string, 0, len(addressSuiteRegistry))
+	for t := range addressSuiteRegistry {
+		types = append(types, t)
+	}
+
+	sort.Strings(types)
+	return types
+}
 
 func RegisterAddressSuite(s hash.AddressSuite) {
 	addressSuiteLock.Lock()
