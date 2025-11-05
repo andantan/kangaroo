@@ -1,0 +1,49 @@
+package testutil
+
+import (
+	"fmt"
+	"github.com/andantan/kangaroo/crypto/hash"
+	hashtestutil "github.com/andantan/kangaroo/crypto/hash/testutil"
+	"github.com/andantan/kangaroo/crypto/key"
+	keytestutil "github.com/andantan/kangaroo/crypto/key/testutil"
+)
+
+type SuitesPairTestCase struct {
+	Name         string
+	KeySuite     key.KeySuite
+	HashSuite    hash.HashSuite
+	AddressSuite hash.AddressSuite
+}
+
+func GetSuitesPairTestCases() []SuitesPairTestCase {
+	keySuites := keytestutil.GetKeySuiteTestCases()
+	hashSuites := hashtestutil.GetHashSuiteTestCases()
+	addressSuites := hashtestutil.GetAddressSuiteTestCases()
+
+	totalCapacity := len(keySuites) * len(hashSuites) * len(addressSuites)
+	tc := make([]SuitesPairTestCase, 0, totalCapacity)
+
+	for _, kSuiteCase := range keySuites {
+		for _, hSuiteCase := range hashSuites {
+			for _, aSuiteCase := range addressSuites {
+				// e.g., "SECP256K1_Hash-SHA256_Addr-KECCAK256"
+				testName := fmt.Sprintf("%s_HASH_%s_ADDRESS_%s",
+					kSuiteCase.Name,
+					hSuiteCase.Name,
+					aSuiteCase.Name,
+				)
+
+				newCase := SuitesPairTestCase{
+					Name:         testName,
+					KeySuite:     kSuiteCase.Suite,
+					HashSuite:    hSuiteCase.Suite,
+					AddressSuite: aSuiteCase.Suite,
+				}
+
+				tc = append(tc, newCase)
+			}
+		}
+	}
+
+	return tc
+}

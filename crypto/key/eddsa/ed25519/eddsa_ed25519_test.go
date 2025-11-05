@@ -3,10 +3,7 @@ package ed25519
 import (
 	"fmt"
 	"github.com/andantan/kangaroo/crypto/hash"
-	"github.com/andantan/kangaroo/crypto/hash/blake2b256"
-	"github.com/andantan/kangaroo/crypto/hash/keccak256"
-	"github.com/andantan/kangaroo/crypto/hash/ripemd160"
-	"github.com/andantan/kangaroo/crypto/hash/sha256"
+	"github.com/andantan/kangaroo/crypto/hash/testutil"
 	"github.com/andantan/kangaroo/crypto/key/eddsa"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -29,22 +26,13 @@ func Test_EdDSA_Ed25519_PrivateKey_Lifecycle(t *testing.T) {
 }
 
 func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
-	addressDerivers := []struct {
-		name    string
-		deriver hash.AddressDeriver
-	}{
-		{"SHA256", &sha256.Sha256AddressDeriver{}},
-		{"KECCAK256", &keccak256.Keccak256AddressDeriver{}},
-		{"RIPEMD160", &ripemd160.Ripemd160AddressDeriver{}},
-		{"BLAKE2B256", &blake2b256.Blake2b256AddressDeriver{}},
-	}
-
+	addressSuites := testutil.GetAddressSuiteTestCases()
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
 	require.NoError(t, err)
 	pubKey := privKey.PublicKey()
 
-	for _, tc := range addressDerivers {
-		t.Run(fmt.Sprintf("with %s address deriver", tc.name), func(t *testing.T) {
+	for _, tc := range addressSuites {
+		t.Run(fmt.Sprintf("with %s address deriver", tc.Name), func(t *testing.T) {
 			// 1. Validation and Type Check
 			assert.True(t, pubKey.IsValid())
 			assert.Equal(t, eddsa.EdDSAEd25519Type, pubKey.Type())
@@ -57,7 +45,7 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 			assert.True(t, pubKey.Equal(reloadedPubKey))
 
 			// 3. Address Derivation using the current Deriver from the table
-			address := pubKey.Address(tc.deriver)
+			address := pubKey.Address(tc.Suite.Deriver())
 			assert.NotNil(t, address)
 			assert.Equal(t, hash.AddressLength, len(address.Bytes()))
 		})
@@ -65,21 +53,13 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 }
 
 func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
-	hashDerivers := []struct {
-		name    string
-		deriver hash.HashDeriver
-	}{
-		{"SHA256", &sha256.Sha256HashDeriver{}},
-		{"KECCAK256", &keccak256.Keccak256HashDeriver{}},
-		{"BLAKE2B256", &blake2b256.Blake2b256HashDeriver{}},
-	}
-
+	hashSuites := testutil.GetHashSuiteTestCases()
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
 	require.NoError(t, err)
 
-	for _, tc := range hashDerivers {
-		t.Run(fmt.Sprintf("with %s hash", tc.name), func(t *testing.T) {
-			dataHash := tc.deriver.Derive([]byte("test data"))
+	for _, tc := range hashSuites {
+		t.Run(fmt.Sprintf("with %s hash", tc.Name), func(t *testing.T) {
+			dataHash := tc.Suite.Deriver().Derive([]byte("test data"))
 			signature, err := privKey.Sign(dataHash.Bytes())
 			require.NoError(t, err)
 
@@ -96,17 +76,10 @@ func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 }
 
 func Test_EdDSA_Ed25519_Signature_Verify(t *testing.T) {
-	hashDerivers := []struct {
-		name    string
-		deriver hash.HashDeriver
-	}{
-		{"SHA256", &sha256.Sha256HashDeriver{}},
-		{"KECCAK256", &keccak256.Keccak256HashDeriver{}},
-		{"BLAKE2B256", &blake2b256.Blake2b256HashDeriver{}},
-	}
+	hashSuites := testutil.GetHashSuiteTestCases()
 
-	for _, tc := range hashDerivers {
-		t.Run(fmt.Sprintf("with %s hash", tc.name), func(t *testing.T) {
+	for _, tc := range hashSuites {
+		t.Run(fmt.Sprintf("with %s hash", tc.Name), func(t *testing.T) {
 			// --- Setup ---
 			privKey, err := GenerateEdDSAEd25519PrivateKey()
 			require.NoError(t, err)

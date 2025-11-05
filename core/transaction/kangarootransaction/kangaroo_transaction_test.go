@@ -2,10 +2,10 @@ package kangarootransaction
 
 import (
 	"github.com/andantan/kangaroo/codec"
+	"github.com/andantan/kangaroo/core/testutil"
 	"github.com/andantan/kangaroo/core/transaction"
 	_ "github.com/andantan/kangaroo/crypto/all"
 	"github.com/andantan/kangaroo/crypto/hash"
-	"github.com/andantan/kangaroo/crypto/key"
 	kangarootxpb "github.com/andantan/kangaroo/proto/core/transaction/pb"
 	"github.com/andantan/kangaroo/registry"
 	"github.com/stretchr/testify/assert"
@@ -14,59 +14,25 @@ import (
 	"testing"
 )
 
-func setupTestMatrix(t *testing.T) []struct {
-	name        string
-	keySuite    key.KeySuite
-	hashDeriver hash.HashSuite
-} {
-	secp256r1Suite, err := registry.GetKeySuite("ecdsa-secp256r1")
-	require.NoError(t, err)
-	secp256k1Suite, err := registry.GetKeySuite("ecdsa-secp256k1")
-	require.NoError(t, err)
-	ed25519Suite, err := registry.GetKeySuite("eddsa-ed25519")
-	require.NoError(t, err)
-
-	sha256Suite, err := registry.GetHashSuite("sha256")
-	require.NoError(t, err)
-	keccak256Suite, err := registry.GetHashSuite("keccak256")
-	require.NoError(t, err)
-	blake2b256Suite, err := registry.GetHashSuite("blake2b256")
-	require.NoError(t, err)
-
-	return []struct {
-		name        string
-		keySuite    key.KeySuite
-		hashDeriver hash.HashSuite
-	}{
-		{"SECP256R1_with_SHA256", secp256r1Suite, sha256Suite},
-		{"SECP256R1_with_KECCAK256", secp256r1Suite, keccak256Suite},
-		{"SECP256R1_with_BLAKE2B256", secp256r1Suite, blake2b256Suite},
-		{"SECP256K1_with_SHA256", secp256k1Suite, sha256Suite},
-		{"SECP256K1_with_KECCAK256", secp256k1Suite, keccak256Suite},
-		{"SECP256K1_with_BLAKE2B256", secp256k1Suite, blake2b256Suite},
-		{"ED25519_with_SHA256", ed25519Suite, sha256Suite},
-		{"ED25519_with_KECCAK256", ed25519Suite, keccak256Suite},
-		{"ED25519_with_BLAKE2B256", ed25519Suite, blake2b256Suite},
-	}
-}
-
 func newTestKangarooTransaction(d []byte, n int) *KangarooTransaction {
 	return NewKangarooTransaction(nil, nil, d, uint64(n))
 }
 
 func TestKangarooTransaction_FullLifecycle(t *testing.T) {
-	testCases := setupTestMatrix(t)
+	testCases := testutil.GetSuitesPairTestCases()
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+		t.Run(tc.Name, func(t *testing.T) {
 			// --- 1. create and sign ---
 			tx := newTestKangarooTransaction([]byte("test_data"), 1)
 			assert.Equal(t, transaction.KangarooTransactionType, tx.Type())
 
-			signer, err := tc.keySuite.GeneratePrivateKey()
+			signer, err := tc.KeySuite.GeneratePrivateKey()
 			require.NoError(t, err)
+			signerAddr := signer.PublicKey().Address(tc.AddressSuite.Deriver())
+			assert.Equal(t, hash.AddressLength, len(signerAddr.Bytes()))
 
-			err = tx.Sign(signer, tc.hashDeriver.Deriver())
+			err = tx.Sign(signer, tc.HashSuite.Deriver())
 			require.NoError(t, err)
 			assert.NotNil(t, tx.Signer)
 			assert.NotNil(t, tx.Signature)
@@ -76,17 +42,17 @@ func TestKangarooTransaction_FullLifecycle(t *testing.T) {
 			assert.True(t, tx.Signer.Equal(signer.PublicKey()))
 
 			// --- 2. verify - success case ---
-			err = tx.Verify(tc.hashDeriver.Deriver())
+			err = tx.Verify(tc.HashSuite.Deriver())
 			assert.NoError(t, err, "correctly signed transaction should verify successfully")
 
 			// --- 3. Hashable ---
 			// 3a. hash for signing
-			signingHash, err := tx.HashForSigning(tc.hashDeriver.Deriver())
+			signingHash, err := tx.HashForSigning(tc.HashSuite.Deriver())
 			require.NoError(t, err)
 			assert.False(t, signingHash.IsZero())
 
 			// 3b. hash for txID (including signature)
-			txIDHash, err := tx.Hash(tc.hashDeriver.Deriver())
+			txIDHash, err := tx.Hash(tc.HashSuite.Deriver())
 			require.NoError(t, err)
 			assert.False(t, txIDHash.IsZero())
 
@@ -116,7 +82,7 @@ func TestKangarooTransaction_FullLifecycle(t *testing.T) {
 			assert.True(t, tx.Signer.Equal(newTx.Signer), "public keys should be equal after round trip")
 			assert.True(t, tx.Signature.Equal(newTx.Signature), "signatures should be equal after round trip")
 
-			err = newTx.Verify(tc.hashDeriver.Deriver())
+			err = newTx.Verify(tc.HashSuite.Deriver())
 			assert.NoError(t, err, "restored transaction should also verify successfully")
 		})
 	}

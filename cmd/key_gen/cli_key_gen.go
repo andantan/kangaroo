@@ -15,7 +15,7 @@ type KeyFile struct {
 	KeyAlgorithm  string `json:"key_algorithm"`
 	PrivateKey    string `json:"private_key"`
 	PublicKey     string `json:"public_key"`
-	AddrAlgorithm string `json:"addr_Algorithm"`
+	AddrAlgorithm string `json:"address_algorithm"`
 	Address       string `json:"address"`
 }
 
@@ -23,14 +23,14 @@ const defaultKeyAlgorithm = "ecdsa-secp256k1"
 const defaultAddressAlgorithm = "blake2b256"
 
 // e.g., make key-gen
-// e.g., make key-gen ARGS="--key-algo=eddsa-ed25519 --addr-algo=blake2b256 -o mykey.json"
+// e.g., make key-gen ARGS="--key-algo=eddsa-ed25519 --addr-algo=keccak256 -o mykey.json"
 // e.g., make key-gen ARGS="-list"
 func main() {
 	availableKeyAlgos := registry.ListKeySuiteTypes()
 	availableAddrAlgos := registry.ListAddressSuiteTypes()
 
-	keyAlgo := flag.String("key-algo", defaultKeyAlgorithm, "Key algorithm to use (e.g., ecdsa-secp256[k|r]1, eddsa-ed25519)")
-	addrAlgo := flag.String("addr-algo", defaultAddressAlgorithm, "Address derivation algorithm (e.g., keccak256, sha256, ripemd160)")
+	keyAlgo := flag.String("key-algo", defaultKeyAlgorithm, "Key algorithm to use (e.g., ecdsa-secp256[k|r]1, eddsa-ed25519, ...)")
+	addrAlgo := flag.String("addr-algo", defaultAddressAlgorithm, "Address derivation algorithm (e.g., keccak256, sha256, ...)")
 	outputFile := flag.String("o", "wallet.json", "Output file name for the generated key pair")
 	listAlgos := flag.Bool("list", false, "List all available algorithms and exit")
 	flag.Parse()
@@ -107,4 +107,6 @@ func main() {
 	fmt.Printf("%-19s \t%s\n", "Address (Raw):", address.String())
 	fmt.Printf("%-19s \t%s\n", "Address (Wrapped):", wrappedAddressString)
 	fmt.Printf("\n✅  Key pair successfully saved to '%s'\n", *outputFile)
+
+	os.Exit(0)
 }

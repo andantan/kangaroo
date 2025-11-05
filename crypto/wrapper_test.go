@@ -3,6 +3,8 @@ package crypto
 import (
 	"fmt"
 	_ "github.com/andantan/kangaroo/crypto/all"
+	hashtestutil "github.com/andantan/kangaroo/crypto/hash/testutil"
+	keytestutil "github.com/andantan/kangaroo/crypto/key/testutil"
 	"github.com/andantan/kangaroo/registry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -10,14 +12,15 @@ import (
 )
 
 func TestKeyWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
-	keySuiteNames := []string{
-		"ecdsa-secp256r1",
-		"ecdsa-secp256k1",
-		"eddsa-ed25519",
+	keySuites := keytestutil.GetKeySuiteTestCases()
+
+	var keySuiteNames []string
+	for _, s := range keySuites {
+		keySuiteNames = append(keySuiteNames, s.Suite.Type())
 	}
 
 	for _, suiteName := range keySuiteNames {
-		t.Run(suiteName, func(t *testing.T) {
+		t.Run(fmt.Sprintf("%s key wrapper wrap & unwrap round trip", suiteName), func(t *testing.T) {
 			// --- 1. Setup ---
 			suite, err := registry.GetKeySuite(suiteName)
 			require.NoError(t, err)
@@ -79,13 +82,23 @@ func TestKeyWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
 
 func TestHashWrapper_AddressWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
 	// --- 1. setup ---
-	hashSuiteNames := []string{"sha256", "keccak256", "blake2b256"}
-	addrSuiteNames := []string{"sha256", "keccak256", "ripemd160", "blake2b256"}
+	hashSuites := hashtestutil.GetHashSuiteTestCases()
+	var hashSuiteNames []string
+	for _, s := range hashSuites {
+		hashSuiteNames = append(hashSuiteNames, s.Suite.Type())
+	}
+
+	addressSuites := hashtestutil.GetAddressSuiteTestCases()
+	var addressSuitesNames []string
+	for _, s := range addressSuites {
+		addressSuitesNames = append(addressSuitesNames, s.Suite.Type())
+	}
+
 	testData := []byte("test data for hashing")
 
 	// --- 2. Hash round trip test ---
 	for _, suiteName := range hashSuiteNames {
-		t.Run(fmt.Sprintf("Hash-%s", suiteName), func(t *testing.T) {
+		t.Run(fmt.Sprintf("%s hash wrapper wrap & unwrap round trip", suiteName), func(t *testing.T) {
 			suite, err := registry.GetHashSuite(suiteName)
 			require.NoError(t, err)
 			hasher := suite.Deriver()
@@ -106,8 +119,8 @@ func TestHashWrapper_AddressWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
 	}
 
 	// --- 3. Address round trip test ---
-	for _, suiteName := range addrSuiteNames {
-		t.Run(fmt.Sprintf("Address-%s", suiteName), func(t *testing.T) {
+	for _, suiteName := range addressSuitesNames {
+		t.Run(fmt.Sprintf("%s address wrapper wrap & unwrap round trip", suiteName), func(t *testing.T) {
 			suite, err := registry.GetAddressSuite(suiteName)
 			require.NoError(t, err)
 			deriver := suite.Deriver()

@@ -7,10 +7,11 @@ const (
 )
 
 const (
-	Sha256Type     = "sha256"
-	Keccak256Type  = "keccak256"
-	Ripemd160Type  = "ripemd160"
-	Blake2b256Type = "blake2b256"
+	Sha256Type        = "sha256"
+	Keccak256Type     = "keccak256"
+	Ripemd160Type     = "ripemd160"
+	Blake2b256Type    = "blake2b256"
+	PoseidonBN254Type = "poseidon-bn254"
 )
 
 type Hash interface {

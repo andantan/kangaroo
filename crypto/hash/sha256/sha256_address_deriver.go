@@ -22,6 +22,5 @@ func (_ *Sha256AddressDeriver) Derive(data []byte) hash.Address {
 	if err != nil {
 		panic(fmt.Sprintf("internal error: failed to derive address from valid hash slice: %v", err))
 	}
-
 	return address
 }
