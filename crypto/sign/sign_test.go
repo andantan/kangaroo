@@ -1,11 +1,11 @@
 package sign
 
 import (
+	"github.com/andantan/kangaroo/crypto/hash/sha/sha256"
 	"github.com/andantan/kangaroo/crypto/testutil"
 	"testing"
 
 	"github.com/andantan/kangaroo/crypto/hash"
-	"github.com/andantan/kangaroo/crypto/hash/sha256"
 	"github.com/andantan/kangaroo/crypto/key"
 	"github.com/andantan/kangaroo/crypto/key/ecdsa/secp256r1"
 	"github.com/andantan/kangaroo/crypto/key/eddsa/ed25519"
