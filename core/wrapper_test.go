@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/andantan/kangaroo/core/testutil"
 	"github.com/andantan/kangaroo/core/transaction/kangarootransaction"
 	_ "github.com/andantan/kangaroo/crypto/all"
 	"github.com/andantan/kangaroo/crypto/hash"
@@ -43,14 +44,16 @@ func setupTestMatrix(t *testing.T) []struct {
 }
 
 func TestTransactionRegistry_WrapUnwrap_RoundTrip(t *testing.T) {
-	testCases := setupTestMatrix(t)
+	testCases := testutil.GetSuitesPairTestCases()
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+		t.Run(tc.Name, func(t *testing.T) {
 			// --- Setup ---
-			hasher := tc.hashSuite.Deriver()
-			signer, err := tc.keySuite.GeneratePrivateKey()
+			hasher := tc.HashSuite.Deriver()
+			signer, err := tc.KeySuite.GeneratePrivateKey()
 			require.NoError(t, err)
+			signerAddr := signer.PublicKey().Address(tc.AddressSuite.Deriver())
+			assert.Equal(t, hash.AddressLength, len(signerAddr.Bytes()))
 
 			tx := kangarootransaction.NewKangarooTransaction(nil, nil, []byte("kangaroo-transaction"), uint64(1))
 			err = tx.Sign(signer, hasher)

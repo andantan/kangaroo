@@ -7,6 +7,7 @@ import (
 const (
 	_ byte = iota
 	Sha256AddressPrefixByte
+	Sha3AddressPrefixByte
 	Keccak256AddressByte
 	Blake2b256AddressByte
 	PoseidonBN254AddressByte
@@ -16,6 +17,7 @@ const (
 
 var typeToAddressPrefix = map[string]byte{
 	Sha256Type:        Sha256AddressPrefixByte,
+	Sha3Type:          Sha3AddressPrefixByte,
 	Keccak256Type:     Keccak256AddressByte,
 	Blake2b256Type:    Blake2b256AddressByte,
 	PoseidonBN254Type: PoseidonBN254AddressByte,

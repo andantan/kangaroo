@@ -29,7 +29,7 @@ func main() {
 	availableKeyAlgos := registry.ListKeySuiteTypes()
 	availableAddrAlgos := registry.ListAddressSuiteTypes()
 
-	keyAlgo := flag.String("key-algo", defaultKeyAlgorithm, "Key algorithm to use (e.g., ecdsa-secp256[k|r]1, eddsa-ed25519, ...)")
+	keyAlgo := flag.String("key-algo", defaultKeyAlgorithm, "Key algorithm to use (e.g., ecdsa-secp256k1, eddsa-ed25519, ...)")
 	addrAlgo := flag.String("addr-algo", defaultAddressAlgorithm, "Address derivation algorithm (e.g., keccak256, sha256, ...)")
 	outputFile := flag.String("o", "wallet.json", "Output file name for the generated key pair")
 	listAlgos := flag.Bool("list", false, "List all available algorithms and exit")

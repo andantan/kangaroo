@@ -8,6 +8,7 @@ const (
 
 const (
 	Sha256Type        = "sha256"
+	Sha3Type          = "sha3-256"
 	Keccak256Type     = "keccak256"
 	Ripemd160Type     = "ripemd160"
 	Blake2b256Type    = "blake2b256"
