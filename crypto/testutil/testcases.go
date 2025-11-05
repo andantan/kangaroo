@@ -29,7 +29,7 @@ func GetSuitesPairTestCases(t *testing.T) []SuitesPairTestCase {
 	for _, kSuiteCase := range keySuites {
 		for _, hSuiteCase := range hashSuites {
 			for _, aSuiteCase := range addressSuites {
-				// e.g., "SECP256K1_Hash-SHA256_Addr-KECCAK256"
+				// e.g., "SCHNORR_SECP256K1_Hash-KECCAK256_Addr-RIPEMD160"
 				testName := fmt.Sprintf("%s_HASH_%s_ADDRESS_%s",
 					kSuiteCase.Name,
 					hSuiteCase.Name,

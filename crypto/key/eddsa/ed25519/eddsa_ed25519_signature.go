@@ -1,6 +1,7 @@
 package ed25519
 
 import (
+	"bytes"
 	"crypto/ed25519"
 	"encoding/hex"
 	"fmt"
@@ -9,8 +10,7 @@ import (
 )
 
 type EdDSAEd25519Signature struct {
-	Point  [32]byte // R
-	Scalar [32]byte // S
+	Sig []byte
 }
 
 var _ key.Signature = (*EdDSAEd25519Signature)(nil)
@@ -20,21 +20,14 @@ func EdDSAEd25519SignatureFromBytes(b []byte) (key.Signature, error) {
 		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSAEd25519SignatureBytesLength, len(b))
 	}
 
-	pointArr := [32]byte{}
-	scalarArr := [32]byte{}
-	copy(pointArr[:], b[:32])
-	copy(scalarArr[:], b[32:])
-
+	sigBytes := append([]byte(nil), b...)
 	return &EdDSAEd25519Signature{
-		Point:  pointArr,
-		Scalar: scalarArr,
+		Sig: sigBytes,
 	}, nil
 }
 
 func (s *EdDSAEd25519Signature) Bytes() []byte {
-	b := append([]byte(nil), s.Point[:]...)
-	b = append(b, s.Scalar[:]...)
-	return b
+	return append([]byte(nil), s.Sig...)
 }
 
 func (s *EdDSAEd25519Signature) String() string {
@@ -42,7 +35,11 @@ func (s *EdDSAEd25519Signature) String() string {
 }
 
 func (s *EdDSAEd25519Signature) IsValid() bool {
-	return s.Point != [32]byte{} && s.Scalar != [32]byte{}
+	if s.Sig == nil || len(s.Sig) != eddsa.EdDSAEd25519SignatureBytesLength {
+		return false
+	}
+
+	return true
 }
 
 func (s *EdDSAEd25519Signature) Type() string {
@@ -59,7 +56,7 @@ func (s *EdDSAEd25519Signature) Equal(other key.Signature) bool {
 		return false
 	}
 
-	return s.Point == otherSig.Point && s.Scalar == otherSig.Scalar
+	return bytes.Equal(s.Sig, otherSig.Sig)
 }
 
 func (s *EdDSAEd25519Signature) Verify(pubkey key.PublicKey, data []byte) bool {
@@ -68,6 +65,5 @@ func (s *EdDSAEd25519Signature) Verify(pubkey key.PublicKey, data []byte) bool {
 		return false
 	}
 
-	sig := append(s.Point[:], s.Scalar[:]...)
-	return ed25519.Verify(pubKey.Key, data, sig)
+	return ed25519.Verify(pubKey.Key, data, s.Sig)
 }

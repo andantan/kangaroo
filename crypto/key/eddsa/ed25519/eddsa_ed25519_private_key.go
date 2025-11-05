@@ -61,14 +61,8 @@ func (k *EdDSAEd25519PrivateKey) PublicKey() key.PublicKey {
 
 func (k *EdDSAEd25519PrivateKey) Sign(data []byte) (key.Signature, error) {
 	sig := ed25519.Sign(k.key, data)
-	point := [32]byte{}
-	scalar := [32]byte{}
-
-	copy(point[:], sig[:32])
-	copy(scalar[:], sig[32:])
 
 	return &EdDSAEd25519Signature{
-		Point:  point,
-		Scalar: scalar,
+		Sig: sig,
 	}, nil
 }

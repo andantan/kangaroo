@@ -17,7 +17,7 @@ type ECDSASecp256k1PublicKey struct {
 var _ key.PublicKey = (*ECDSASecp256k1PublicKey)(nil)
 
 func (k *ECDSASecp256k1PublicKey) Bytes() []byte {
-	return k.Key[:]
+	return append([]byte(nil), k.Key...)
 }
 
 func (k *ECDSASecp256k1PublicKey) String() string {

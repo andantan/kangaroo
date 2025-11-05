@@ -8,6 +8,7 @@ import (
 	"github.com/andantan/kangaroo/registry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/crypto/blake2b"
 	"testing"
 )
 
@@ -27,7 +28,8 @@ func TestKeyWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
 			privKey, err := suite.GeneratePrivateKey()
 			require.NoError(t, err)
 			pubKey := privKey.PublicKey()
-			sig, err := privKey.Sign([]byte("test data"))
+			hash := blake2b.Sum256([]byte("test data"))
+			sig, err := privKey.Sign(hash[:])
 			require.NoError(t, err)
 
 			// --- 2. PrivateKey round trip test ---
