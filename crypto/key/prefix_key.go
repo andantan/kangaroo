@@ -14,6 +14,7 @@ const (
 	EdDSAEd25519PrefixByte
 	EdDSAEd448PrefixByte
 	SchnorrSecp256k1PrefixByte
+	SchnorrSr25519PrefixByte
 )
 
 // mapping algorithm type name to 1 byte prefix
@@ -23,6 +24,7 @@ var typeToKeyPrefix = map[string]byte{
 	eddsa.EdDSAEd25519Type:       EdDSAEd25519PrefixByte,
 	eddsa.EdDSAEd448Type:         EdDSAEd448PrefixByte,
 	schnorr.SchnorrSecp256k1Type: SchnorrSecp256k1PrefixByte,
+	schnorr.SchnorrSr25519Type:   SchnorrSr25519PrefixByte,
 }
 
 var keyPrefixToType = make(map[byte]string)

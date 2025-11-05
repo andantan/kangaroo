@@ -12,11 +12,14 @@ import (
 )
 
 type KeyFile struct {
-	KeyAlgorithm  string `json:"key_algorithm"`
-	PrivateKey    string `json:"private_key"`
-	PublicKey     string `json:"public_key"`
-	AddrAlgorithm string `json:"address_algorithm"`
-	Address       string `json:"address"`
+	KeyAlgorithm      string `json:"key_algorithm"`
+	PrivateKey        string `json:"private_key"`
+	WrappedPrivateKey string `json:"wrapped_private_key"`
+	PublicKey         string `json:"public_key"`
+	WrappedPublicKey  string `json:"wrapped_public_key"`
+	AddrAlgorithm     string `json:"address_algorithm"`
+	Address           string `json:"address"`
+	WrappedAddress    string `json:"wrapped_address"`
 }
 
 const defaultKeyAlgorithm = "ecdsa-secp256k1"
@@ -80,11 +83,14 @@ func main() {
 	}
 
 	keyFile := KeyFile{
-		KeyAlgorithm:  privateKey.Type(),
-		PrivateKey:    privateKey.String(),
-		PublicKey:     publicKey.String(),
-		AddrAlgorithm: address.Type(),
-		Address:       address.String(),
+		KeyAlgorithm:      privateKey.Type(),
+		PrivateKey:        privateKey.String(),
+		WrappedPrivateKey: wrappedPrivateKeyString,
+		PublicKey:         publicKey.String(),
+		WrappedPublicKey:  wrappedPublicKeyString,
+		AddrAlgorithm:     address.Type(),
+		Address:           address.String(),
+		WrappedAddress:    wrappedAddressString,
 	}
 
 	jsonData, err := json.MarshalIndent(keyFile, "", "  ")

@@ -7,6 +7,7 @@ import (
 	"github.com/andantan/kangaroo/crypto/key/eddsa/ed25519"
 	"github.com/andantan/kangaroo/crypto/key/eddsa/ed448"
 	schnorrsecp256k1 "github.com/andantan/kangaroo/crypto/key/schnorr/secp256k1"
+	"github.com/andantan/kangaroo/crypto/key/schnorr/sr25519"
 	"testing"
 )
 
@@ -24,5 +25,6 @@ func GetKeySuiteTestCases(t *testing.T) []KeySuiteTestCase {
 		{"EdDSA_ED25519", &ed25519.EdDSAEd25519Suite{}},
 		{"EdDSA_ED448", &ed448.EdDSAEd448Suite{}},
 		{"SCHNORR_SECP256K1", &schnorrsecp256k1.SchnorrSecp256k1Suite{}},
+		{"SCHNORR_SR25519", &sr25519.SchnorrSr25519Suite{}},
 	}
 }

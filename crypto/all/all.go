@@ -13,4 +13,5 @@ import (
 	_ "github.com/andantan/kangaroo/crypto/key/eddsa/ed25519"
 	_ "github.com/andantan/kangaroo/crypto/key/eddsa/ed448"
 	_ "github.com/andantan/kangaroo/crypto/key/schnorr/secp256k1"
+	_ "github.com/andantan/kangaroo/crypto/key/schnorr/sr25519"
 )
