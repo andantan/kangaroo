@@ -10,6 +10,7 @@ const (
 	Keccak256HashByte
 	Blake2b256HashByte
 	PoseidonBN256HashByte
+	MimcBN256HashByte
 )
 
 var typeToHashPrefix = map[string]byte{
@@ -17,6 +18,7 @@ var typeToHashPrefix = map[string]byte{
 	Keccak256Type:     Keccak256HashByte,
 	Blake2b256Type:    Blake2b256HashByte,
 	PoseidonBN254Type: PoseidonBN256HashByte,
+	MimcBN254Type:     MimcBN256HashByte,
 }
 
 var hashPrefixToType = make(map[byte]string)

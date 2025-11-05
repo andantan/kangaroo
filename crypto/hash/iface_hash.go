@@ -12,6 +12,7 @@ const (
 	Ripemd160Type     = "ripemd160"
 	Blake2b256Type    = "blake2b256"
 	PoseidonBN254Type = "poseidon-bn254"
+	MimcBN254Type     = "mimc-bn254"
 )
 
 type Hash interface {

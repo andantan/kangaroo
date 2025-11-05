@@ -4,6 +4,7 @@ import (
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/andantan/kangaroo/crypto/hash/blake2b256"
 	"github.com/andantan/kangaroo/crypto/hash/keccak256"
+	"github.com/andantan/kangaroo/crypto/hash/mimcbn254"
 	"github.com/andantan/kangaroo/crypto/hash/poseidonbn254"
 	"github.com/andantan/kangaroo/crypto/hash/ripemd160"
 	"github.com/andantan/kangaroo/crypto/hash/sha256"
@@ -25,6 +26,7 @@ func GetHashSuiteTestCases() []HashSuiteTestCase {
 		{"KECCAK256", &keccak256.Keccak256HashSuite{}},
 		{"BLAKE2B256", &blake2b256.Blake2b256HashSuite{}},
 		{"POSEIDON_BN254", &poseidonbn254.PoseidonBN254HashSuite{}},
+		{"MIMC_BN254", &mimcbn254.MimcBN254HashSuite{}},
 	}
 }
 
@@ -35,5 +37,6 @@ func GetAddressSuiteTestCases() []AddressSuiteTestCase {
 		{"RIPEMD160", &ripemd160.Ripemd160AddressSuite{}},
 		{"BLAKE2B256", &blake2b256.Blake2b256AddressSuite{}},
 		{"POSEIDON_BN254", &poseidonbn254.PoseidonBN254AddressSuite{}},
+		{"MIMC_BN254", &mimcbn254.MimcBN254AddressSuite{}},
 	}
 }

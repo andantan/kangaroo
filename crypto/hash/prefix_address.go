@@ -8,17 +8,19 @@ const (
 	_ byte = iota
 	Sha256AddressPrefixByte
 	Keccak256AddressByte
-	Ripemd160AddressByte
 	Blake2b256AddressByte
 	PoseidonBN254AddressByte
+	MimcBN254AddressByte
+	Ripemd160AddressByte
 )
 
 var typeToAddressPrefix = map[string]byte{
 	Sha256Type:        Sha256AddressPrefixByte,
 	Keccak256Type:     Keccak256AddressByte,
-	Ripemd160Type:     Ripemd160AddressByte,
 	Blake2b256Type:    Blake2b256AddressByte,
 	PoseidonBN254Type: PoseidonBN254AddressByte,
+	MimcBN254Type:     MimcBN254AddressByte,
+	Ripemd160Type:     Ripemd160AddressByte,
 }
 
 var addressPrefixToType = make(map[byte]string)

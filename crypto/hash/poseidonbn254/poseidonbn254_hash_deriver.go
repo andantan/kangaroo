@@ -2,29 +2,29 @@ package poseidonbn254
 
 import (
 	"fmt"
-	kangaroohash "github.com/andantan/kangaroo/crypto/hash"
+	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/poseidon2"
 )
 
 type PoseidonBN254HashDeriver struct{}
 
-var _ kangaroohash.HashDeriver = (*PoseidonBN254HashDeriver)(nil)
+var _ hash.HashDeriver = (*PoseidonBN254HashDeriver)(nil)
 
 func (_ *PoseidonBN254HashDeriver) Type() string {
-	return kangaroohash.PoseidonBN254Type
+	return hash.PoseidonBN254Type
 }
 
-func (_ *PoseidonBN254HashDeriver) Derive(data []byte) kangaroohash.Hash {
+func (_ *PoseidonBN254HashDeriver) Derive(data []byte) hash.Hash {
 	f := poseidon2.NewMerkleDamgardHasher()
 	d := f.Sum(data)
-	
+
 	var fe fr.Element
 	fe.SetBytes(d)
 	hb := fe.Bytes()
 
-	fhb := make([]byte, kangaroohash.HashLength)
-	copy(fhb[kangaroohash.HashLength-len(hb):], hb[:])
+	fhb := make([]byte, hash.HashLength)
+	copy(fhb[hash.HashLength-len(hb):], hb[:])
 
 	h, err := PoseidonBN254HashFromBytes(fhb[:])
 	if err != nil {
