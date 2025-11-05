@@ -12,7 +12,7 @@ import (
 )
 
 func TestKeyWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
-	keySuites := keytestutil.GetKeySuiteTestCases()
+	keySuites := keytestutil.GetKeySuiteTestCases(t)
 
 	var keySuiteNames []string
 	for _, s := range keySuites {
@@ -82,13 +82,13 @@ func TestKeyWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
 
 func TestHashWrapper_AddressWrapper_WrapUnwrap_RoundTrip(t *testing.T) {
 	// --- 1. setup ---
-	hashSuites := hashtestutil.GetHashSuiteTestCases()
+	hashSuites := hashtestutil.GetHashSuiteTestCases(t)
 	var hashSuiteNames []string
 	for _, s := range hashSuites {
 		hashSuiteNames = append(hashSuiteNames, s.Suite.Type())
 	}
 
-	addressSuites := hashtestutil.GetAddressSuiteTestCases()
+	addressSuites := hashtestutil.GetAddressSuiteTestCases(t)
 	var addressSuitesNames []string
 	for _, s := range addressSuites {
 		addressSuitesNames = append(addressSuitesNames, s.Suite.Type())

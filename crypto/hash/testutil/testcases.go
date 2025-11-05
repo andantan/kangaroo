@@ -9,6 +9,7 @@ import (
 	"github.com/andantan/kangaroo/crypto/hash/ripemd160"
 	"github.com/andantan/kangaroo/crypto/hash/sha256"
 	"github.com/andantan/kangaroo/crypto/hash/sha3"
+	"testing"
 )
 
 type HashSuiteTestCase struct {
@@ -16,12 +17,9 @@ type HashSuiteTestCase struct {
 	Suite hash.HashSuite
 }
 
-type AddressSuiteTestCase struct {
-	Name  string
-	Suite hash.AddressSuite
-}
+func GetHashSuiteTestCases(t *testing.T) []HashSuiteTestCase {
+	t.Helper()
 
-func GetHashSuiteTestCases() []HashSuiteTestCase {
 	return []HashSuiteTestCase{
 		{"SHA256", &sha256.Sha256HashSuite{}},
 		{"SHA3_256", &sha3.Sha3HashSuite{}},
@@ -32,7 +30,14 @@ func GetHashSuiteTestCases() []HashSuiteTestCase {
 	}
 }
 
-func GetAddressSuiteTestCases() []AddressSuiteTestCase {
+type AddressSuiteTestCase struct {
+	Name  string
+	Suite hash.AddressSuite
+}
+
+func GetAddressSuiteTestCases(t *testing.T) []AddressSuiteTestCase {
+	t.Helper()
+
 	return []AddressSuiteTestCase{
 		{"SHA256", &sha256.Sha256AddressSuite{}},
 		{"SHA3_256", &sha3.Sha3AddressSuite{}},

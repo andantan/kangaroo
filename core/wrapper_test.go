@@ -1,50 +1,17 @@
 package core
 
 import (
-	"github.com/andantan/kangaroo/core/testutil"
 	"github.com/andantan/kangaroo/core/transaction/kangarootransaction"
 	_ "github.com/andantan/kangaroo/crypto/all"
 	"github.com/andantan/kangaroo/crypto/hash"
-	"github.com/andantan/kangaroo/crypto/key"
-	"github.com/andantan/kangaroo/registry"
+	"github.com/andantan/kangaroo/crypto/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-func setupTestMatrix(t *testing.T) []struct {
-	name      string
-	keySuite  key.KeySuite
-	hashSuite hash.HashSuite
-} {
-	secp256r1Suite, err := registry.GetKeySuite("ecdsa-secp256r1")
-	require.NoError(t, err)
-	secp256k1Suite, err := registry.GetKeySuite("ecdsa-secp256k1")
-	require.NoError(t, err)
-	ed25519Suite, err := registry.GetKeySuite("eddsa-ed25519")
-	require.NoError(t, err)
-
-	sha256Suite, err := registry.GetHashSuite("sha256")
-	require.NoError(t, err)
-	keccak256Suite, err := registry.GetHashSuite("keccak256")
-	require.NoError(t, err)
-
-	return []struct {
-		name      string
-		keySuite  key.KeySuite
-		hashSuite hash.HashSuite
-	}{
-		{"SECP256R1_with_SHA256", secp256r1Suite, sha256Suite},
-		{"SECP256R1_with_KECCAK256", secp256r1Suite, keccak256Suite},
-		{"SECP256K1_with_SHA256", secp256k1Suite, sha256Suite},
-		{"SECP256K1_with_KECCAK256", secp256k1Suite, keccak256Suite},
-		{"ED25519_with_SHA256", ed25519Suite, sha256Suite},
-		{"ED25519_with_KECCAK256", ed25519Suite, keccak256Suite},
-	}
-}
-
 func TestTransactionRegistry_WrapUnwrap_RoundTrip(t *testing.T) {
-	testCases := testutil.GetSuitesPairTestCases()
+	testCases := testutil.GetSuitesPairTestCases(t)
 
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {

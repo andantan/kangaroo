@@ -25,7 +25,7 @@ func (k *ECDSASecp256k1PublicKey) String() string {
 }
 
 func (k *ECDSASecp256k1PublicKey) IsValid() bool {
-	if k.Key == nil || len(k.Key) != ecdsa.ECDSAPublicKeyBytesLength {
+	if k.Key == nil || len(k.Key) != ecdsa.ECDSASecp256k1PublicKeyBytesLength {
 		return false
 	}
 
@@ -56,8 +56,9 @@ func (k *ECDSASecp256k1PublicKey) Address(deriver hash.AddressDeriver) hash.Addr
 }
 
 func ECDSASecp256k1PublicKeyFromBytes(b []byte) (key.PublicKey, error) {
-	if len(b) != ecdsa.ECDSAPublicKeyBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for public-key<%s>: expected %d, got %d", ecdsa.ECDSASecp256k1Type, ecdsa.ECDSAPublicKeyBytesLength, len(b))
+	if len(b) != ecdsa.ECDSASecp256k1PublicKeyBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for public-key<%s>: expected %d, got %d",
+			ecdsa.ECDSASecp256k1Type, ecdsa.ECDSASecp256k1PublicKeyBytesLength, len(b))
 	}
 
 	keyBytes := append([]byte(nil), b...)

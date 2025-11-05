@@ -27,8 +27,9 @@ func GenerateECDSASecp256k1PrivateKey() (key.PrivateKey, error) {
 }
 
 func ECDSASecp256k1PrivateKeyFromBytes(b []byte) (key.PrivateKey, error) {
-	if len(b) != kangarooecdsa.ECDSAPrivateKeyBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for private-key<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256k1Type, kangarooecdsa.ECDSAPrivateKeyBytesLength, len(b))
+	if len(b) != kangarooecdsa.ECDSASecp256k1PrivateKeyBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for private-key<%s>: expected %d, got %d",
+			kangarooecdsa.ECDSASecp256k1Type, kangarooecdsa.ECDSASecp256k1PrivateKeyBytesLength, len(b))
 	}
 
 	pk := secp256k1.PrivKeyFromBytes(b)

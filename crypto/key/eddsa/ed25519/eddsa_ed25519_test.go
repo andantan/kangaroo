@@ -19,14 +19,14 @@ func Test_EdDSA_Ed25519_PrivateKey_Lifecycle(t *testing.T) {
 
 	// 2. Bytes Round Trip
 	privKeyBytes := privKey.Bytes()
-	assert.Equal(t, eddsa.EdDSAPrivateKeyBytesLength, len(privKeyBytes))
+	assert.Equal(t, eddsa.EdDSAEd25519PrivateKeyBytesLength, len(privKeyBytes))
 	reloadedPrivKey, err := EdDSAEd25519PrivateKeyFromBytes(privKeyBytes)
 	require.NoError(t, err)
 	assert.Equal(t, privKey, reloadedPrivKey)
 }
 
 func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
-	addressSuites := testutil.GetAddressSuiteTestCases()
+	addressSuites := testutil.GetAddressSuiteTestCases(t)
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
 	require.NoError(t, err)
 	pubKey := privKey.PublicKey()
@@ -39,7 +39,7 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 
 			// 2. Bytes Round Trip
 			pubKeyBytes := pubKey.Bytes()
-			assert.Equal(t, eddsa.EdDSAPublicKeyBytesLength, len(pubKeyBytes))
+			assert.Equal(t, eddsa.EdDSAEd25519PublicKeyBytesLength, len(pubKeyBytes))
 			reloadedPubKey, err := EdDSAEd25519PublicKeyFromBytes(pubKeyBytes)
 			require.NoError(t, err)
 			assert.True(t, pubKey.Equal(reloadedPubKey))
@@ -53,7 +53,7 @@ func Test_EdDSA_Ed25519_PublicKey_Lifecycle(t *testing.T) {
 }
 
 func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
-	hashSuites := testutil.GetHashSuiteTestCases()
+	hashSuites := testutil.GetHashSuiteTestCases(t)
 	privKey, err := GenerateEdDSAEd25519PrivateKey()
 	require.NoError(t, err)
 
@@ -67,7 +67,7 @@ func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 			assert.Equal(t, eddsa.EdDSAEd25519Type, signature.Type())
 
 			sigBytes := signature.Bytes()
-			assert.Equal(t, eddsa.EdDSASignatureBytesLength, len(sigBytes))
+			assert.Equal(t, eddsa.EdDSAEd25519SignatureBytesLength, len(sigBytes))
 			reloadedSig, err := EdDSAEd25519SignatureFromBytes(sigBytes)
 			require.NoError(t, err)
 			assert.True(t, signature.Equal(reloadedSig))
@@ -76,7 +76,7 @@ func Test_EdDSA_Ed25519_Signature_Lifecycle(t *testing.T) {
 }
 
 func Test_EdDSA_Ed25519_Signature_Verify(t *testing.T) {
-	hashSuites := testutil.GetHashSuiteTestCases()
+	hashSuites := testutil.GetHashSuiteTestCases(t)
 
 	for _, tc := range hashSuites {
 		t.Run(fmt.Sprintf("with %s hash", tc.Name), func(t *testing.T) {
@@ -108,7 +108,7 @@ func Test_EdDSA_Ed25519_Signature_Verify(t *testing.T) {
 			})
 
 			t.Run("Verification with invalid public key should fail", func(t *testing.T) {
-				invalidPubKeyBytes := make([]byte, eddsa.EdDSAPublicKeyBytesLength)
+				invalidPubKeyBytes := make([]byte, eddsa.EdDSAEd25519PublicKeyBytesLength)
 				invalidPubKey, err := EdDSAEd25519PublicKeyFromBytes(invalidPubKeyBytes)
 				assert.NoError(t, err)
 				assert.False(t, signature.Verify(invalidPubKey, correctData))

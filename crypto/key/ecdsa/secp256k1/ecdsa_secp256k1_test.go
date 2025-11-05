@@ -19,14 +19,14 @@ func Test_ECDSA_Secp256k1_PrivateKey_Lifecycle(t *testing.T) {
 
 	// 2. Bytes Round Trip
 	privKeyBytes := privKey.Bytes()
-	assert.Equal(t, ecdsa.ECDSAPrivateKeyBytesLength, len(privKeyBytes))
+	assert.Equal(t, ecdsa.ECDSASecp256k1PrivateKeyBytesLength, len(privKeyBytes))
 	reloadedPrivKey, err := ECDSASecp256k1PrivateKeyFromBytes(privKeyBytes)
 	require.NoError(t, err)
 	assert.Equal(t, privKey, reloadedPrivKey)
 }
 
 func Test_ECDSA_Secp256k1_PublicKey_Lifecycle(t *testing.T) {
-	addressSuites := testutil.GetAddressSuiteTestCases()
+	addressSuites := testutil.GetAddressSuiteTestCases(t)
 	privKey, err := GenerateECDSASecp256k1PrivateKey()
 	require.NoError(t, err)
 	pubKey := privKey.PublicKey()
@@ -39,7 +39,7 @@ func Test_ECDSA_Secp256k1_PublicKey_Lifecycle(t *testing.T) {
 
 			// 2. Bytes Round Trip
 			pubKeyBytes := pubKey.Bytes()
-			assert.Equal(t, ecdsa.ECDSAPublicKeyBytesLength, len(pubKeyBytes))
+			assert.Equal(t, ecdsa.ECDSASecp256k1PublicKeyBytesLength, len(pubKeyBytes))
 			reloadedPubKey, err := ECDSASecp256k1PublicKeyFromBytes(pubKeyBytes)
 			require.NoError(t, err)
 			assert.True(t, pubKey.Equal(reloadedPubKey))
@@ -53,7 +53,7 @@ func Test_ECDSA_Secp256k1_PublicKey_Lifecycle(t *testing.T) {
 }
 
 func Test_ECDSA_Secp256k1_Signature_Lifecycle(t *testing.T) {
-	hashSuites := testutil.GetHashSuiteTestCases()
+	hashSuites := testutil.GetHashSuiteTestCases(t)
 	privKey, err := GenerateECDSASecp256k1PrivateKey()
 	require.NoError(t, err)
 
@@ -67,7 +67,7 @@ func Test_ECDSA_Secp256k1_Signature_Lifecycle(t *testing.T) {
 			assert.Equal(t, ecdsa.ECDSASecp256k1Type, signature.Type())
 
 			sigBytes := signature.Bytes()
-			assert.Equal(t, ecdsa.ECDSASignatureBytesLength, len(sigBytes))
+			assert.Equal(t, ecdsa.ECDSASecp256k1SignatureBytesLength, len(sigBytes))
 			reloadedSig, err := ECDSASecp256k1SignatureFromBytes(sigBytes)
 			require.NoError(t, err)
 			assert.True(t, signature.Equal(reloadedSig))
@@ -76,7 +76,7 @@ func Test_ECDSA_Secp256k1_Signature_Lifecycle(t *testing.T) {
 }
 
 func Test_ECDSA_Secp256k1_Signature_Verify(t *testing.T) {
-	hashSuites := testutil.GetHashSuiteTestCases()
+	hashSuites := testutil.GetHashSuiteTestCases(t)
 
 	for _, tc := range hashSuites {
 		t.Run(fmt.Sprintf("with %s hash", tc.Name), func(t *testing.T) {
@@ -107,7 +107,7 @@ func Test_ECDSA_Secp256k1_Signature_Verify(t *testing.T) {
 			})
 
 			t.Run("Verification with invalid public key should fail", func(t *testing.T) {
-				invalidPubKeyBytes := make([]byte, ecdsa.ECDSAPublicKeyBytesLength)
+				invalidPubKeyBytes := make([]byte, ecdsa.ECDSASecp256k1PublicKeyBytesLength)
 				invalidPubKey, err := ECDSASecp256k1PublicKeyFromBytes(invalidPubKeyBytes)
 				assert.Error(t, err)
 				assert.False(t, signature.Verify(invalidPubKey, dataHash.Bytes()))

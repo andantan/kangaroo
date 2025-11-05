@@ -2,10 +2,10 @@ package kangarootransaction
 
 import (
 	"github.com/andantan/kangaroo/codec"
-	"github.com/andantan/kangaroo/core/testutil"
 	"github.com/andantan/kangaroo/core/transaction"
 	_ "github.com/andantan/kangaroo/crypto/all"
 	"github.com/andantan/kangaroo/crypto/hash"
+	"github.com/andantan/kangaroo/crypto/testutil"
 	kangarootxpb "github.com/andantan/kangaroo/proto/core/transaction/pb"
 	"github.com/andantan/kangaroo/registry"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +19,7 @@ func newTestKangarooTransaction(d []byte, n int) *KangarooTransaction {
 }
 
 func TestKangarooTransaction_FullLifecycle(t *testing.T) {
-	testCases := testutil.GetSuitesPairTestCases()
+	testCases := testutil.GetSuitesPairTestCases(t)
 
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {

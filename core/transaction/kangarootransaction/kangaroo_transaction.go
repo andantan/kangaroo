@@ -7,6 +7,7 @@ import (
 	"github.com/andantan/kangaroo/crypto"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/andantan/kangaroo/crypto/key"
+	"github.com/andantan/kangaroo/crypto/sign"
 	kangarootxpb "github.com/andantan/kangaroo/proto/core/transaction/pb"
 	"google.golang.org/protobuf/proto"
 	"math/big"
@@ -177,7 +178,7 @@ func (tx *KangarooTransaction) NewProto() proto.Message {
 }
 
 func (tx *KangarooTransaction) Sign(privKey key.PrivateKey, deriver hash.HashDeriver) error {
-	sig, err := crypto.Sign(privKey, tx, deriver)
+	sig, err := sign.Sign(privKey, tx, deriver)
 	if err != nil {
 		return err
 	}
@@ -205,7 +206,7 @@ func (tx *KangarooTransaction) Verify(deriver hash.HashDeriver) error {
 		return fmt.Errorf("%s: %w", errPrefix, err)
 	}
 
-	err = crypto.VerifySignature(tx.Signer, tx.Signature, h)
+	err = sign.VerifySignature(tx.Signer, tx.Signature, h)
 	if err != nil {
 		return fmt.Errorf("%s: %w", errPrefix, err)
 	}

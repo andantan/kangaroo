@@ -79,8 +79,8 @@ func (s *ECDSASecp256r1Signature) Verify(pubKey key.PublicKey, data []byte) bool
 }
 
 func ECDSASecp256r1SignatureFromBytes(b []byte) (key.Signature, error) {
-	if len(b) != kangarooecdsa.ECDSASignatureBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256r1Type, kangarooecdsa.ECDSASignatureBytesLength, len(b))
+	if len(b) != kangarooecdsa.ECDSASecp256r1SignatureBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", kangarooecdsa.ECDSASecp256r1Type, kangarooecdsa.ECDSASecp256r1SignatureBytesLength, len(b))
 	}
 	r := new(big.Int).SetBytes(b[:32])
 	s := new(big.Int).SetBytes(b[32:])

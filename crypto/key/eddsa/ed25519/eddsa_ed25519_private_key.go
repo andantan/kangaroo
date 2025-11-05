@@ -26,8 +26,9 @@ func GenerateEdDSAEd25519PrivateKey() (key.PrivateKey, error) {
 }
 
 func EdDSAEd25519PrivateKeyFromBytes(b []byte) (key.PrivateKey, error) {
-	if len(b) != eddsa.EdDSAPrivateKeyBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for private-key<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSAPrivateKeyBytesLength, len(b))
+	if len(b) != eddsa.EdDSAEd25519PrivateKeyBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for private-key<%s>: expected %d, got %d",
+			eddsa.EdDSAEd25519Type, eddsa.EdDSAEd25519PrivateKeyBytesLength, len(b))
 	}
 
 	return &EdDSAEd25519PrivateKey{
@@ -44,7 +45,7 @@ func (k *EdDSAEd25519PrivateKey) String() string {
 }
 
 func (k *EdDSAEd25519PrivateKey) IsValid() bool {
-	return len(k.key) == ed25519.PrivateKeySize
+	return len(k.key) == eddsa.EdDSAEd25519PrivateKeyBytesLength
 }
 
 func (k *EdDSAEd25519PrivateKey) Type() string {

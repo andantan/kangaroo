@@ -15,6 +15,22 @@ type EdDSAEd25519Signature struct {
 
 var _ key.Signature = (*EdDSAEd25519Signature)(nil)
 
+func EdDSAEd25519SignatureFromBytes(b []byte) (key.Signature, error) {
+	if len(b) != eddsa.EdDSAEd25519SignatureBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSAEd25519SignatureBytesLength, len(b))
+	}
+
+	pointArr := [32]byte{}
+	scalarArr := [32]byte{}
+	copy(pointArr[:], b[:32])
+	copy(scalarArr[:], b[32:])
+
+	return &EdDSAEd25519Signature{
+		Point:  pointArr,
+		Scalar: scalarArr,
+	}, nil
+}
+
 func (s *EdDSAEd25519Signature) Bytes() []byte {
 	b := append([]byte(nil), s.Point[:]...)
 	b = append(b, s.Scalar[:]...)
@@ -47,27 +63,11 @@ func (s *EdDSAEd25519Signature) Equal(other key.Signature) bool {
 }
 
 func (s *EdDSAEd25519Signature) Verify(pubkey key.PublicKey, data []byte) bool {
-	eddsaPubKey, ok := pubkey.(*EdDSAEd25519PublicKey)
+	pubKey, ok := pubkey.(*EdDSAEd25519PublicKey)
 	if !ok {
 		return false
 	}
 
 	sig := append(s.Point[:], s.Scalar[:]...)
-	return ed25519.Verify(eddsaPubKey.Key, data, sig)
-}
-
-func EdDSAEd25519SignatureFromBytes(b []byte) (key.Signature, error) {
-	if len(b) != eddsa.EdDSASignatureBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for signature<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSASignatureBytesLength, len(b))
-	}
-
-	pointArr := [32]byte{}
-	scalarArr := [32]byte{}
-	copy(pointArr[:], b[:32])
-	copy(scalarArr[:], b[32:])
-
-	return &EdDSAEd25519Signature{
-		Point:  pointArr,
-		Scalar: scalarArr,
-	}, nil
+	return ed25519.Verify(pubKey.Key, data, sig)
 }

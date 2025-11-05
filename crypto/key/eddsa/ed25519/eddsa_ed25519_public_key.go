@@ -15,6 +15,17 @@ type EdDSAEd25519PublicKey struct {
 
 var _ key.PublicKey = (*EdDSAEd25519PublicKey)(nil)
 
+func EdDSAEd25519PublicKeyFromBytes(b []byte) (key.PublicKey, error) {
+	if len(b) != eddsa.EdDSAEd25519PublicKeyBytesLength {
+		return nil, fmt.Errorf("invalid bytes length for public-key<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSAEd25519PublicKeyBytesLength, len(b))
+	}
+
+	keyBytes := append([]byte(nil), b...)
+	return &EdDSAEd25519PublicKey{
+		Key: keyBytes,
+	}, nil
+}
+
 func (k *EdDSAEd25519PublicKey) Bytes() []byte {
 	return k.Key[:]
 }
@@ -26,7 +37,7 @@ func (k *EdDSAEd25519PublicKey) String() string {
 func (k *EdDSAEd25519PublicKey) IsValid() bool {
 	// This performs a length check. Full cryptographic validation of the point
 	// is implicitly handled by the ed25519.Verify function.
-	if k.Key == nil || len(k.Key) != eddsa.EdDSAPublicKeyBytesLength {
+	if k.Key == nil || len(k.Key) != eddsa.EdDSAEd25519PublicKeyBytesLength {
 		return false
 	}
 
@@ -52,15 +63,4 @@ func (k *EdDSAEd25519PublicKey) Equal(other key.PublicKey) bool {
 
 func (k *EdDSAEd25519PublicKey) Address(deriver hash.AddressDeriver) hash.Address {
 	return deriver.Derive(k.Key)
-}
-
-func EdDSAEd25519PublicKeyFromBytes(b []byte) (key.PublicKey, error) {
-	if len(b) != eddsa.EdDSAPublicKeyBytesLength {
-		return nil, fmt.Errorf("invalid bytes length for public-key<%s>: expected %d, got %d", eddsa.EdDSAEd25519Type, eddsa.EdDSAPublicKeyBytesLength, len(b))
-	}
-
-	keyBytes := append([]byte(nil), b...)
-	return &EdDSAEd25519PublicKey{
-		Key: keyBytes,
-	}, nil
 }

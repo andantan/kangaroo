@@ -6,6 +6,7 @@ import (
 	hashtestutil "github.com/andantan/kangaroo/crypto/hash/testutil"
 	"github.com/andantan/kangaroo/crypto/key"
 	keytestutil "github.com/andantan/kangaroo/crypto/key/testutil"
+	"testing"
 )
 
 type SuitesPairTestCase struct {
@@ -15,10 +16,12 @@ type SuitesPairTestCase struct {
 	AddressSuite hash.AddressSuite
 }
 
-func GetSuitesPairTestCases() []SuitesPairTestCase {
-	keySuites := keytestutil.GetKeySuiteTestCases()
-	hashSuites := hashtestutil.GetHashSuiteTestCases()
-	addressSuites := hashtestutil.GetAddressSuiteTestCases()
+func GetSuitesPairTestCases(t *testing.T) []SuitesPairTestCase {
+	t.Helper()
+
+	keySuites := keytestutil.GetKeySuiteTestCases(t)
+	hashSuites := hashtestutil.GetHashSuiteTestCases(t)
+	addressSuites := hashtestutil.GetAddressSuiteTestCases(t)
 
 	totalCapacity := len(keySuites) * len(hashSuites) * len(addressSuites)
 	tc := make([]SuitesPairTestCase, 0, totalCapacity)
