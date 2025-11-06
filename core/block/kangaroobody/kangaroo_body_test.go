@@ -2,6 +2,7 @@ package kangaroobody
 
 import (
 	"github.com/andantan/kangaroo/codec"
+	"github.com/andantan/kangaroo/codec/wrapper"
 	"github.com/andantan/kangaroo/core/block"
 	"github.com/andantan/kangaroo/core/transaction"
 	"github.com/andantan/kangaroo/core/transaction/kangarootransaction"
@@ -39,11 +40,14 @@ func TestKangarooBody_FullLifecycle(t *testing.T) {
 			tx1 := createSignedTx(t, "tx1", 1, signer, hasher)
 			tx2 := createSignedTx(t, "tx2", 2, signer, hasher)
 			tx3 := createSignedTx(t, "tx3", 3, signer, hasher)
+			tx4 := createSignedTx(t, "tx4", 3, signer, hasher)
+			tx5 := createSignedTx(t, "tx5", 3, signer, hasher)
 
-			originalBody := NewKangarooBody([]transaction.Transaction{tx1, tx2, tx3})
+			originalBody := NewKangarooBody([]transaction.Transaction{tx1, tx3, tx2, tx5, tx4})
+			t.Logf("%s\n", originalBody)
 
-			assert.Equal(t, uint64(3), originalBody.GetWeight())
-			assert.Len(t, originalBody.GetTransactions(), 3)
+			assert.Equal(t, uint64(5), originalBody.GetWeight())
+			assert.Len(t, originalBody.GetTransactions(), 5)
 			assert.Equal(t, block.KangarooBodyType, originalBody.Type())
 			assert.NotEmpty(t, originalBody.String())
 
@@ -53,19 +57,19 @@ func TestKangarooBody_FullLifecycle(t *testing.T) {
 			assert.False(t, merkleRoot.IsZero())
 
 			// --- 3. ProtoCodec (Round Trip) ---
-			// 3a. Marshall (Encode) - ToProto가 WrapTransaction을 호출
+			// 3a. Marshall (Encode)
 			encodedBytes, err := codec.EncodeProto(originalBody)
 			require.NoError(t, err)
 			assert.NotEmpty(t, encodedBytes)
 
-			// 3b. UnMarshall (Decode) - FromProto가 UnwrapTransaction을 호출
+			// 3b. UnMarshall (Decode)
 			newBody := new(KangarooBody)
 			err = codec.DecodeProto(encodedBytes, newBody)
 			require.NoError(t, err)
 
 			// --- 4. Compare restored object ---
 			assert.Equal(t, originalBody.GetWeight(), newBody.GetWeight())
-			require.Len(t, newBody.GetTransactions(), 3)
+			require.Len(t, newBody.GetTransactions(), 5)
 
 			// 4a. recovered body hash compare
 			newMerkleRoot, err := newBody.Hash(hasher)
@@ -83,9 +87,9 @@ func TestKangarooBody_FullLifecycle(t *testing.T) {
 }
 
 func TestKangarooBody_EdgeCases(t *testing.T) {
-	keySuite, err := registry.GetKeySuite("ecdsa-secp256k1")
+	keySuite, err := registry.GetKeySuite("eddsa-ed448")
 	require.NoError(t, err)
-	hashSuite, err := registry.GetHashSuite("sha256")
+	hashSuite, err := registry.GetHashSuite("blake2b256")
 	require.NoError(t, err)
 	hasher := hashSuite.Deriver()
 
@@ -134,4 +138,49 @@ func TestKangarooBody_EdgeCases(t *testing.T) {
 		require.NoError(t, err)
 		assert.True(t, tx1Hash.Equal(newTx1Hash))
 	})
+}
+
+func TestKangarooBody_Wrapper_RoundTrip(t *testing.T) {
+	testCases := testutil.GetSuitesPairTestCases(t)
+
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			// --- 1. Setup ---
+			hasher := tc.HashSuite.Deriver()
+			signer, err := tc.KeySuite.GeneratePrivateKey()
+			require.NoError(t, err)
+			signerAddr := signer.PublicKey().Address(tc.AddressSuite.Deriver())
+			assert.Equal(t, hash.AddressLength, len(signerAddr.Bytes()))
+
+			tx1 := createSignedTx(t, "tx1", 1, signer, hasher)
+			tx2 := createSignedTx(t, "tx2", 2, signer, hasher)
+			originalBody := NewKangarooBody([]transaction.Transaction{tx1, tx2})
+
+			// 2. Bytes round trip
+			wrappedBody, err := wrapper.WrapBody(originalBody)
+			require.NoError(t, err)
+			unwrappedBody, err := wrapper.UnwrapBody(wrappedBody)
+			require.NoError(t, err)
+
+			// 3. Compare
+			origHash, err := originalBody.Hash(hasher)
+			require.NoError(t, err)
+			unwrappedHash, err := unwrappedBody.Hash(hasher)
+			require.NoError(t, err)
+
+			assert.True(t, origHash.Equal(unwrappedHash), "Merkle root should be deterministic")
+			assert.Equal(t, originalBody.GetWeight(), unwrappedBody.GetWeight(), "Weight should be equal")
+
+			// 4. String round trip
+			wrappedString, err := wrapper.WrapBodyToString(originalBody)
+			require.NoError(t, err)
+			parsedBody, err := wrapper.UnwrapBodyFromString(wrappedString)
+			require.NoError(t, err)
+
+			// 5. Verify
+			parsedHash, err := parsedBody.Hash(hasher)
+			require.NoError(t, err)
+			assert.True(t, origHash.Equal(parsedHash), "Merkle root from string parse should be deterministic")
+		})
+	}
 }

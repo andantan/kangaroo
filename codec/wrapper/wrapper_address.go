@@ -1,4 +1,4 @@
-package crypto
+package wrapper
 
 import (
 	"encoding/hex"
@@ -30,7 +30,7 @@ func UnwrapAddress(data []byte) (hash.Address, error) {
 	}
 
 	typePrefix := data[0]
-	hashData := data[1:]
+	addressData := data[1:]
 
 	typeName, err := hash.GetTypeFromAddressPrefix(typePrefix)
 	if err != nil {
@@ -42,7 +42,7 @@ func UnwrapAddress(data []byte) (hash.Address, error) {
 		return nil, err
 	}
 
-	return suite.AddressFromBytes(hashData)
+	return suite.AddressFromBytes(addressData)
 }
 
 func UnwrapAddressFromString(s string) (hash.Address, error) {

@@ -1,6 +1,7 @@
 package blake2b256
 
 import (
+	"github.com/andantan/kangaroo/codec/wrapper"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -35,6 +36,21 @@ func Test_BLAKE2B256_Hash_IsZero(t *testing.T) {
 	assert.True(t, nilHash.IsZero())
 }
 
-func Test_BLAKE2B256_Derive_nil(t *testing.T) {
+func Test_BLAKE2B256_Hash_Wrapper_RoundTrip(t *testing.T) {
+	testString := "blake2b256_hash"
+	testBytes := []byte(testString)
+	deriver := &Blake2b256HashDeriver{}
+	h := deriver.Derive(testBytes)
 
+	wrappedHash, err := wrapper.WrapHash(h)
+	require.NoError(t, err)
+	unwrappedHash, err := wrapper.UnwrapHash(wrappedHash)
+	require.NoError(t, err)
+	assert.True(t, h.Equal(unwrappedHash))
+
+	wrappedHashString, err := wrapper.WrapHashToString(h)
+	require.NoError(t, err)
+	parsedAddr, err := wrapper.UnwrapHashFromString(wrappedHashString)
+	require.NoError(t, err)
+	assert.True(t, h.Equal(parsedAddr))
 }

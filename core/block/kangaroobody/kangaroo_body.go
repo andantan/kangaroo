@@ -3,7 +3,7 @@ package kangaroobody
 import (
 	"errors"
 	"fmt"
-	"github.com/andantan/kangaroo/core"
+	"github.com/andantan/kangaroo/codec/wrapper"
 	"github.com/andantan/kangaroo/core/block"
 	"github.com/andantan/kangaroo/core/transaction"
 	"github.com/andantan/kangaroo/crypto/hash"
@@ -73,7 +73,7 @@ func (b *KangarooBody) ToProto() (proto.Message, error) {
 	txxBytes := make([][]byte, len(b.Transactions))
 
 	for i, tx := range b.Transactions {
-		wrappedTxBytes, err := core.WrapTransaction(tx)
+		wrappedTxBytes, err := wrapper.WrapTransaction(tx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to wrap transaction %d: %w", i, err)
 		}
@@ -93,7 +93,7 @@ func (b *KangarooBody) FromProto(m proto.Message) error {
 
 	txx := make([]transaction.Transaction, len(pb.Transactions))
 	for i, wrappedTxBytes := range pb.Transactions {
-		unwrappedTx, err := core.UnwrapTransaction(wrappedTxBytes)
+		unwrappedTx, err := wrapper.UnwrapTransaction(wrappedTxBytes)
 		if err != nil {
 			return fmt.Errorf("failed to unwrap transaction %d: %w", i, err)
 		}
@@ -119,7 +119,7 @@ func (b *KangarooBody) String() string {
 		txTypes = append(txTypes, tx.Type())
 	}
 
-	return fmt.Sprintf("Body<%s>{TxCount: %d, Txs: [%s]}",
+	return fmt.Sprintf("Body<%s>{Weight: %d, Transactions: [%s]}",
 		b.Type(), txCount, strings.Join(txTypes, ", "))
 }
 

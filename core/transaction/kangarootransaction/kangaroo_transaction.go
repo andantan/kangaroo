@@ -3,8 +3,8 @@ package kangarootransaction
 import (
 	"fmt"
 	"github.com/andantan/kangaroo/codec"
+	"github.com/andantan/kangaroo/codec/wrapper"
 	"github.com/andantan/kangaroo/core/transaction"
-	"github.com/andantan/kangaroo/crypto"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/andantan/kangaroo/crypto/key"
 	"github.com/andantan/kangaroo/crypto/sign"
@@ -65,7 +65,7 @@ func (tx *KangarooTransaction) HashForSigning(deriver hash.HashDeriver) (hash.Ha
 		toBytes []byte
 	)
 	if tx.ToAddress != nil {
-		if toBytes, err = crypto.WrapAddress(tx.ToAddress); err != nil {
+		if toBytes, err = wrapper.WrapAddress(tx.ToAddress); err != nil {
 			return nil, err
 		}
 	}
@@ -97,7 +97,7 @@ func (tx *KangarooTransaction) ToProto() (proto.Message, error) {
 	)
 
 	if tx.ToAddress != nil {
-		if toBytes, err = crypto.WrapAddress(tx.ToAddress); err != nil {
+		if toBytes, err = wrapper.WrapAddress(tx.ToAddress); err != nil {
 			return nil, err
 		}
 	}
@@ -109,14 +109,14 @@ func (tx *KangarooTransaction) ToProto() (proto.Message, error) {
 
 	var sigBytes []byte
 	if tx.Signature != nil {
-		if sigBytes, err = crypto.WrapSignature(tx.Signature); err != nil {
+		if sigBytes, err = wrapper.WrapSignature(tx.Signature); err != nil {
 			return nil, err
 		}
 	}
 
 	var signerBytes []byte
 	if tx.Signer != nil {
-		if signerBytes, err = crypto.WrapPublicKey(tx.Signer); err != nil {
+		if signerBytes, err = wrapper.WrapPublicKey(tx.Signer); err != nil {
 			return nil, err
 		}
 	}
@@ -138,7 +138,7 @@ func (tx *KangarooTransaction) FromProto(m proto.Message) error {
 	}
 
 	if len(pb.ToAddress) > 0 {
-		toAddr, err := crypto.UnwrapAddress(pb.ToAddress)
+		toAddr, err := wrapper.UnwrapAddress(pb.ToAddress)
 		if err != nil {
 			return err
 		}
@@ -152,7 +152,7 @@ func (tx *KangarooTransaction) FromProto(m proto.Message) error {
 	}
 
 	if len(pb.Signer) > 0 {
-		decPubKey, err := crypto.UnwrapPublicKey(pb.Signer)
+		decPubKey, err := wrapper.UnwrapPublicKey(pb.Signer)
 		if err != nil {
 			return fmt.Errorf("failed to parse transaction public key: %w", err)
 		}
@@ -160,7 +160,7 @@ func (tx *KangarooTransaction) FromProto(m proto.Message) error {
 	}
 
 	if len(pb.Signature) > 0 {
-		decSig, err := crypto.UnwrapSignature(pb.Signature)
+		decSig, err := wrapper.UnwrapSignature(pb.Signature)
 		if err != nil {
 			return fmt.Errorf("failed to parse transaction signature: %w", err)
 		}

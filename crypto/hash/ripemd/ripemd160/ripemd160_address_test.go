@@ -1,6 +1,7 @@
 package ripemd160
 
 import (
+	"github.com/andantan/kangaroo/codec/wrapper"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -33,4 +34,23 @@ func Test_RIPEMD160_Address_IsZero(t *testing.T) {
 	ripemdDeriver := &Ripemd160AddressDeriver{}
 	nilAddress := ripemdDeriver.Derive(nil)
 	assert.True(t, nilAddress.IsZero())
+}
+
+func Test_RIPEMD160_Address_Wrapper_RoundTrip(t *testing.T) {
+	testString := "ripemd160_address"
+	testBytes := []byte(testString)
+	deriver := &Ripemd160AddressDeriver{}
+	a := deriver.Derive(testBytes)
+
+	wrappedAddr, err := wrapper.WrapAddress(a)
+	require.NoError(t, err)
+	unwrappedAddr, err := wrapper.UnwrapAddress(wrappedAddr)
+	require.NoError(t, err)
+	assert.True(t, a.Equal(unwrappedAddr))
+
+	wrappedAddrString, err := wrapper.WrapAddressToString(a)
+	require.NoError(t, err)
+	parsedAddr, err := wrapper.UnwrapAddressFromString(wrappedAddrString)
+	require.NoError(t, err)
+	assert.True(t, a.Equal(parsedAddr))
 }

@@ -1,4 +1,4 @@
-package core
+package wrapper
 
 import (
 	"encoding/hex"
@@ -37,7 +37,7 @@ func UnwrapTransaction(data []byte) (transaction.Transaction, error) {
 	}
 
 	typePrefix := data[0]
-	keyData := data[1:]
+	txData := data[1:]
 
 	typeName, err := transaction.GetTypeFromTransactionPrefix(typePrefix)
 	if err != nil {
@@ -50,7 +50,7 @@ func UnwrapTransaction(data []byte) (transaction.Transaction, error) {
 	}
 
 	tx := suite.NewTransaction()
-	if err = codec.DecodeProto(keyData, tx); err != nil {
+	if err = codec.DecodeProto(txData, tx); err != nil {
 		return nil, err
 	}
 

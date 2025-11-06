@@ -2,6 +2,7 @@ package ed25519
 
 import (
 	"fmt"
+	"github.com/andantan/kangaroo/codec/wrapper"
 	"github.com/andantan/kangaroo/crypto/hash"
 	"github.com/andantan/kangaroo/crypto/hash/testutil"
 	"github.com/andantan/kangaroo/crypto/key/eddsa"
@@ -113,6 +114,74 @@ func Test_EdDSA_Ed25519_Signature_Verify(t *testing.T) {
 				assert.NoError(t, err)
 				assert.False(t, signature.Verify(invalidPubKey, correctData))
 			})
+		})
+	}
+}
+
+func Test_EdDSA_Ed25519_Key_Wrapper_RoundTrip(t *testing.T) {
+	hashSuites := testutil.GetHashSuiteTestCases(t)
+
+	// --- 1. setup ---
+	privKey, err := GenerateEdDSAEd25519PrivateKey()
+	require.NoError(t, err)
+	pubKey := privKey.PublicKey()
+
+	// --- 2. PrivateKey round trip test ---
+	// a. Bytes (Wrap -> Unwrap)
+	wrappedPriv, err := wrapper.WrapPrivateKey(privKey)
+	require.NoError(t, err)
+	unwrappedPriv, err := wrapper.UnwrapPrivateKey(wrappedPriv)
+	require.NoError(t, err)
+	reroundUnwrappedPriv, err := wrapper.WrapPrivateKey(unwrappedPriv)
+	assert.Equal(t, wrappedPriv, reroundUnwrappedPriv)
+
+	// b. String (Wrap -> String -> Parse)
+	wrappedPrivString, err := wrapper.WrapPrivateKeyToString(privKey)
+	require.NoError(t, err)
+	parsedPriv, err := wrapper.UnwrapPrivateKeyFromString(wrappedPrivString)
+	require.NoError(t, err)
+	reroundParsedPriv, err := wrapper.WrapPrivateKey(parsedPriv)
+	assert.Equal(t, wrappedPriv, reroundParsedPriv)
+
+	// --- 3. PublicKey round trip test ---
+	// a. Bytes (Wrap -> Unwrap)
+	wrappedPub, err := wrapper.WrapPublicKey(pubKey)
+	require.NoError(t, err)
+	unwrappedPub, err := wrapper.UnwrapPublicKey(wrappedPub)
+	require.NoError(t, err)
+	assert.True(t, pubKey.Equal(unwrappedPub))
+
+	// b. String (Wrap -> String -> Parse)
+	wrappedPubString, err := wrapper.WrapPublicKeyToString(pubKey)
+	require.NoError(t, err)
+	parsedPub, err := wrapper.UnwrapPublicKeyFromString(wrappedPubString)
+	require.NoError(t, err)
+	assert.True(t, pubKey.Equal(parsedPub))
+
+	for _, tc := range hashSuites {
+		t.Run(fmt.Sprintf("with %s hash sig round trip", tc.Name), func(t *testing.T) {
+			testString := "test data"
+			testBytes := []byte(testString)
+			h := tc.Suite.Deriver().Derive(testBytes)
+
+			sig, err := privKey.Sign(h.Bytes())
+			require.NoError(t, err)
+			assert.True(t, sig.Verify(pubKey, h.Bytes()))
+
+			// --- 4. Signature round trip test ---
+			// a. Bytes (Wrap -> Unwrap)
+			wrappedSig, err := wrapper.WrapSignature(sig)
+			require.NoError(t, err)
+			unwrappedSig, err := wrapper.UnwrapSignature(wrappedSig)
+			require.NoError(t, err)
+			assert.True(t, sig.Equal(unwrappedSig))
+
+			// b. String (Wrap -> String -> Parse)
+			wrappedSigString, err := wrapper.WrapSignatureToString(sig)
+			require.NoError(t, err)
+			parsedSig, err := wrapper.UnwrapSignatureFromString(wrappedSigString)
+			require.NoError(t, err)
+			assert.True(t, sig.Equal(parsedSig))
 		})
 	}
 }

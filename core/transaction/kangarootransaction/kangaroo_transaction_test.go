@@ -2,6 +2,7 @@ package kangarootransaction
 
 import (
 	"github.com/andantan/kangaroo/codec"
+	"github.com/andantan/kangaroo/codec/wrapper"
 	"github.com/andantan/kangaroo/core/transaction"
 	_ "github.com/andantan/kangaroo/crypto/all"
 	"github.com/andantan/kangaroo/crypto/hash"
@@ -252,4 +253,51 @@ func TestKangarooTransaction_FromProto_Failures(t *testing.T) {
 		err := tx.FromProto(pbTx)
 		assert.Error(t, err)
 	})
+}
+
+func TestKangarooTransaction_Wrapper_RoundTrip(t *testing.T) {
+	testCases := testutil.GetSuitesPairTestCases(t)
+
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			// --- 1. Setup ---
+			hasher := tc.HashSuite.Deriver()
+			signer, err := tc.KeySuite.GeneratePrivateKey()
+			require.NoError(t, err)
+			signerAddr := signer.PublicKey().Address(tc.AddressSuite.Deriver())
+			assert.Equal(t, hash.AddressLength, len(signerAddr.Bytes()))
+
+			tx := NewKangarooTransaction(nil, nil, []byte("kangaroo-transaction"), uint64(1))
+			err = tx.Sign(signer, hasher)
+			require.NoError(t, err)
+
+			// 2. Bytes round trip
+			wrappedTx, err := wrapper.WrapTransaction(tx)
+			require.NoError(t, err)
+			unwrappedTx, err := wrapper.UnwrapTransaction(wrappedTx)
+			require.NoError(t, err)
+
+			// 3. Compare
+			origHash, err := tx.Hash(hasher)
+			require.NoError(t, err)
+			unwrappedHash, err := unwrappedTx.Hash(hasher)
+			require.NoError(t, err)
+			assert.True(t, origHash.Equal(unwrappedHash))
+
+			// 4. String round trip
+			wrappedString, err := wrapper.WrapTransactionToString(tx)
+			require.NoError(t, err)
+			parsedTx, err := wrapper.UnwrapTransactionFromString(wrappedString)
+			require.NoError(t, err)
+			parsedHash, err := parsedTx.Hash(hasher)
+			require.NoError(t, err)
+			assert.True(t, origHash.Equal(parsedHash))
+
+			// 5. Verify
+			err = unwrappedTx.Verify(hasher)
+			assert.NoError(t, err, "unwrapped tx from bytes should be valid")
+			err = parsedTx.Verify(hasher)
+			assert.NoError(t, err, "unwrapped tx from string should be valid")
+		})
+	}
 }

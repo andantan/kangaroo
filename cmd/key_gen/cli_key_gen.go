@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/andantan/kangaroo/crypto"
+	"github.com/andantan/kangaroo/codec/wrapper"
 	_ "github.com/andantan/kangaroo/crypto/all"
 	"github.com/andantan/kangaroo/registry"
 	"log"
@@ -65,19 +65,19 @@ func main() {
 	if err != nil {
 		log.Fatalf("FATAL: Failed to generate private key: %v", err)
 	}
-	wrappedPrivateKeyString, err := crypto.WrapPrivateKeyToString(privateKey)
+	wrappedPrivateKeyString, err := wrapper.WrapPrivateKeyToString(privateKey)
 	if err != nil {
 		log.Fatalf("FATAL: Failed to wrap private key: %v", err)
 	}
 
 	publicKey := privateKey.PublicKey()
-	wrappedPublicKeyString, err := crypto.WrapPublicKeyToString(publicKey)
+	wrappedPublicKeyString, err := wrapper.WrapPublicKeyToString(publicKey)
 	if err != nil {
 		log.Fatalf("FATAL: Failed to wrap public key: %v", err)
 	}
 
 	address := publicKey.Address(addressSuite.Deriver())
-	wrappedAddressString, err := crypto.WrapAddressToString(address)
+	wrappedAddressString, err := wrapper.WrapAddressToString(address)
 	if err != nil {
 		log.Fatalf("FATAL: Failed to wrap address: %v", err)
 	}
