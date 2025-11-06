@@ -29,4 +29,8 @@ func Test_KECCAK256_Address_IsZero(t *testing.T) {
 	nonZeroAddr, err := Keccak256AddressFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroAddr.IsZero())
+
+	keccakDeriver := &Keccak256AddressDeriver{}
+	nilAddress := keccakDeriver.Derive(nil)
+	assert.True(t, nilAddress.IsZero())
 }

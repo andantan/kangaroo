@@ -29,4 +29,12 @@ func Test_BLAKE2B256_Hash_IsZero(t *testing.T) {
 	nonZeroHash, err := Blake2b256HashFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroHash.IsZero())
+
+	blakeDeriver := &Blake2b256HashDeriver{}
+	nilHash := blakeDeriver.Derive(nil)
+	assert.True(t, nilHash.IsZero())
+}
+
+func Test_BLAKE2B256_Derive_nil(t *testing.T) {
+
 }

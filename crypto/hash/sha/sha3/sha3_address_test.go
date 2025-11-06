@@ -29,4 +29,8 @@ func Test_SHA3_Address_IsZero(t *testing.T) {
 	nonZeroAddr, err := Sha3AddressFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroAddr.IsZero())
+
+	shaDeriver := &Sha3AddressDeriver{}
+	nilAddress := shaDeriver.Derive(nil)
+	assert.True(t, nilAddress.IsZero())
 }

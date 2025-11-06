@@ -16,6 +16,10 @@ func (_ *MimcBN254AddressDeriver) Type() string {
 }
 
 func (_ *MimcBN254AddressDeriver) Derive(data []byte) hash.Address {
+	if data == nil {
+		return &MimcBN254Address{}
+	}
+
 	f := mimc.NewMiMC()
 	d := f.Sum(data)
 

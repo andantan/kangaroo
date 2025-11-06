@@ -29,4 +29,8 @@ func Test_KECCAK256_Hash_IsZero(t *testing.T) {
 	nonZeroHash, err := Keccak256HashFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroHash.IsZero())
+
+	keccakDeriver := &Keccak256HashDeriver{}
+	nilHash := keccakDeriver.Derive(nil)
+	assert.True(t, nilHash.IsZero())
 }

@@ -131,8 +131,8 @@ func (tx *KangarooTransaction) ToProto() (proto.Message, error) {
 	}, nil
 }
 
-func (tx *KangarooTransaction) FromProto(message proto.Message) error {
-	pb, ok := message.(*kangarootxpb.KangarooTransaction)
+func (tx *KangarooTransaction) FromProto(m proto.Message) error {
+	pb, ok := m.(*kangarootxpb.KangarooTransaction)
 	if !ok {
 		return fmt.Errorf("cannot deserialize protobuf KangarooTransaction")
 	}
@@ -215,17 +215,33 @@ func (tx *KangarooTransaction) Verify(deriver hash.HashDeriver) error {
 }
 
 func (tx *KangarooTransaction) String() string {
-	signerAddr := "<nil>"
-	if tx.Signer != nil {
-		signerAddr = tx.Signer.String()[:10] + "..."
+	toAddr := "<nil>"
+	if tx.ToAddress != nil {
+		fullAddr := tx.ToAddress.String()
+		if len(fullAddr) > 10 {
+			toAddr = fullAddr[:10] + "..."
+		} else {
+			toAddr = fullAddr
+		}
 	}
 
-	return fmt.Sprintf("Transaction<%s>{Nonce: %d, DataSize: %d, Signer: %s}",
-		tx.Type(),
-		tx.Nonce,
-		len(tx.Data),
-		signerAddr,
-	)
+	value := "<nil>"
+	if tx.Value != nil {
+		value = tx.Value.String()
+	}
+
+	signerAddr := "<nil>"
+	if tx.Signer != nil {
+		fullAddr := tx.Signer.String()
+		if len(fullAddr) > 10 {
+			signerAddr = fullAddr[:10] + "..."
+		} else {
+			signerAddr = fullAddr
+		}
+	}
+
+	return fmt.Sprintf("Transaction<%s>{ToAddress: %s, Value: %s, Nonce: %d, DataSize: %d, Signer: %s}",
+		tx.Type(), toAddr, value, tx.Nonce, len(tx.Data), signerAddr)
 }
 
 func (tx *KangarooTransaction) Type() string {

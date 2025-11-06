@@ -29,4 +29,8 @@ func Test_MIMC_BN254_Hash_IsZero(t *testing.T) {
 	nonZeroHash, err := MimcBN254HashFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroHash.IsZero())
+
+	mimcDeriver := &MimcBN254HashDeriver{}
+	nilHash := mimcDeriver.Derive(nil)
+	assert.True(t, nilHash.IsZero())
 }

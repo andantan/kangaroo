@@ -49,7 +49,12 @@ func UnwrapTransaction(data []byte) (transaction.Transaction, error) {
 		return nil, err
 	}
 
-	return suite.TransactionFromBytes(keyData)
+	tx := suite.NewTransaction()
+	if err = codec.DecodeProto(keyData, tx); err != nil {
+		return nil, err
+	}
+
+	return tx, nil
 }
 
 func UnwrapTransactionFromString(s string) (transaction.Transaction, error) {

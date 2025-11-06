@@ -15,6 +15,10 @@ func (_ *Blake2b256AddressDeriver) Type() string {
 }
 
 func (_ *Blake2b256AddressDeriver) Derive(data []byte) hash.Address {
+	if data == nil {
+		return &Blake2b256Address{}
+	}
+
 	hashBytes := blake2b.Sum256(data)
 	start := len(hashBytes) - hash.AddressLength
 	addrBytes := hashBytes[start:]

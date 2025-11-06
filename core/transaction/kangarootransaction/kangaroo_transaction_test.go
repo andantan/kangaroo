@@ -25,6 +25,7 @@ func TestKangarooTransaction_FullLifecycle(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			// --- 1. create and sign ---
 			tx := newTestKangarooTransaction([]byte("test_data"), 1)
+			t.Logf("%s\n", tx)
 			assert.Equal(t, transaction.KangarooTransactionType, tx.Type())
 
 			signer, err := tc.KeySuite.GeneratePrivateKey()

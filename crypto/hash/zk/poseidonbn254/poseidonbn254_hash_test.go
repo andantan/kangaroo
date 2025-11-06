@@ -8,9 +8,9 @@ import (
 )
 
 func Test_POSEIDON_BN254_Hash_BytesAndFromBytes(t *testing.T) {
-	bn254Deriver := &PoseidonBN254HashDeriver{}
+	poseidonDeriver := &PoseidonBN254HashDeriver{}
 	testString := "poseidon_bn254_hash"
-	originalHash := bn254Deriver.Derive([]byte(testString))
+	originalHash := poseidonDeriver.Derive([]byte(testString))
 	originalBytes := originalHash.Bytes()
 	assert.Equal(t, hash.HashLength, len(originalBytes))
 
@@ -29,4 +29,8 @@ func Test_POSEIDON_BN254_Hash_IsZero(t *testing.T) {
 	nonZeroHash, err := PoseidonBN254HashFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroHash.IsZero())
+
+	poseidonDeriver := &PoseidonBN254HashDeriver{}
+	nilHash := poseidonDeriver.Derive(nil)
+	assert.True(t, nilHash.IsZero())
 }

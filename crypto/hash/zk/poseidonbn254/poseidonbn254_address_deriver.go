@@ -16,6 +16,10 @@ func (_ *PoseidonBN254AddressDeriver) Type() string {
 }
 
 func (_ *PoseidonBN254AddressDeriver) Derive(data []byte) hash.Address {
+	if data == nil {
+		return &PoseidonBN254Address{}
+	}
+
 	f := poseidon2.NewMerkleDamgardHasher()
 	d := f.Sum(data)
 

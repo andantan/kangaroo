@@ -15,6 +15,10 @@ func (_ *Blake2b256HashDeriver) Type() string {
 }
 
 func (_ *Blake2b256HashDeriver) Derive(data []byte) hash.Hash {
+	if data == nil {
+		return &Blake2b256Hash{}
+	}
+
 	hashBytes := blake2b.Sum256(data)
 	h, err := Blake2b256HashFromBytes(hashBytes[:])
 	if err != nil {

@@ -15,6 +15,10 @@ func (_ *Ripemd160AddressDeriver) Type() string {
 }
 
 func (_ *Ripemd160AddressDeriver) Derive(data []byte) hash.Address {
+	if data == nil {
+		return &Ripemd160Address{}
+	}
+
 	rh := ripemd160.New()
 	rh.Write(data)
 	rhb := rh.Sum(nil)

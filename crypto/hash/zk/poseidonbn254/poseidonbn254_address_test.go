@@ -8,9 +8,9 @@ import (
 )
 
 func Test_POSEIDON_BN254_Address_BytesAndFromBytes(t *testing.T) {
-	bn254Deriver := &PoseidonBN254AddressDeriver{}
+	poseidonDeriver := &PoseidonBN254AddressDeriver{}
 	testString := "poseidon_bn254_address"
-	originalAddress := bn254Deriver.Derive([]byte(testString))
+	originalAddress := poseidonDeriver.Derive([]byte(testString))
 	originalBytes := originalAddress.Bytes()
 	assert.Equal(t, hash.AddressLength, len(originalBytes))
 
@@ -29,4 +29,8 @@ func Test_POSEIDON_BN254_Address_IsZero(t *testing.T) {
 	nonZeroAddr, err := PoseidonBN254AddressFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroAddr.IsZero())
+
+	poseidonDeriver := &PoseidonBN254AddressDeriver{}
+	nilAddress := poseidonDeriver.Derive(nil)
+	assert.True(t, nilAddress.IsZero())
 }

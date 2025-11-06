@@ -15,6 +15,10 @@ func (_ *Sha256HashDeriver) Type() string {
 }
 
 func (_ *Sha256HashDeriver) Derive(data []byte) hash.Hash {
+	if data == nil {
+		return &Sha256Hash{}
+	}
+
 	hashBytes := sha256.Sum256(data)
 	h, err := Sha256HashFromBytes(hashBytes[:])
 	if err != nil {

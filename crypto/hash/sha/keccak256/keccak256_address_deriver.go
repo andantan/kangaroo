@@ -15,6 +15,10 @@ func (_ *Keccak256AddressDeriver) Type() string {
 }
 
 func (_ *Keccak256AddressDeriver) Derive(data []byte) hash.Address {
+	if data == nil {
+		return &Keccak256Address{}
+	}
+
 	kh := sha3.NewLegacyKeccak256()
 	kh.Write(data)
 	khb := kh.Sum(nil)

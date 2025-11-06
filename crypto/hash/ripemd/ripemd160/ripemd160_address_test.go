@@ -29,4 +29,8 @@ func Test_RIPEMD160_Address_IsZero(t *testing.T) {
 	nonZeroAddr, err := Ripemd160AddressFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroAddr.IsZero())
+
+	ripemdDeriver := &Ripemd160AddressDeriver{}
+	nilAddress := ripemdDeriver.Derive(nil)
+	assert.True(t, nilAddress.IsZero())
 }

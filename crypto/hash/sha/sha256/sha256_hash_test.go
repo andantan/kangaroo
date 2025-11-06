@@ -29,4 +29,8 @@ func Test_SHA256_Hash_IsZero(t *testing.T) {
 	nonZeroHash, err := Sha256HashFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroHash.IsZero())
+
+	shaDeriver := &Sha256HashDeriver{}
+	nilHash := shaDeriver.Derive(nil)
+	assert.True(t, nilHash.IsZero())
 }

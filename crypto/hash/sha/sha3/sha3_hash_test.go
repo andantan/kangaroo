@@ -29,4 +29,8 @@ func Test_SHA3_Hash_IsZero(t *testing.T) {
 	nonZeroHash, err := Sha3HashFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroHash.IsZero())
+
+	shaDeriver := &Sha3HashDeriver{}
+	nilHash := shaDeriver.Derive(nil)
+	assert.True(t, nilHash.IsZero())
 }

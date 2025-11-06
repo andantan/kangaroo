@@ -29,5 +29,5 @@ type Transaction interface {
 type TransactionSuite interface {
 	format.StringTypable
 
-	TransactionFromBytes(data []byte) (Transaction, error)
+	NewTransaction() Transaction
 }

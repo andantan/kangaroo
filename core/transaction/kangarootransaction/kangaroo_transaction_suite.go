@@ -1,7 +1,6 @@
 package kangarootransaction
 
 import (
-	"github.com/andantan/kangaroo/codec"
 	"github.com/andantan/kangaroo/core/transaction"
 	"github.com/andantan/kangaroo/registry"
 )
@@ -18,10 +17,6 @@ func (s *KangarooTransactionSuite) Type() string {
 	return transaction.KangarooTransactionType
 }
 
-func (s *KangarooTransactionSuite) TransactionFromBytes(data []byte) (transaction.Transaction, error) {
-	tx := new(KangarooTransaction)
-	if err := codec.DecodeProto(data, tx); err != nil {
-		return nil, err
-	}
-	return tx, nil
+func (s *KangarooTransactionSuite) NewTransaction() transaction.Transaction {
+	return &KangarooTransaction{}
 }

@@ -9,7 +9,7 @@ import (
 
 // ============================================================================================================
 //
-//	HASH SUITE REGISTRY
+//	TRANSACTION SUITE REGISTRY
 //
 // ============================================================================================================
 var transactionSuiteRegistry = make(map[string]transaction.TransactionSuite)

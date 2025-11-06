@@ -15,6 +15,10 @@ func (_ *Sha3HashDeriver) Type() string {
 }
 
 func (_ *Sha3HashDeriver) Derive(data []byte) hash.Hash {
+	if data == nil {
+		return &Sha3Hash{}
+	}
+
 	hashBytes := sha3.Sum256(data)
 	h, err := Sha3HashFromBytes(hashBytes[:])
 	if err != nil {

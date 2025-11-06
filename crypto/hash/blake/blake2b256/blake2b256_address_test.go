@@ -29,4 +29,8 @@ func Test_BLAKE2B256_Address_IsZero(t *testing.T) {
 	nonZeroAddr, err := Blake2b256AddressFromBytes(nonZeroBytes)
 	require.NoError(t, err)
 	assert.False(t, nonZeroAddr.IsZero())
+
+	blakeDeriver := &Blake2b256AddressDeriver{}
+	nilAddress := blakeDeriver.Derive(nil)
+	assert.True(t, nilAddress.IsZero())
 }

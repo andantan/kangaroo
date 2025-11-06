@@ -4,8 +4,8 @@ import "google.golang.org/protobuf/proto"
 
 type ProtoCodec interface {
 	ToProto() (proto.Message, error)
-	FromProto(proto.Message) error // proto field mapper
-	NewProto() proto.Message       // prototype mapper
+	FromProto(m proto.Message) error // proto field mapper
+	NewProto() proto.Message         // prototype mapper
 }
 
 func EncodeProto(c ProtoCodec) ([]byte, error) {

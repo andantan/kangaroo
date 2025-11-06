@@ -16,6 +16,10 @@ func (_ *MimcBN254HashDeriver) Type() string {
 }
 
 func (_ *MimcBN254HashDeriver) Derive(data []byte) hash.Hash {
+	if data == nil {
+		return &MimcBN254Hash{}
+	}
+
 	f := mimc.NewMiMC()
 	d := f.Sum(data)
 

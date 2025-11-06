@@ -15,6 +15,10 @@ func (_ *Sha256AddressDeriver) Type() string {
 }
 
 func (_ *Sha256AddressDeriver) Derive(data []byte) hash.Address {
+	if data == nil {
+		return &Sha256Address{}
+	}
+
 	hashBytes := sha256.Sum256(data)
 	start := len(hashBytes) - hash.AddressLength
 	addrBytes := hashBytes[start:]
