@@ -34,6 +34,14 @@ func (s *EdDSAEd25519Signature) String() string {
 	return "0x" + hex.EncodeToString(s.Bytes())
 }
 
+func (s *EdDSAEd25519Signature) ShortString(length int) string {
+	ss := hex.EncodeToString(s.Bytes())
+	if length > len(ss) {
+		length = len(ss)
+	}
+	return "0x" + ss[:length]
+}
+
 func (s *EdDSAEd25519Signature) IsValid() bool {
 	if s.Sig == nil || len(s.Sig) != eddsa.EdDSAEd25519SignatureBytesLength {
 		return false

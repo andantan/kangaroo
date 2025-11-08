@@ -164,7 +164,8 @@ func TestKangarooTransaction_Verify_Failures(t *testing.T) {
 }
 
 func TestKangarooTransaction_Hash_Failures(t *testing.T) {
-	suite, _ := registry.GetHashSuite("sha256")
+	suite, err := registry.GetHashSuite("sha256")
+	require.NoError(t, err)
 
 	t.Run("should fail to hash unsigned transaction", func(t *testing.T) {
 		tx := newTestKangarooTransaction([]byte("data"), 1) // not signed

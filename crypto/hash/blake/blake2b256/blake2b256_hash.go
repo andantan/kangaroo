@@ -14,24 +14,29 @@ var _ hash.Hash = Blake2b256Hash{}
 func (h Blake2b256Hash) Bytes() []byte {
 	return h[:]
 }
+
 func (h Blake2b256Hash) IsZero() bool {
 	return h == Blake2b256Hash{}
 }
+
 func (h Blake2b256Hash) IsValid() bool {
 	return !h.IsZero()
 }
+
 func (h Blake2b256Hash) Type() string {
 	return hash.Blake2b256Type
 }
+
 func (h Blake2b256Hash) String() string {
 	return "0x" + hex.EncodeToString(h[:])
 }
-func (h Blake2b256Hash) ShortString(l int) string {
+
+func (h Blake2b256Hash) ShortString(length int) string {
 	hs := hex.EncodeToString(h[:])
-	if l > len(hs) {
-		l = len(hs)
+	if length > len(hs) {
+		length = len(hs)
 	}
-	return "0x" + hs[:l]
+	return "0x" + hs[:length]
 }
 func (h Blake2b256Hash) Equal(other hash.Hash) bool {
 	otherHash, ok := other.(Blake2b256Hash)

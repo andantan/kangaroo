@@ -13,11 +13,11 @@ import (
 //
 // ============================================================================================================
 var bodySuiteRegistry = make(map[string]block.BodySuite)
-var bodySuitelock = &sync.RWMutex{}
+var bodySuiteLock = &sync.RWMutex{}
 
 func RegistryBodySuite(s block.BodySuite) {
-	bodySuitelock.Lock()
-	defer bodySuitelock.Unlock()
+	bodySuiteLock.Lock()
+	defer bodySuiteLock.Unlock()
 	name := s.Type()
 	if _, exists := bodySuiteRegistry[name]; exists {
 		panic("body suite already registered: " + name)
@@ -27,8 +27,8 @@ func RegistryBodySuite(s block.BodySuite) {
 }
 
 func GetBodySuite(name string) (block.BodySuite, error) {
-	bodySuitelock.RLock()
-	defer bodySuitelock.RUnlock()
+	bodySuiteLock.RLock()
+	defer bodySuiteLock.RUnlock()
 	suite, ok := bodySuiteRegistry[name]
 	if !ok {
 		return nil, fmt.Errorf("body suite not found: %s", name)

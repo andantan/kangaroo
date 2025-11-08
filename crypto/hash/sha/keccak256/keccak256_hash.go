@@ -31,14 +31,14 @@ func (h Keccak256Hash) String() string {
 	return "0x" + hex.EncodeToString(h.Bytes())
 }
 
-func (h Keccak256Hash) ShortString(l int) string {
+func (h Keccak256Hash) ShortString(length int) string {
 	hs := hex.EncodeToString(h.Bytes())
 
-	if l > len(hs) {
-		l = len(hs)
+	if length > len(hs) {
+		length = len(hs)
 	}
 
-	return "0x" + hs[:l]
+	return "0x" + hs[:length]
 }
 
 func (h Keccak256Hash) Equal(other hash.Hash) bool {

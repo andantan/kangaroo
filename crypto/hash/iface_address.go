@@ -9,11 +9,11 @@ const (
 type Address interface {
 	format.Byteable
 	format.Stringable
+	format.ShortStringable
 	format.StringTypable
 	format.Validatable
 
 	IsZero() bool
-	ShortString(length int) string
 	Equal(other Address) bool
 	Gt(other Address) bool
 	Gte(other Address) bool

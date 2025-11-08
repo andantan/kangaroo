@@ -31,14 +31,14 @@ func (a Ripemd160Address) String() string {
 	return "0x" + hex.EncodeToString(a.Bytes())
 }
 
-func (a Ripemd160Address) ShortString(l int) string {
+func (a Ripemd160Address) ShortString(length int) string {
 	as := hex.EncodeToString(a.Bytes())
 
-	if l > len(as) {
-		l = len(as)
+	if length > len(as) {
+		length = len(as)
 	}
 
-	return "0x" + as[:l]
+	return "0x" + as[:length]
 }
 
 func (a Ripemd160Address) Equal(other hash.Address) bool {

@@ -34,6 +34,14 @@ func (k *EdDSAEd25519PublicKey) String() string {
 	return "0x" + hex.EncodeToString(k.Bytes())
 }
 
+func (k *EdDSAEd25519PublicKey) ShortString(length int) string {
+	ks := hex.EncodeToString(k.Bytes())
+	if length > len(ks) {
+		length = len(ks)
+	}
+	return "0x" + ks[:length]
+}
+
 func (k *EdDSAEd25519PublicKey) IsValid() bool {
 	// This performs a length check. Full cryptographic validation of the point
 	// is implicitly handled by the ed25519.Verify function.

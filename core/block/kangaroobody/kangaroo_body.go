@@ -7,7 +7,7 @@ import (
 	"github.com/andantan/kangaroo/core/block"
 	"github.com/andantan/kangaroo/core/transaction"
 	"github.com/andantan/kangaroo/crypto/hash"
-	kangaroobodypb "github.com/andantan/kangaroo/proto/core/block/pb"
+	kangarooblockpb "github.com/andantan/kangaroo/proto/core/block/pb"
 	"google.golang.org/protobuf/proto"
 	"sort"
 	"strings"
@@ -80,13 +80,13 @@ func (b *KangarooBody) ToProto() (proto.Message, error) {
 		txxBytes[i] = wrappedTxBytes
 	}
 
-	return &kangaroobodypb.KangarooBody{
+	return &kangarooblockpb.KangarooBody{
 		Transactions: txxBytes,
 	}, nil
 }
 
 func (b *KangarooBody) FromProto(m proto.Message) error {
-	pb, ok := m.(*kangaroobodypb.KangarooBody)
+	pb, ok := m.(*kangarooblockpb.KangarooBody)
 	if !ok {
 		return fmt.Errorf("cannot deserialize protobuf Kangaroobody")
 	}
@@ -105,7 +105,7 @@ func (b *KangarooBody) FromProto(m proto.Message) error {
 }
 
 func (b *KangarooBody) NewProto() proto.Message {
-	return &kangaroobodypb.KangarooBody{}
+	return &kangarooblockpb.KangarooBody{}
 }
 
 func (b *KangarooBody) String() string {

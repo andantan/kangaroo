@@ -8,6 +8,7 @@ import (
 type PublicKey interface {
 	format.Byteable
 	format.Stringable
+	format.ShortStringable
 	format.StringTypable
 	format.Validatable
 

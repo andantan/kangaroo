@@ -52,6 +52,14 @@ func (k *SchnorrSr25519PrivateKey) String() string {
 	return "0x" + hex.EncodeToString(k.Bytes())
 }
 
+func (k *SchnorrSr25519PrivateKey) ShortString(length int) string {
+	ks := hex.EncodeToString(k.Bytes())
+	if length > len(ks) {
+		length = len(ks)
+	}
+	return "0x" + ks[:length]
+}
+
 func (k *SchnorrSr25519PrivateKey) IsValid() bool {
 	return k != nil && k.key != nil
 }

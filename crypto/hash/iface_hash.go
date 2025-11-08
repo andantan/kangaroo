@@ -19,11 +19,11 @@ const (
 type Hash interface {
 	format.Byteable
 	format.Stringable
+	format.ShortStringable
 	format.StringTypable
 	format.Validatable
 
 	IsZero() bool
-	ShortString(length int) string
 	Equal(other Hash) bool
 	Gt(other Hash) bool
 	Gte(other Hash) bool

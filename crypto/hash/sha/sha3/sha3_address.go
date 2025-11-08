@@ -31,14 +31,14 @@ func (a Sha3Address) String() string {
 	return "0x" + hex.EncodeToString(a.Bytes())
 }
 
-func (a Sha3Address) ShortString(l int) string {
+func (a Sha3Address) ShortString(length int) string {
 	as := hex.EncodeToString(a.Bytes())
 
-	if l > len(as) {
-		l = len(as)
+	if length > len(as) {
+		length = len(as)
 	}
 
-	return "0x" + as[:l]
+	return "0x" + as[:length]
 }
 
 func (a Sha3Address) Equal(other hash.Address) bool {

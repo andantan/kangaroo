@@ -44,6 +44,14 @@ func (k *EdDSAEd25519PrivateKey) String() string {
 	return "0x" + hex.EncodeToString(k.Bytes())
 }
 
+func (k *EdDSAEd25519PrivateKey) ShortString(length int) string {
+	ks := hex.EncodeToString(k.Bytes())
+	if length > len(ks) {
+		length = len(ks)
+	}
+	return "0x" + ks[:length]
+}
+
 func (k *EdDSAEd25519PrivateKey) IsValid() bool {
 	return len(k.key) == eddsa.EdDSAEd25519PrivateKeyBytesLength
 }

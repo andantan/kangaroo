@@ -31,6 +31,14 @@ func (s *ECDSASecp256r1Signature) String() string {
 	return "0x" + hex.EncodeToString(s.Bytes())
 }
 
+func (s *ECDSASecp256r1Signature) ShortString(length int) string {
+	ss := hex.EncodeToString(s.Bytes())
+	if length > len(ss) {
+		length = len(ss)
+	}
+	return "0x" + ss[:length]
+}
+
 func (s *ECDSASecp256r1Signature) IsValid() bool {
 	if s == nil || s.R == nil || s.S == nil {
 		return false

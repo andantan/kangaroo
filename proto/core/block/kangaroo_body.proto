@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package block;
 
-option go_package = "core/block/pb;kangaroobodypb";
+option go_package = "core/block/pb;kangarooblockpb";
 
 message KangarooBody {
   repeated bytes transactions = 1;

@@ -42,6 +42,14 @@ func (s *SchnorrSr25519Signature) String() string {
 	return "0x" + hex.EncodeToString(s.Bytes())
 }
 
+func (s *SchnorrSr25519Signature) ShortString(length int) string {
+	ss := hex.EncodeToString(s.Bytes())
+	if length > len(ss) {
+		length = len(ss)
+	}
+	return "0x" + ss[:length]
+}
+
 func (s *SchnorrSr25519Signature) IsValid() bool {
 	return s != nil && s.s != nil
 }

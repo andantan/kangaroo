@@ -217,12 +217,7 @@ func (tx *KangarooTransaction) Verify(deriver hash.HashDeriver) error {
 func (tx *KangarooTransaction) String() string {
 	toAddr := "<nil>"
 	if tx.ToAddress != nil {
-		fullAddr := tx.ToAddress.String()
-		if len(fullAddr) > 10 {
-			toAddr = fullAddr[:10] + "..."
-		} else {
-			toAddr = fullAddr
-		}
+		toAddr = tx.ToAddress.ShortString(8)
 	}
 
 	value := "<nil>"
@@ -232,12 +227,7 @@ func (tx *KangarooTransaction) String() string {
 
 	signerAddr := "<nil>"
 	if tx.Signer != nil {
-		fullAddr := tx.Signer.String()
-		if len(fullAddr) > 10 {
-			signerAddr = fullAddr[:10] + "..."
-		} else {
-			signerAddr = fullAddr
-		}
+		signerAddr = tx.Signer.ShortString(8)
 	}
 
 	return fmt.Sprintf("Transaction<%s>{ToAddress: %s, Value: %s, Nonce: %d, DataSize: %d, Signer: %s}",

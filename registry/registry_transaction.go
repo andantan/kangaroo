@@ -13,11 +13,11 @@ import (
 //
 // ============================================================================================================
 var transactionSuiteRegistry = make(map[string]transaction.TransactionSuite)
-var transactionSuitelock = &sync.RWMutex{}
+var transactionSuiteLock = &sync.RWMutex{}
 
 func RegistryTransactionSuite(s transaction.TransactionSuite) {
-	transactionSuitelock.Lock()
-	defer transactionSuitelock.Unlock()
+	transactionSuiteLock.Lock()
+	defer transactionSuiteLock.Unlock()
 	name := s.Type()
 	if _, exists := transactionSuiteRegistry[name]; exists {
 		panic("transaction suite already registered: " + name)
@@ -27,8 +27,8 @@ func RegistryTransactionSuite(s transaction.TransactionSuite) {
 }
 
 func GetTransactionSuite(name string) (transaction.TransactionSuite, error) {
-	transactionSuitelock.RLock()
-	defer transactionSuitelock.RUnlock()
+	transactionSuiteLock.RLock()
+	defer transactionSuiteLock.RUnlock()
 	suite, ok := transactionSuiteRegistry[name]
 	if !ok {
 		return nil, fmt.Errorf("transaction suite not found: %s", name)

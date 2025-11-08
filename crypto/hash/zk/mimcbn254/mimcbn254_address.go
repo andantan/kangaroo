@@ -31,12 +31,12 @@ func (a MimcBN254Address) String() string {
 	return "0x" + hex.EncodeToString(a[:])
 }
 
-func (a MimcBN254Address) ShortString(l int) string {
+func (a MimcBN254Address) ShortString(length int) string {
 	as := hex.EncodeToString(a.Bytes())
-	if l > len(as) {
-		l = len(as)
+	if length > len(as) {
+		length = len(as)
 	}
-	return "0x" + as[:l]
+	return "0x" + as[:length]
 }
 
 func (a MimcBN254Address) Equal(other hash.Address) bool {

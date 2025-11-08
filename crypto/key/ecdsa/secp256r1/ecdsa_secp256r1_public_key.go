@@ -24,6 +24,14 @@ func (k *ECDSASecp256r1PublicKey) String() string {
 	return "0x" + hex.EncodeToString(k.Bytes())
 }
 
+func (k *ECDSASecp256r1PublicKey) ShortString(length int) string {
+	ks := hex.EncodeToString(k.Bytes())
+	if length > len(ks) {
+		length = len(ks)
+	}
+	return "0x" + ks[:length]
+}
+
 func (k *ECDSASecp256r1PublicKey) IsValid() bool {
 	if k == nil || len(k.Key) != ecdsa.ECDSASecp256r1PublicKeyBytesLength {
 		return false

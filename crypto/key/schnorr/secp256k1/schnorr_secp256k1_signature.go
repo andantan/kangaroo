@@ -52,6 +52,14 @@ func (s *SchnorrSecp256k1Signature) String() string {
 	return "0x" + hex.EncodeToString(s.Bytes())
 }
 
+func (s *SchnorrSecp256k1Signature) ShortString(length int) string {
+	ss := hex.EncodeToString(s.Bytes())
+	if length > len(ss) {
+		length = len(ss)
+	}
+	return "0x" + ss[:length]
+}
+
 func (s *SchnorrSecp256k1Signature) IsValid() bool {
 	return s != nil && s.R != nil && s.S != nil
 }

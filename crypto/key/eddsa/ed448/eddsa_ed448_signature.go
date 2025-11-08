@@ -34,6 +34,14 @@ func (s *EdDSAEd448Signature) String() string {
 	return "0x" + hex.EncodeToString(s.Bytes())
 }
 
+func (s *EdDSAEd448Signature) ShortString(length int) string {
+	ss := hex.EncodeToString(s.Bytes())
+	if length > len(ss) {
+		length = len(ss)
+	}
+	return "0x" + ss[:length]
+}
+
 func (s *EdDSAEd448Signature) Type() string {
 	return eddsa.EdDSAEd448Type
 }
